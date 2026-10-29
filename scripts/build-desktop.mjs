@@ -19,7 +19,7 @@ const electronVersion = (await rd('node_modules/electron/package.json')).version
 
 await fs.rm(stage, { recursive: true, force: true });
 const copy = (rel) => fs.cp(path.join(repo, rel), path.join(stage, rel), { recursive: true });
-for (const f of ['main.js', 'preload.cjs', 'index.html', 'renderer.js']) await copy(`apps/desktop/${f}`);
+for (const f of ['main.js', 'preload.cjs', 'index.html', 'renderer.js', 'build/icon.png']) await copy(`apps/desktop/${f}`);
 for (const d of ['packages/engine/src', 'packages/engine/helper', 'packages/engine/package.json', 'packages/dom-runtime', 'anchors', 'dicts']) await copy(d);
 // 离线语言包：放进 vendor/，引擎优先用它（用前拷到缓存目录，外部的 Cursor 命令行读不到 asar 内路径）
 const vsixName = 'ms-ceintl.vscode-language-pack-zh-hans-1.128.0.vsix';
@@ -60,6 +60,7 @@ const config = {
     executableName: 'cursor-zh-localizer',
     artifactName: 'cursor-zh-localizer-${version}-${arch}.${ext}',
     category: 'Utility',
+    icon: path.join(desktop, 'build/icon.png'),
     syncDesktopName: true,
     synopsis: 'Cursor 一键汉化',
     target: [{ target: 'AppImage', arch: ['x64'] }, { target: 'deb', arch: ['x64'] }],
@@ -76,7 +77,9 @@ const config = {
     artifactName: 'cursor-zh-localizer-${version}-win-${arch}.${ext}',
     // 本工具自己不提权：需要写 Program Files 时由引擎按需弹 UAC（czl-apply.ps1）
     requestedExecutionLevel: 'asInvoker',
-    signAndEditExecutable: false,
+    icon: path.join(desktop, 'build/icon.ico'),
+    // 不签名，但仍用 resedit（纯 JS，不需要 wine）把图标和版本信息写进 exe
+    signExecutable: false,
     // 安装包不用 electron-builder 的 nsis 目标（Linux 上要 wine 生成卸载程序），见下面 makensis 那段
     target: [{ target: 'zip', arch: ['x64'] }, { target: 'portable', arch: ['x64'] }],
   },
@@ -84,6 +87,7 @@ const config = {
   mac: {
     artifactName: 'cursor-zh-localizer-${version}-mac-${arch}.${ext}',
     category: 'public.app-category.utilities',
+    icon: path.join(desktop, 'build/icon.icns'),
     identity: null,
     target: [{ target: 'zip', arch: ['x64', 'arm64'] }],
   },
@@ -128,7 +132,7 @@ if (has('--win')) {
   if (!NSISDIR) console.log('· 未找到 makensis（electron-builder 的 nsis 缓存），跳过安装包');
   else {
     const out = path.join(repo, 'dist', `cursor-zh-localizer-${desktopPkg.version}-win-x64-setup.exe`);
-    execFileSync(path.join(NSISDIR, 'linux/makensis'), ['-V2', `-DVERSION=${desktopPkg.version}`, `-DSRCDIR=${path.join(repo, 'dist/win-unpacked')}`, `-DOUTFILE=${out}`, path.join(desktop, 'build/win/installer.nsi')],
+    execFileSync(path.join(NSISDIR, 'linux/makensis'), ['-V2', `-DVERSION=${desktopPkg.version}`, `-DSRCDIR=${path.join(repo, 'dist/win-unpacked')}`, `-DOUTFILE=${out}`, `-DICON=${path.join(desktop, 'build/icon.ico')}`, path.join(desktop, 'build/win/installer.nsi')],
       { stdio: 'inherit', env: { ...process.env, NSISDIR, NSISCONFDIR: NSISDIR } });
     console.log(`· 已生成安装包 ${path.relative(repo, out)}`);
   }

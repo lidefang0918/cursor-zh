@@ -25,6 +25,10 @@ VIAddVersionKey /LANG=2052 "LegalCopyright" "MIT"
 
 !include "MUI2.nsh"
 !define MUI_ABORTWARNING
+!ifdef ICON
+!define MUI_ICON "${ICON}"
+!define MUI_UNICON "${ICON}"
+!endif
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${EXENAME}"
 !define MUI_FINISHPAGE_RUN_TEXT "立即运行 ${APPNAME}"
 !insertmacro MUI_PAGE_WELCOME
