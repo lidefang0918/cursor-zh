@@ -21,9 +21,14 @@ export function langpackUrl(version) {
 // vendorDir：离线分发包里随附的 vsix（<vendorDir>/<id>-<version>.vsix），有就直接用，不联网
 export async function downloadLangpack({ version, cacheDir, vendorDir }) {
   const name = `${LANGPACK_ID}-${version}.vsix`;
-  if (vendorDir) { try { await fs.access(path.join(vendorDir, name)); return path.join(vendorDir, name); } catch {} }
   const dest = path.join(cacheDir, name);
   try { await fs.access(dest); return dest; } catch {}
+  // 随附的 vsix 先拷到缓存目录再用：打包后它在 app.asar 里，Cursor 命令行（外部进程）读不到 asar 内路径
+  if (vendorDir) {
+    let buf = null;
+    try { buf = await fs.readFile(path.join(vendorDir, name)); } catch {}
+    if (buf) { await fs.mkdir(cacheDir, { recursive: true }); await fs.writeFile(dest, buf); return dest; }
+  }
   const res = await fetch(langpackUrl(version));
   if (!res.ok) throw new Error(`下载语言包失败 ${version}: HTTP ${res.status}`);
   await fs.mkdir(cacheDir, { recursive: true });

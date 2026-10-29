@@ -3607,7 +3607,8 @@
     }
   ],
   "platforms": [
-    "darwin"
+    "darwin",
+    "win32"
   ],
   "pristine": {
     "resources/app/out/vs/workbench/workbench.desktop.main.js": "5197ce48a203b89b28c2e1ec0c8eefd393ea40ecb7d37c5e33cc594629ed771b",

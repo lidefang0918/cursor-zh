@@ -21,7 +21,15 @@ const KIND = {
   'appimage-extracted': 'AppImage 解包版（本工具解包，位于用户目录）',
   'appimage-mounted': 'AppImage（运行中的只读镜像）',
   manual: '手动安装 / 解压版',
+  'win-user': '用户级安装（%LOCALAPPDATA%\\Programs\\cursor，无需管理员）',
+  'win-system': '系统级安装（Program Files，写入时需要管理员/UAC）',
+  'win-other': 'Windows 其他位置安装',
+  'mac-applications': '/Applications 中的 Cursor.app',
+  'mac-user-applications': '~/Applications 中的 Cursor.app',
+  'mac-translocated': 'App 转移隔离路径（只读）',
+  'mac-other': '其他位置的 Cursor.app',
 };
+const WIN = E.platform === 'win32';
 
 let S = null;          // 最近一次状态
 let target = null;     // 选中的安装根（null = 自动）
@@ -41,7 +49,8 @@ function commandNotice(title, r, action) {
   pendingAction = action;
   notice('warn', title, [
     r.tried?.length ? `已尝试：${r.tried.map((t) => `${t.via}（${t.reason}）`).join('；')}` : null,
-    '请打开终端，执行下面这条命令（会要求输入你的登录密码）：',
+    WIN ? '“用户账户控制”被取消或不可用。请以管理员身份打开 PowerShell（右键开始菜单 →“终端(管理员)”或“Windows PowerShell(管理员)”），执行下面这条命令：'
+      : '请打开终端，执行下面这条命令（会要求输入你的登录密码）：',
     el('code', { class: 'cmd', id: 'sudo-cmd' }, r.command),
     '执行成功后（会显示几行 OK），回到这里点“我已执行，继续”。' + (r.cursorLeftClosed ? 'Cursor 暂时保持关闭，完成后会自动重新打开。' : ''),
   ].filter(Boolean), [
@@ -63,7 +72,9 @@ function describeState(s) {
         ], [['解包并汉化', () => extract(a.path), true]]);
       }
     } else {
-      notice('error', '未找到 Cursor', ['支持的安装位置：/usr/share/cursor（deb/rpm）、/opt/cursor、~/.local/share/cursor；AppImage 版放在 ~/Applications 或 ~/Downloads 后点“刷新”。']);
+      notice('error', '未找到 Cursor', [WIN
+        ? '支持的安装位置：%LOCALAPPDATA%\\Programs\\cursor（用户版安装包）、C:\\Program Files\\cursor（系统版安装包）。装好 Cursor 后点“刷新”。'
+        : '支持的安装位置：/usr/share/cursor（deb/rpm）、/opt/cursor、~/.local/share/cursor；AppImage 版放在 ~/Applications 或 ~/Downloads 后点“刷新”。']);
     }
     return;
   }
@@ -85,12 +96,13 @@ function describeState(s) {
   if (s.readOnlyFs) {
     notice('error', '安装位于只读文件系统', [`${c.root} 所在的文件系统是只读的（通常是正在运行的 AppImage 镜像），无法修改。请使用 AppImage 的“解包后汉化”。`]);
   } else if (s.needsElevation && s.supported && !s.localized && !s.pending) {
-    const how = s.elevation?.pkexec && s.elevation?.graphical
+    const how = WIN ? '点击“一键汉化”后 Windows 会弹出“用户账户控制”窗口，点“是”即可；若取消，会给出一条需要在管理员 PowerShell 中执行的命令。'
+      : s.elevation?.pkexec && s.elevation?.graphical
       ? '点击“一键汉化”后会弹出系统授权窗口（pkexec），输入密码即可；若授权窗口不可用，会改用免密 sudo 或给出一条终端命令。'
       : '系统没有可用的图形授权（pkexec）。将尝试免密 sudo；不行的话会给出一条需要在终端执行的 sudo 命令。';
     notice('info', '需要管理员权限', [
-      `Cursor 安装在 ${c.root}，文件归 root 所有。${how}`,
-      '只有“把准备好的文件放进安装目录”这一步以管理员身份运行（一个很小的脚本，逐个校验 sha256），本界面不会以 root 运行。',
+      `Cursor 安装在 ${c.root}，${WIN ? '写入需要管理员权限' : '文件归 root 所有'}。${how}`,
+      `只有“把准备好的文件放进安装目录”这一步以管理员身份运行（一个很小的脚本，逐个校验 sha256），本界面不会以${WIN ? '管理员' : ' root '}身份运行。`,
     ]);
   }
   if ((s.kind === 'deb' || s.kind === 'rpm') && s.localized) {
@@ -147,7 +159,7 @@ async function run(action, opt = {}) {
       await refresh();
       clearNotices();
       commandNotice('需要管理员权限', r, action);
-      log('✖ 需要管理员权限，请按提示在终端执行命令', 'err');
+      log(`✖ 需要管理员权限，请按提示在${WIN ? '管理员 PowerShell' : '终端'}执行命令`, 'err');
       return;
     } else if (r.code === 'MAC_APP_MANAGEMENT' || r.code === 'MAC_TRANSLOCATED') {
       busy = false;

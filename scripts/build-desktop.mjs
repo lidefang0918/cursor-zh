@@ -1,12 +1,13 @@
 // 打包界面：先把运行需要的文件按仓库原结构装配到 .build/app，
 // 这样 main.js 里的相对引用 ../../packages/engine 和引擎里的 REPO 路径都不用改。
 // 用法：node scripts/build-desktop.mjs [--appimage|--deb]      Linux（默认 AppImage + deb）
-//       node scripts/build-desktop.mjs --win                    Windows x64：zip + 便携版 exe（在 Linux 上交叉打包，未签名）
+//       node scripts/build-desktop.mjs --win                    Windows x64：NSIS 安装包 + zip + 便携版 exe（在 Linux 上交叉打包，未签名）
 //       node scripts/build-desktop.mjs --mac                    macOS x64/arm64：zip（在 Linux 上交叉打包，未签名、未公证）
 // 产物：dist/
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -20,6 +21,16 @@ await fs.rm(stage, { recursive: true, force: true });
 const copy = (rel) => fs.cp(path.join(repo, rel), path.join(stage, rel), { recursive: true });
 for (const f of ['main.js', 'preload.cjs', 'index.html', 'renderer.js']) await copy(`apps/desktop/${f}`);
 for (const d of ['packages/engine/src', 'packages/engine/helper', 'packages/engine/package.json', 'packages/dom-runtime', 'anchors', 'dicts']) await copy(d);
+// 离线语言包：放进 vendor/，引擎优先用它（用前拷到缓存目录，外部的 Cursor 命令行读不到 asar 内路径）
+const vsixName = 'ms-ceintl.vscode-language-pack-zh-hans-1.128.0.vsix';
+const vsix = [process.env.CZL_VSIX, path.join(repo, 'vendor', vsixName), path.join(process.env.HOME || '', '.config/cursor-zh-localizer/cache', vsixName)]
+  .filter(Boolean).find((p) => { try { return statSync(p).isFile(); } catch { return false; } });
+if (vsix) { await fs.mkdir(path.join(stage, 'vendor'), { recursive: true }); await fs.copyFile(vsix, path.join(stage, 'vendor', vsixName)); console.log(`· 随附语言包 ${vsix}`); }
+else console.log('· 未找到语言包 vsix，运行时会联网从 open-vsx 下载');
+// 原始文件哈希（核对用），放进 resources/pristine
+const pristineDir = path.join(stage, 'pristine');
+await fs.mkdir(pristineDir, { recursive: true });
+for (const f of await fs.readdir(path.join(repo, 'docs'))) if (/^pristine-.*\.sha256$/.test(f)) await fs.copyFile(path.join(repo, 'docs', f), path.join(pristineDir, f));
 
 await fs.writeFile(path.join(stage, 'package.json'), JSON.stringify({
   name: 'cursor-zh-localizer',
@@ -66,6 +77,7 @@ const config = {
     // 本工具自己不提权：需要写 Program Files 时由引擎按需弹 UAC（czl-apply.ps1）
     requestedExecutionLevel: 'asInvoker',
     signAndEditExecutable: false,
+    // 安装包不用 electron-builder 的 nsis 目标（Linux 上要 wine 生成卸载程序），见下面 makensis 那段
     target: [{ target: 'zip', arch: ['x64'] }, { target: 'portable', arch: ['x64'] }],
   },
   portable: { artifactName: 'cursor-zh-localizer-${version}-win-${arch}-portable.${ext}' },
@@ -103,5 +115,21 @@ if (has('--mac')) {
     const zipArgs = zipTool === 'zip' ? ['-qry', zip, 'cursor-zh-localizer.app'] : ['a', '-tzip', '-snl', '-bso0', zip, 'cursor-zh-localizer.app'];
     execFileSync(zipTool, zipArgs, { cwd: path.dirname(appDir), stdio: 'inherit' });
     console.log(`· 已 ad-hoc 签名并重新打包 ${path.relative(repo, zip)}`);
+  }
+}
+
+// Windows 安装包：用 electron-builder 缓存里的 Linux 版 makensis 直接编译 apps/desktop/build/win/installer.nsi。
+// 卸载程序由安装时的 WriteUninstaller 写出，所以 Linux 上不需要 wine。按用户安装、开始菜单/桌面快捷方式、控制面板可卸载。
+if (has('--win')) {
+  const cache = path.join(process.env.HOME || '', '.cache/electron-builder');
+  const nsisDir = (await fs.readdir(cache).catch(() => [])).filter((d) => /^nsis-\d/.test(d)).sort().pop();
+  const inner = nsisDir && (await fs.readdir(path.join(cache, nsisDir))).find((d) => d.startsWith('nsis-'));
+  const NSISDIR = process.env.NSISDIR || (inner && path.join(cache, nsisDir, inner));
+  if (!NSISDIR) console.log('· 未找到 makensis（electron-builder 的 nsis 缓存），跳过安装包');
+  else {
+    const out = path.join(repo, 'dist', `cursor-zh-localizer-${desktopPkg.version}-win-x64-setup.exe`);
+    execFileSync(path.join(NSISDIR, 'linux/makensis'), ['-V2', `-DVERSION=${desktopPkg.version}`, `-DSRCDIR=${path.join(repo, 'dist/win-unpacked')}`, `-DOUTFILE=${out}`, path.join(desktop, 'build/win/installer.nsi')],
+      { stdio: 'inherit', env: { ...process.env, NSISDIR, NSISCONFDIR: NSISDIR } });
+    console.log(`· 已生成安装包 ${path.relative(repo, out)}`);
   }
 }

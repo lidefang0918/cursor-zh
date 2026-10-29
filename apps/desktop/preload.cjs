@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('engine', {
+  platform: process.platform,
   getStatus: (o) => ipcRenderer.invoke('getStatus', o),
   localize: (o) => ipcRenderer.invoke('localize', o),
   revert: (o) => ipcRenderer.invoke('revert', o),
