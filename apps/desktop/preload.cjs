@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld('engine', {
   revert: (o) => ipcRenderer.invoke('revert', o),
   extractAppImage: (p) => ipcRenderer.invoke('extractAppImage', p),
   copy: (t) => ipcRenderer.invoke('copy', t),
+  showLog: () => ipcRenderer.invoke('showLog'),
   onLog: (cb) => ipcRenderer.on('log', (_e, msg) => cb(msg)),
 });

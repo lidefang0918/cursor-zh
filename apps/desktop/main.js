@@ -1,9 +1,9 @@
-import { app, BrowserWindow, ipcMain, clipboard } from 'electron';
+import { app, BrowserWindow, ipcMain, clipboard, shell } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 // 直接按相对路径引用引擎（打包时整个仓库结构原样进 app.asar）
-import { localize, revert, status, extractAppImage } from '../../packages/engine/src/index.js';
+import { localize, revert, status, extractAppImage, nextStep } from '../../packages/engine/src/index.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 let win;
@@ -24,8 +24,8 @@ function send(msg) {
 async function exclusive(fn) {
   if (busy) return { ok: false, code: 'BUSY', error: '已有操作在进行中' };
   busy = true;
-  try { const r = JSON.parse(JSON.stringify(await fn())); fileLog(`结果 ${JSON.stringify(r)}`); return r; }
-  catch (e) { fileLog(`异常 ${e.stack || e.message}`); return { ok: false, code: 'EXCEPTION', error: e.message }; }
+  try { const r = JSON.parse(JSON.stringify(await fn())); if (r && r.ok === false && !r.next) r.next = nextStep(r.code); r.logFile = logFile; fileLog(`结果 ${JSON.stringify(r)}`); return r; }
+  catch (e) { fileLog(`异常 ${e.stack || e.message}`); return { ok: false, code: 'EXCEPTION', error: e.message, next: nextStep('EXCEPTION'), logFile }; }
   finally { busy = false; }
 }
 
@@ -41,12 +41,14 @@ ipcMain.handle('getStatus', async (_e, o = {}) => JSON.parse(JSON.stringify(awai
 ipcMain.handle('localize', (_e, o) => exclusive(() => localize(pick(o))));
 ipcMain.handle('revert', (_e, o) => exclusive(() => revert(pick(o))));
 ipcMain.handle('extractAppImage', (_e, appImagePath) => exclusive(async () => ({ ok: true, ...(await extractAppImage({ appImagePath, log: send })) })));
+ipcMain.handle('showLog', () => { fileLog('打开日志'); shell.showItemInFolder(logFile); return logFile; });
 ipcMain.handle('copy', (_e, text) => { clipboard.writeText(String(text)); return true; });
 
 app.whenReady().then(() => {
   fileLog(`启动 v${app.getVersion()} ${process.platform}-${process.arch} electron ${process.versions.electron}`);
   win = new BrowserWindow({
     width: 820, height: 860, minHeight: 600, title: 'Cursor 一键汉化',
+    icon: path.join(here, 'build', 'icon.png'),
     webPreferences: { preload: path.join(here, 'preload.cjs'), contextIsolation: true, sandbox: true },
   });
   win.setMenuBarVisibility(false);

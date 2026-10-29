@@ -10,6 +10,7 @@ function el(tag, props = {}, ...kids) {
   return n;
 }
 const log = (msg, cls) => {
+  if (busy && !cls) $('step').textContent = String(msg).replace(/^\s*[·⚠]\s*/, '');
   const line = el('div', cls ? { class: cls } : {}, msg);
   $('log').append(line);
   $('log').scrollTop = $('log').scrollHeight;
@@ -91,7 +92,15 @@ function describeState(s) {
     ]);
   }
   if (s.stale) {
-    notice('warn', '汉化已失效', ['检测到 Cursor 被重装或更新，安装文件已恢复成原版英文。点“一键汉化”重新汉化即可（旧备份已自动留档，不会被用来覆盖新版本）。']);
+    if (s.supported) {
+      notice('warn', 'Cursor 已更新，汉化已失效', ['Cursor 被更新或重装后，安装文件变回了原版英文。点下面的按钮重新汉化即可（旧备份已自动留档，不会用来覆盖新版本）。'],
+        [['重新汉化', () => run('localize'), true]]);
+    } else {
+      notice('warn', `Cursor 已更新到 ${c.version}，汉化已失效`, ['本工具还没适配这个新版本，暂时无法汉化（为了不改坏 Cursor，本工具不会修改未适配的版本）。请等本工具更新后再点“一键汉化”。']);
+    }
+  } else if (s.localized && s.upToDate === false) {
+    notice('info', '有更新的汉化内容', ['本工具的词典/界面补漏比 Cursor 里现在用的更新（覆盖更全、修了问题）。点“更新汉化”即可，不需要先还原。'],
+      [['更新汉化', () => run('localize'), true]]);
   }
   if (s.readOnlyFs) {
     notice('error', '安装位于只读文件系统', [`${c.root} 所在的文件系统是只读的（通常是正在运行的 AppImage 镜像），无法修改。请使用 AppImage 的“解包后汉化”。`]);
@@ -132,22 +141,35 @@ async function refresh() {
   $('state').replaceChildren(st, s.running ? el('span', { class: 'badge' }, 'Cursor 运行中') : '');
   describeState(s);
   const blocked = busy || !s.cursor || !s.supported || s.readOnlyFs || !!s.otherInstall;
-  $('localize').disabled = blocked || (s.localized && !s.stale);
+  $('localize').disabled = blocked || (s.localized && s.upToDate !== false);
+  $('localize').textContent = s.stale ? '重新汉化' : s.localized ? (s.upToDate === false ? '更新汉化' : '已汉化 ✔') : '一键汉化';
   $('revert').disabled = busy || !(s.state?.localized || s.pending);
 }
 
+const fail = (r) => {
+  log(`✖ ${r.error}${r.restored === false ? '（未能完整回滚！）' : r.restored ? '（安装文件未改动）' : ''}`, 'err');
+  notice('error', action2text(r) + '失败', [r.error, r.next ? el('div', { class: 'next' }, `下一步：${r.next}`) : null].filter(Boolean),
+    [['打开日志', () => E.showLog()]]);
+};
+let current = null;
+const action2text = () => (current === 'revert' ? '还原' : '汉化');
+
 async function run(action, opt = {}) {
   busy = true;
+  current = action;
   $('localize').disabled = $('revert').disabled = true;
+  $('progress').hidden = false;
+  $('step').textContent = action === 'localize' ? '正在汉化…' : '正在还原…';
   clearNotices();
   try {
     const r = await E[action]({ ...(target ? { installRoot: target } : {}), ...opt });
     if (r.ok) {
       pendingAction = null;
-      const done = action === 'localize' ? '✔ 汉化完成' : r.cancelledPending ? '✔ 已取消未完成的汉化' : '✔ 已还原';
-      log(`${done}${r.relaunched ? '，Cursor 已重新打开' : '，重启 Cursor 后生效'}`, 'done');
+      const done = action === 'localize' ? (r.already ? '✔ 已是最新汉化，无需重复操作' : r.refreshed ? '✔ 汉化已更新' : '✔ 汉化完成') : r.cancelledPending ? '✔ 已取消未完成的汉化' : '✔ 已还原';
+      log(`${done}${r.relaunched ? '，Cursor 已重新打开' : r.already ? '' : '，重启 Cursor 后生效'}`, 'done');
     } else if (r.code === 'CURSOR_RUNNING') {
       busy = false;
+      $('progress').hidden = true;
       await refresh();
       notice('warn', 'Cursor 正在运行', [
         `${action === 'localize' ? '汉化' : '还原'}需要重启 Cursor 才能生效。`,
@@ -156,6 +178,7 @@ async function run(action, opt = {}) {
       return;
     } else if (r.code === 'NEED_ELEVATION') {
       busy = false;
+      $('progress').hidden = true;
       await refresh();
       clearNotices();
       commandNotice('需要管理员权限', r, action);
@@ -163,6 +186,7 @@ async function run(action, opt = {}) {
       return;
     } else if (r.code === 'MAC_APP_MANAGEMENT' || r.code === 'MAC_TRANSLOCATED') {
       busy = false;
+      $('progress').hidden = true;
       await refresh();
       clearNotices();
       notice('warn', r.code === 'MAC_APP_MANAGEMENT' ? 'macOS 阻止了修改 Cursor.app' : 'Cursor.app 处于“App 转移”隔离路径', [
@@ -172,12 +196,17 @@ async function run(action, opt = {}) {
       log(`✖ ${r.error}`, 'err');
       return;
     } else {
-      log(`✖ ${r.error}${r.restored === false ? '（未能完整回滚！）' : r.restored ? '（安装文件未改动）' : ''}`, 'err');
+      busy = false;
+      $('progress').hidden = true;
+      await refresh();
+      fail(r);
+      return;
     }
   } catch (e) {
     log(`✖ ${e.message}`, 'err');
   }
   busy = false;
+  $('progress').hidden = true;
   await refresh();
 }
 
@@ -196,5 +225,6 @@ E.onLog((m) => log(m));
 $('localize').onclick = () => run('localize');
 $('revert').onclick = () => run('revert');
 $('refresh').onclick = () => refresh();
+$('showlog').onclick = () => E.showLog();
 $('installs').onchange = (e) => { target = e.target.value; refresh(); };
 refresh();
