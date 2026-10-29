@@ -405,3 +405,20 @@ box 重启会清掉 `/usr/share/cursor`（以及 apt 源 `cursor.list`），`~/.
   - 随包带了 vsix（sha256 d43d9f7b…，和 Open VSX 上的一致）。引擎会优先使用 `vendor/` 里的 vsix。
   - 用法说明在 `docs/mac-cli/RUN.md`。
   - 在 box 上演练过：解开 tar，从包里导入引擎，用 platform=darwin 对 3.27.14 的真实文件做 localize → revert，codesign/xattr/ps 用假的。结果：替换 1549 + 74，未命中 0；没有联网下载；还原后 4 个文件的 sha、MacOS/Cursor 和 CodeResources 都逐字节恢复。
+
+## 第 8 轮：Mac 真机反馈补漏（3.27.14）
+
+用户在自己 Mac 上（3.27.14 universal）跑完汉化后反馈两类问题：
+
+- **原生菜单全英文**（只有我们 NLS 补丁里的“关闭窗口”是中文）。
+  - 原因：Cursor 主进程启动时只读 `<userData>/languagepacks.json` 决定语言包；这份清单由共享进程在**启动之后**按已装扩展重建。CLI 刚装完语言包时清单里没有 zh-cn，第一次重启拿不到中文 NLS（不会生成 `clp/<hash>.zh-cn`），要再重启一次。box 上之所以没暴露，是因为调试期间 Cursor 已启动过多次，清单早已写好。
+  - 修复：`registerLanguagePack()` 装完语言包后按 VS Code `LanguagePacksCache` 的格式自己登记（hash = md5(id + version)，translations 指向扩展目录）。用真实语言包生成的文件与 box 上 Cursor 自己写的 `languagepacks.json` **逐字节一致**。还原时 `unregisterLanguagePack()` 撤掉条目。登记失败只告警（最坏多重启一次）。
+  - box 实测：revert（清单里 zh-cn 已撤掉、clp 已清空）→ localize → 只启动一次 Cursor，立即生成 `clp/e847c90f….zh-cn/<commit>/nls.messages.json`，里面是“文件(&&F)”等中文。
+- **设置/Customize/智能体窗口里还有英文**：新增 163 条词条（共 824 条），两条模板片段规则：
+  - 编辑器标签页标题 `getName(){return"Customize"}`（标签栏是文件名区，DOM 补漏不碰，只能静态改）。
+  - Customize 页按钮 `["Browse", <span> Marketplace</span>]` 拆分文案。
+  - `New Project` 加入 `DOM_ONLY`：bundle 里拿它当默认项目名存盘并用 `t.name===N2i` 比较，静态替换会让汉化前后的数据对不上。
+  - 单词类（All / MCPs / Installed / Add / Projects / Customize）在 bundle 里有逻辑用法（case/比较/对象键），只走 DOM 补漏；`Installed 4` 的数字是独立文本节点，DOM 能翻。
+  - `IDE` 保留英文（术语表）。
+- 锚点重新生成（3.27.22 必须用原版 deb 解包目录 `/workspace/cache/ex/linux-deb/usr/share/cursor`，不能用 box 上已汉化的 /usr/share/cursor）：两版本覆盖率相同，desktop SAFE 492 / glass SAFE 566，片段各 29；NLS 191 条。
+- 副本验证：mac14 / linux22 / mac22 / win22 全部通过，静态 1983 处 + 片段 78 处，未命中 0，NLS 191 未命中 0。

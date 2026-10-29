@@ -24,7 +24,7 @@ async function setup({ js = 'a="Cursor Settings";b="New Agent";', version = 'tes
   const cliPath = path.join(cliDir, 'cursor');
   await fs.writeFile(cliPath, `#!/bin/sh
 ext=""; while [ $# -gt 0 ]; do case "$1" in --extensions-dir) ext="$2"; shift;; --install-extension) mode=i;; --uninstall-extension) mode=u;; esac; shift; done
-[ "$mode" = i ] && mkdir -p "$ext/ms-ceintl.vscode-language-pack-zh-hans-1.128.0"
+[ "$mode" = i ] && mkdir -p "$ext/ms-ceintl.vscode-language-pack-zh-hans-1.128.0" && printf '%s' '{"name":"vscode-language-pack-zh-hans","publisher":"MS-CEINTL","version":"1.128.0","contributes":{"localizations":[{"languageId":"zh-cn","localizedLanguageName":"中文(简体)","translations":[{"id":"vscode","path":"./translations/main.i18n.json"}]}]}}' > "$ext/ms-ceintl.vscode-language-pack-zh-hans-1.128.0/package.json"
 [ "$mode" = u ] && rm -rf "$ext"/ms-ceintl.vscode-language-pack-zh-hans-*
 exit 0
 `, { mode: 0o755 });
@@ -54,6 +54,11 @@ describe('localize/revert', () => {
     assert.equal(await readLocale(opts.argvPath), 'zh-cn');
     assert.equal((await readState(opts.dataDir)).localized, true);
     assert.ok(logs.length > 3);
+    // 语言包当场登记进 languagepacks.json：第一次重启就能生成中文 NLS 缓存（原生菜单变中文）
+    const lpFile = path.join(opts.userDataDir, 'languagepacks.json');
+    const packs = JSON.parse(await read(lpFile));
+    assert.equal(packs['zh-cn'].hash, 'e847c90f9aa805971f169edf104a4233');
+    assert.match(packs['zh-cn'].translations.vscode, /ms-ceintl\.vscode-language-pack-zh-hans-1\.128\.0\/translations\/main\.i18n\.json$/);
 
     const again = await localize(opts);
     assert.equal(again.ok, false);
@@ -65,6 +70,7 @@ describe('localize/revert', () => {
     assert.equal(await read(path.join(root, 'resources/app/product.json')), productBefore);
     assert.equal(await readLocale(opts.argvPath), null);
     assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
+    assert.deepEqual(JSON.parse(await read(path.join(opts.userDataDir, 'languagepacks.json'))), {});
     assert.equal((await readState(opts.dataDir)).localized, false);
   });
 

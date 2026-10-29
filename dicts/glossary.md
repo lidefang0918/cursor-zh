@@ -19,14 +19,18 @@
 | Multitask | 多任务 | |
 | Worktree / Worktrees | 工作树 | |
 | Repositories | 仓库 | |
-| This Computer | 本机 | |
+| This Computer / This Mac / This PC | 本机 | 环境选择器 |
+| Marketplace | 插件市场 | Cursor Marketplace → Cursor 插件市场 |
+| Projects / New Project | 项目 / 新建项目 | "New Project" 只走 DOM（bundle 里拿它当默认项目名存盘并比较） |
+| MCPs | MCP | 复数不加"s" |
+| Menu Bar（macOS） | 菜单栏 | 系统设置路径按 macOS 中文界面：系统设置 > 菜单栏 > 允许在菜单栏中显示 |
 | Settings | 设置 | |
 | Undo / Redo | 撤销 / 重做 | VS Code 语言包里是"撤消"，我们自己的词条用"撤销" |
 | 菜单助记键 &&File | 文件(&&F) | NLS 层沿用 VS Code 中文惯例 |
 
 ## 保持英文（不翻）
 
-- 产品/品牌：Cursor、Cursor Tab、Grok Bot、GitHub、GitLab、Slack、Linear、MCP、LSP、Composer
+- 产品/品牌：Cursor、Cursor Tab、Grok Bot、GitHub、GitLab、Slack、Linear、MCP、LSP、Composer、IDE（智能体窗口右上角“IDE ↗”入口，中文界面也通称 IDE）
 - 模型名：GPT-*、Claude *、Gemini *、Grok *、Auto 等
 - 用户名、邮箱、文件路径、仓库名
 - 快捷键（Ctrl+K、Alt+T…）：属性里 "文案 (快捷键)" 只翻前半段

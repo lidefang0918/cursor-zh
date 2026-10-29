@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import crypto from 'node:crypto';
 
 const run = promisify(execFile);
 export const LANGPACK_ID = 'ms-ceintl.vscode-language-pack-zh-hans';
@@ -70,6 +71,55 @@ export async function ensureLanguagePack({ cliPath, extensionsDir, userDataDir, 
   const extensionPath = await findInstalledLangpack(extensionsDir);
   if (!extensionPath) throw new Error('语言包安装后未在 extensions 目录找到');
   return { installed: true, extensionPath };
+}
+
+// Cursor 主进程启动时只读 <userData>/languagepacks.json 决定用哪个语言包；这份清单由共享进程在
+// "启动后"才按已装扩展重建。所以 CLI 刚装完语言包时清单里还没有 zh-cn，第一次重启仍是英文
+// （原生菜单等 NLS 文案全英文），要再重启一次才生效。这里照 VS Code LanguagePacksCache 的格式自己登记：
+// key = languageId，hash = md5(各扩展 uuid||id + version)，translations[id] = <扩展目录>/<path>。
+export async function registerLanguagePack({ userDataDir, extensionPath }) {
+  const manifest = JSON.parse(await fs.readFile(path.join(extensionPath, 'package.json'), 'utf8'));
+  const id = `${manifest.publisher}.${manifest.name}`.toLowerCase();
+  const file = path.join(userDataDir, 'languagepacks.json');
+  let packs = {};
+  try { packs = JSON.parse(await fs.readFile(file, 'utf8')) ?? {}; } catch {}
+  const locales = [];
+  for (const loc of manifest.contributes?.localizations ?? []) {
+    if (!loc.languageId || !Array.isArray(loc.translations)) continue;
+    const key = loc.languageId.toLowerCase();
+    const pack = packs[key] ?? { hash: '', extensions: [], translations: {}, label: loc.localizedLanguageName ?? loc.languageName };
+    const exts = (pack.extensions ?? []).filter((e) => e.extensionIdentifier?.id?.toLowerCase() !== id);
+    exts.push({ extensionIdentifier: { id }, version: manifest.version });
+    pack.extensions = exts;
+    pack.translations ??= {};
+    for (const t of loc.translations) pack.translations[t.id] = path.join(extensionPath, t.path);
+    const md5 = crypto.createHash('md5');
+    for (const e of exts) md5.update(e.extensionIdentifier.uuid || e.extensionIdentifier.id).update(e.version);
+    pack.hash = md5.digest('hex');
+    packs[key] = pack;
+    locales.push(key);
+  }
+  if (!locales.length) throw new Error(`语言包没有 localizations 声明：${extensionPath}`);
+  await fs.mkdir(userDataDir, { recursive: true });
+  await fs.writeFile(file, JSON.stringify(packs));
+  return { file, locales };
+}
+
+// 卸载时把我们登记的条目撤掉（Cursor 下次启动也会自己重建，这里只是不留指向已删目录的路径）
+export async function unregisterLanguagePack({ userDataDir }) {
+  const file = path.join(userDataDir, 'languagepacks.json');
+  let packs;
+  try { packs = JSON.parse(await fs.readFile(file, 'utf8')); } catch { return false; }
+  let changed = false;
+  for (const [key, pack] of Object.entries(packs ?? {})) {
+    const exts = (pack.extensions ?? []).filter((e) => e.extensionIdentifier?.id?.toLowerCase() !== LANGPACK_ID);
+    if (exts.length === (pack.extensions ?? []).length) continue;
+    // 同一语言即使还有别的扩展，也整条删掉，交给 Cursor 启动时重建（translations 无法按扩展拆分）
+    changed = true;
+    delete packs[key];
+  }
+  if (changed) await fs.writeFile(file, JSON.stringify(packs));
+  return changed;
 }
 
 export async function uninstallLanguagePack({ cliPath, extensionsDir, userDataDir }) {

@@ -1180,6 +1180,318 @@
         },
         {
           "from": "Swap Agent Sidebar Location"
+        },
+        {
+          "from": "Cursor Marketplace"
+        },
+        {
+          "from": "Import Marketplace..."
+        },
+        {
+          "from": "Manage installed plugins"
+        },
+        {
+          "from": "Manage plugins"
+        },
+        {
+          "from": "Manage Marketplace"
+        },
+        {
+          "from": "From Marketplace"
+        },
+        {
+          "from": "From Local Repository"
+        },
+        {
+          "from": "From GitHub Repository"
+        },
+        {
+          "from": "Import from GitHub"
+        },
+        {
+          "from": "Import from Disk"
+        },
+        {
+          "from": "Go to Plugin"
+        },
+        {
+          "from": "Open config"
+        },
+        {
+          "from": "Edit MCP config"
+        },
+        {
+          "from": "Publish Skill"
+        },
+        {
+          "from": "Unpublish Skill"
+        },
+        {
+          "from": "Menu Bar Icon"
+        },
+        {
+          "from": "Show Cursor in menu bar"
+        },
+        {
+          "from": "Show Cursor in the menu bar"
+        },
+        {
+          "from": "Show Cursor in the system tray"
+        },
+        {
+          "from": "Cursor is turned off in System Settings > Menu Bar > Allow in the Menu Bar"
+        },
+        {
+          "from": "Open Settings"
+        },
+        {
+          "from": "Your code data will not be trained on or used to improve the product. Code may be stored to provide features such as Background Agent."
+        },
+        {
+          "from": "Your code data will not be trained on or used to improve the product. We will not store your code."
+        },
+        {
+          "from": "Play a sound when Agent finishes responding"
+        },
+        {
+          "from": "Verify Extension Signatures"
+        },
+        {
+          "from": "Sign in to get started with Cursor's AI features"
+        },
+        {
+          "from": "Use native macOS font anti-aliasing"
+        },
+        {
+          "from": "Font Smoothing"
+        },
+        {
+          "from": "When enabled, uses grayscale antialiasing for thinner, crisper text that matches native macOS rendering."
+        },
+        {
+          "from": "Dark Theme"
+        },
+        {
+          "from": "Light Theme"
+        },
+        {
+          "from": "High Contrast Dark Theme"
+        },
+        {
+          "from": "High Contrast Light Theme"
+        },
+        {
+          "from": "Follow System Color Scheme"
+        },
+        {
+          "from": "Manage Themes"
+        },
+        {
+          "from": "Choose which theme to use"
+        },
+        {
+          "from": "Match the active theme to your OS dark/light setting"
+        },
+        {
+          "from": "Minimize interface animations"
+        },
+        {
+          "from": "Choose the theme used when your system is in dark mode"
+        },
+        {
+          "from": "Choose the theme used when your system is in light mode"
+        },
+        {
+          "from": "Choose the theme used when your system is in dark high contrast mode"
+        },
+        {
+          "from": "Choose the theme used when your system is in light high contrast mode"
+        },
+        {
+          "from": "Create your own themes, tweak the vibe, and import your favorites"
+        },
+        {
+          "from": "Queue Messages"
+        },
+        {
+          "from": "Read Allowlist"
+        },
+        {
+          "from": "Usage Summary"
+        },
+        {
+          "from": "Voice Submit Keywords"
+        },
+        {
+          "from": "Automatically format files when Agent finishes"
+        },
+        {
+          "from": "Show inline diff decorations in the editor"
+        },
+        {
+          "from": "Use the preview box instead of shell streaming"
+        },
+        {
+          "from": "When to show the usage summary at the bottom of the chat pane"
+        },
+        {
+          "from": "Words that send your prompt while you dictate"
+        },
+        {
+          "from": "How quickly the voice speaks in voice chats"
+        },
+        {
+          "from": "Language used in voice chats"
+        },
+        {
+          "from": "Monthly Limit"
+        },
+        {
+          "from": "Set a fixed amount or make on-demand usage unlimited"
+        },
+        {
+          "from": "Open pull request links inside Cursor or the default browser"
+        },
+        {
+          "from": "Prefix for new Agent branches"
+        },
+        {
+          "from": "Maximum retained Cursor-managed worktrees"
+        },
+        {
+          "from": "Maximum aggregate worktree size"
+        },
+        {
+          "from": "Cursor periodically removes old worktrees to free disk space"
+        },
+        {
+          "from": "Check connectivity to all Cursor services"
+        },
+        {
+          "from": "Domains required for Cursor"
+        },
+        {
+          "from": "Configure HTTP compatibility for proxies and VPNs"
+        },
+        {
+          "from": "Files to exclude from indexing in addition to .gitignore"
+        },
+        {
+          "from": "Skip symlinks during discovery"
+        },
+        {
+          "from": "Apply .cursorignore files to subdirectories"
+        },
+        {
+          "from": "Choose the model used by Explore subagent for initial research"
+        },
+        {
+          "from": "Configure the local agent LLM gateway"
+        },
+        {
+          "from": "Gateway"
+        },
+        {
+          "from": "Dedicated Agent Runtime"
+        },
+        {
+          "from": "Continue chatting in Cursor"
+        },
+        {
+          "from": "This Mac"
+        },
+        {
+          "from": "This PC"
+        },
+        {
+          "from": "Copy Link"
+        },
+        {
+          "from": "Copy link"
+        },
+        {
+          "from": "Copy Command"
+        },
+        {
+          "from": "Copy output"
+        },
+        {
+          "from": "Copy as JSON"
+        },
+        {
+          "from": "Copy cursor.com link"
+        },
+        {
+          "from": "Copy Current URL"
+        },
+        {
+          "from": "Discard Changes"
+        },
+        {
+          "from": "Sync changes"
+        },
+        {
+          "from": "Open File"
+        },
+        {
+          "from": "Open Link"
+        },
+        {
+          "from": "Open Agent"
+        },
+        {
+          "from": "Open in Browser"
+        },
+        {
+          "from": "Open in External Browser"
+        },
+        {
+          "from": "Open in Terminal Pane"
+        },
+        {
+          "from": "Search with Google"
+        },
+        {
+          "from": "Create New"
+        },
+        {
+          "from": "Save to Workspace"
+        },
+        {
+          "from": "Run History"
+        },
+        {
+          "from": "Build in Parallel"
+        },
+        {
+          "from": "Take Screenshot"
+        },
+        {
+          "from": "Capture Area Screenshot"
+        },
+        {
+          "from": "Hard Reload"
+        },
+        {
+          "from": "Clear Cache"
+        },
+        {
+          "from": "Clear Cookies"
+        },
+        {
+          "from": "Clear Browsing History"
+        },
+        {
+          "from": "Clear Accepted Certificates"
+        },
+        {
+          "from": "Mine"
+        },
+        {
+          "from": "Change owner"
+        },
+        {
+          "from": "Add Models"
         }
       ],
       "fragments": [
@@ -1316,6 +1628,16 @@
         {
           "from": "`Automatically jump to the next diff when accepting changes with ${Li?\"\\u2318\":\"Ctrl+\"}Y`",
           "to": "`使用 ${Li?\"\\u2318\":\"Ctrl+\"}Y 接受更改时自动跳到下一处差异`",
+          "count": 1
+        },
+        {
+          "from": "getName(){return\"Customize\"}",
+          "to": "getName(){return\"自定义\"}",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Browse\",Zb(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\" Marketplace\"})]",
+          "to": "children:[\"浏览\",Zb(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\"插件市场\"})]",
           "count": 1
         }
       ]
@@ -2609,6 +2931,417 @@
         },
         {
           "from": "Swap Agent Sidebar Location"
+        },
+        {
+          "from": "Cursor Marketplace"
+        },
+        {
+          "from": "Import Marketplace..."
+        },
+        {
+          "from": "Manage installed plugins"
+        },
+        {
+          "from": "Manage plugins"
+        },
+        {
+          "from": "Manage Marketplace"
+        },
+        {
+          "from": "From Marketplace"
+        },
+        {
+          "from": "From Local Repository"
+        },
+        {
+          "from": "From GitHub Repository"
+        },
+        {
+          "from": "Import from GitHub"
+        },
+        {
+          "from": "Import from Disk"
+        },
+        {
+          "from": "Go to Plugin"
+        },
+        {
+          "from": "Open config"
+        },
+        {
+          "from": "Edit MCP config"
+        },
+        {
+          "from": "Publish Skill"
+        },
+        {
+          "from": "Unpublish Skill"
+        },
+        {
+          "from": "Menu Bar Icon"
+        },
+        {
+          "from": "Show Cursor in menu bar"
+        },
+        {
+          "from": "Show Cursor in the menu bar"
+        },
+        {
+          "from": "Show Cursor in the system tray"
+        },
+        {
+          "from": "Cursor is turned off in System Settings > Menu Bar > Allow in the Menu Bar"
+        },
+        {
+          "from": "Open Settings"
+        },
+        {
+          "from": "Your code data will not be trained on or used to improve the product. Code may be stored to provide features such as Background Agent."
+        },
+        {
+          "from": "Your code data will not be trained on or used to improve the product. We will not store your code."
+        },
+        {
+          "from": "Play a sound when Agent finishes responding"
+        },
+        {
+          "from": "Verify Extension Signatures"
+        },
+        {
+          "from": "Sign in to get started with Cursor's AI features"
+        },
+        {
+          "from": "Use native macOS font anti-aliasing"
+        },
+        {
+          "from": "Font Smoothing"
+        },
+        {
+          "from": "When enabled, uses grayscale antialiasing for thinner, crisper text that matches native macOS rendering."
+        },
+        {
+          "from": "Dark Theme"
+        },
+        {
+          "from": "High Contrast Dark Theme"
+        },
+        {
+          "from": "High Contrast Light Theme"
+        },
+        {
+          "from": "Follow System Color Scheme"
+        },
+        {
+          "from": "Manage Themes"
+        },
+        {
+          "from": "Choose which theme to use"
+        },
+        {
+          "from": "Match the active theme to your OS dark/light setting"
+        },
+        {
+          "from": "Minimize interface animations"
+        },
+        {
+          "from": "Choose the theme used when your system is in dark mode"
+        },
+        {
+          "from": "Choose the theme used when your system is in light mode"
+        },
+        {
+          "from": "Choose the theme used when your system is in dark high contrast mode"
+        },
+        {
+          "from": "Choose the theme used when your system is in light high contrast mode"
+        },
+        {
+          "from": "Create your own themes, tweak the vibe, and import your favorites"
+        },
+        {
+          "from": "Queue Messages"
+        },
+        {
+          "from": "Read Allowlist"
+        },
+        {
+          "from": "Usage Summary"
+        },
+        {
+          "from": "Voice Submit Keywords"
+        },
+        {
+          "from": "Automatically format files when Agent finishes"
+        },
+        {
+          "from": "Show inline diff decorations in the editor"
+        },
+        {
+          "from": "Use the preview box instead of shell streaming"
+        },
+        {
+          "from": "When to show the usage summary at the bottom of the chat pane"
+        },
+        {
+          "from": "Words that send your prompt while you dictate"
+        },
+        {
+          "from": "How quickly the voice speaks in voice chats"
+        },
+        {
+          "from": "Language used in voice chats"
+        },
+        {
+          "from": "Monthly Limit"
+        },
+        {
+          "from": "Set a fixed amount or make on-demand usage unlimited"
+        },
+        {
+          "from": "Open pull request links inside Cursor or the default browser"
+        },
+        {
+          "from": "Prefix for new Agent branches"
+        },
+        {
+          "from": "Maximum retained Cursor-managed worktrees"
+        },
+        {
+          "from": "Maximum aggregate worktree size"
+        },
+        {
+          "from": "Cursor periodically removes old worktrees to free disk space"
+        },
+        {
+          "from": "Check connectivity to all Cursor services"
+        },
+        {
+          "from": "Domains required for Cursor"
+        },
+        {
+          "from": "Configure HTTP compatibility for proxies and VPNs"
+        },
+        {
+          "from": "Files to exclude from indexing in addition to .gitignore"
+        },
+        {
+          "from": "Skip symlinks during discovery"
+        },
+        {
+          "from": "Apply .cursorignore files to subdirectories"
+        },
+        {
+          "from": "Choose the model used by Explore subagent for initial research"
+        },
+        {
+          "from": "Configure the local agent LLM gateway"
+        },
+        {
+          "from": "Dedicated Agent Runtime"
+        },
+        {
+          "from": "Get Cursor for iOS"
+        },
+        {
+          "from": "Shortcuts"
+        },
+        {
+          "from": "Contact Us"
+        },
+        {
+          "from": "Send follow-up"
+        },
+        {
+          "from": "Send follow-up with subagent"
+        },
+        {
+          "from": "Continue chatting in Cursor"
+        },
+        {
+          "from": "This Mac"
+        },
+        {
+          "from": "This PC"
+        },
+        {
+          "from": "Copy Link"
+        },
+        {
+          "from": "Copy link"
+        },
+        {
+          "from": "Copy URL"
+        },
+        {
+          "from": "Copy ID"
+        },
+        {
+          "from": "Copy File Path"
+        },
+        {
+          "from": "Copy Relative Path"
+        },
+        {
+          "from": "Copy Command"
+        },
+        {
+          "from": "Copy output"
+        },
+        {
+          "from": "Copy as Markdown"
+        },
+        {
+          "from": "Copy as JSON"
+        },
+        {
+          "from": "Copy Remote URL"
+        },
+        {
+          "from": "Copy cursor.com link"
+        },
+        {
+          "from": "Copy Current URL"
+        },
+        {
+          "from": "Close All"
+        },
+        {
+          "from": "Close Others"
+        },
+        {
+          "from": "Close to the Right"
+        },
+        {
+          "from": "Keep Open"
+        },
+        {
+          "from": "Rename tab"
+        },
+        {
+          "from": "Discard Changes"
+        },
+        {
+          "from": "Refresh Changes"
+        },
+        {
+          "from": "Sync changes"
+        },
+        {
+          "from": "Open File"
+        },
+        {
+          "from": "Open Link"
+        },
+        {
+          "from": "Open Agent"
+        },
+        {
+          "from": "Open in Browser"
+        },
+        {
+          "from": "Open in External Browser"
+        },
+        {
+          "from": "Open in Terminal Pane"
+        },
+        {
+          "from": "Preview in Cursor"
+        },
+        {
+          "from": "Preview in Browser"
+        },
+        {
+          "from": "View on Web"
+        },
+        {
+          "from": "Search with Google"
+        },
+        {
+          "from": "Edit Title"
+        },
+        {
+          "from": "Edit Icon"
+        },
+        {
+          "from": "Edit Details"
+        },
+        {
+          "from": "Create New"
+        },
+        {
+          "from": "Save to Workspace"
+        },
+        {
+          "from": "Move to Side Chat"
+        },
+        {
+          "from": "Mark All as Read"
+        },
+        {
+          "from": "Run History"
+        },
+        {
+          "from": "Build in Parallel"
+        },
+        {
+          "from": "Link PR"
+        },
+        {
+          "from": "Unlink PR"
+        },
+        {
+          "from": "Close PR"
+        },
+        {
+          "from": "Reopen PR"
+        },
+        {
+          "from": "Reset Share Link"
+        },
+        {
+          "from": "Find in Plan"
+        },
+        {
+          "from": "Find in Diff"
+        },
+        {
+          "from": "Find in Changes"
+        },
+        {
+          "from": "Take Screenshot"
+        },
+        {
+          "from": "Capture Area Screenshot"
+        },
+        {
+          "from": "Hard Reload"
+        },
+        {
+          "from": "Clear Cache"
+        },
+        {
+          "from": "Clear Cookies"
+        },
+        {
+          "from": "Clear Browsing History"
+        },
+        {
+          "from": "Clear Accepted Certificates"
+        },
+        {
+          "from": "This workspace"
+        },
+        {
+          "from": "Mine"
+        },
+        {
+          "from": "Overview"
+        },
+        {
+          "from": "Change owner"
+        },
+        {
+          "from": "Add Models"
         }
       ],
       "fragments": [
@@ -2746,6 +3479,16 @@
           "from": "`Automatically jump to the next diff when accepting changes with ${Sr?\"\\u2318\":\"Ctrl+\"}Y`",
           "to": "`使用 ${Sr?\"\\u2318\":\"Ctrl+\"}Y 接受更改时自动跳到下一处差异`",
           "count": 1
+        },
+        {
+          "from": "getName(){return\"Customize\"}",
+          "to": "getName(){return\"自定义\"}",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Browse\",g0(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\" Marketplace\"})]",
+          "to": "children:[\"浏览\",g0(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\"插件市场\"})]",
+          "count": 1
         }
       ]
     }
@@ -2793,6 +3536,10 @@
       {
         "index": 2678,
         "from": "&&Cancel"
+      },
+      {
+        "index": 2683,
+        "from": "Copy Command"
       },
       {
         "index": 2684,
@@ -2943,6 +3690,10 @@
         "from": "Close"
       },
       {
+        "index": 4084,
+        "from": "Reload"
+      },
+      {
         "index": 4092,
         "from": "Archive"
       },
@@ -3011,8 +3762,16 @@
         "from": "Open Browser"
       },
       {
+        "index": 5330,
+        "from": "Open Settings"
+      },
+      {
         "index": 5345,
         "from": "Back"
+      },
+      {
+        "index": 5347,
+        "from": "Reload"
       },
       {
         "index": 5348,
@@ -3059,6 +3818,22 @@
         "from": "Open Containing Folder"
       },
       {
+        "index": 5430,
+        "from": "Copy cursor.com link"
+      },
+      {
+        "index": 5431,
+        "from": "Copy cursor.com link"
+      },
+      {
+        "index": 5432,
+        "from": "Copy cursor.com link"
+      },
+      {
+        "index": 5433,
+        "from": "Copy cursor.com link"
+      },
+      {
         "index": 5452,
         "from": "Open Customize"
       },
@@ -3083,12 +3858,20 @@
         "from": "Remote"
       },
       {
+        "index": 6947,
+        "from": "Local"
+      },
+      {
         "index": 6968,
         "from": "Report Issue"
       },
       {
         "index": 6995,
         "from": "Open New External Terminal"
+      },
+      {
+        "index": 7047,
+        "from": "Open in Browser"
       },
       {
         "index": 7333,
@@ -3205,6 +3988,10 @@
       {
         "index": 9122,
         "from": "Remote"
+      },
+      {
+        "index": 9154,
+        "from": "&&Enable"
       },
       {
         "index": 9204,
@@ -3383,6 +4170,10 @@
         "from": "Learn More"
       },
       {
+        "index": 12113,
+        "from": "Open File"
+      },
+      {
         "index": 12115,
         "from": "&&Log In"
       },
@@ -3443,6 +4234,10 @@
         "from": "Cancel"
       },
       {
+        "index": 12755,
+        "from": "Local"
+      },
+      {
         "index": 12756,
         "from": "Remote"
       },
@@ -3455,6 +4250,10 @@
         "from": "Learn More"
       },
       {
+        "index": 12902,
+        "from": "Connect"
+      },
+      {
         "index": 12923,
         "from": "Stop"
       },
@@ -3465,6 +4264,10 @@
       {
         "index": 13091,
         "from": "Network"
+      },
+      {
+        "index": 13616,
+        "from": "&&Save"
       }
     ]
   }

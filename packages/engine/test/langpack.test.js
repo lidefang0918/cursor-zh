@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {
   langpackVersionFor, langpackUrl, ensureLanguagePack, uninstallLanguagePack,
-  findInstalledLangpack, findConflicts, setLocale, readLocale,
+  findInstalledLangpack, findConflicts, setLocale, readLocale, registerLanguagePack, unregisterLanguagePack,
 } from '../src/langpack.js';
 
 const tmp = (p) => fs.mkdtemp(path.join(os.tmpdir(), p));
@@ -80,5 +80,52 @@ describe('langpack', () => {
     const argvPath = path.join(await tmp('argv-'), 'sub', 'argv.json');
     await setLocale({ argvPath, locale: 'zh-cn' });
     assert.equal(await readLocale(argvPath), 'zh-cn');
+  });
+});
+
+describe('languagepacks.json registration', () => {
+  async function fakeExtension() {
+    const ext = path.join(await tmp('ext-'), 'ms-ceintl.vscode-language-pack-zh-hans-1.128.0');
+    await fs.mkdir(ext, { recursive: true });
+    await fs.writeFile(path.join(ext, 'package.json'), JSON.stringify({
+      name: 'vscode-language-pack-zh-hans', publisher: 'MS-CEINTL', version: '1.128.0',
+      contributes: { localizations: [{ languageId: 'zh-cn', languageName: 'Chinese Simplified', localizedLanguageName: '中文(简体)',
+        translations: [{ id: 'vscode', path: './translations/main.i18n.json' }, { id: 'vscode.git', path: './translations/extensions/vscode.git.i18n.json' }] }] },
+    }));
+    return ext;
+  }
+
+  it('writes the entry the way Cursor does (same hash as Cursor-generated file), keeps other locales', async () => {
+    const userDataDir = await tmp('ud-');
+    await fs.writeFile(path.join(userDataDir, 'languagepacks.json'), JSON.stringify({ ja: { hash: 'x', extensions: [], translations: {}, label: '日本語' } }));
+    const ext = await fakeExtension();
+    const r = await registerLanguagePack({ userDataDir, extensionPath: ext });
+    assert.deepEqual(r.locales, ['zh-cn']);
+    const packs = JSON.parse(await fs.readFile(path.join(userDataDir, 'languagepacks.json'), 'utf8'));
+    assert.ok(packs.ja);
+    const zh = packs['zh-cn'];
+    // box 上 Cursor 3.27.22 自己生成的 languagepacks.json 里就是这个 hash
+    assert.equal(zh.hash, 'e847c90f9aa805971f169edf104a4233');
+    assert.deepEqual(zh.extensions, [{ extensionIdentifier: { id: 'ms-ceintl.vscode-language-pack-zh-hans' }, version: '1.128.0' }]);
+    assert.equal(zh.translations.vscode, path.join(ext, 'translations/main.i18n.json'));
+    assert.equal(zh.translations['vscode.git'], path.join(ext, 'translations/extensions/vscode.git.i18n.json'));
+    assert.equal(zh.label, '中文(简体)');
+    // 幂等：再登记一次不会重复扩展
+    await registerLanguagePack({ userDataDir, extensionPath: ext });
+    const again = JSON.parse(await fs.readFile(path.join(userDataDir, 'languagepacks.json'), 'utf8'));
+    assert.equal(again['zh-cn'].extensions.length, 1);
+    assert.equal(again['zh-cn'].hash, zh.hash);
+  });
+
+  it('creates languagepacks.json when missing and unregister removes only our entry', async () => {
+    const userDataDir = path.join(await tmp('ud-'), 'Cursor');
+    await registerLanguagePack({ userDataDir, extensionPath: await fakeExtension() });
+    const file = path.join(userDataDir, 'languagepacks.json');
+    const packs = JSON.parse(await fs.readFile(file, 'utf8'));
+    packs.ja = { hash: 'x', extensions: [{ extensionIdentifier: { id: 'ms-ceintl.vscode-language-pack-ja' }, version: '1' }], translations: {} };
+    await fs.writeFile(file, JSON.stringify(packs));
+    assert.equal(await unregisterLanguagePack({ userDataDir }), true);
+    assert.deepEqual(Object.keys(JSON.parse(await fs.readFile(file, 'utf8'))), ['ja']);
+    assert.equal(await unregisterLanguagePack({ userDataDir }), false);
   });
 });

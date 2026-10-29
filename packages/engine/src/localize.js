@@ -13,7 +13,7 @@ import { applyPatch, filesToBackup, updateChecksums } from './patch.js';
 import { injectDomRuntime, BEGIN as DOM_BEGIN } from './inject.js';
 import { applyNls, clearNlsCache } from './nls.js';
 import {
-  ensureLanguagePack, uninstallLanguagePack, setLocale, findConflicts, downloadLangpack, langpackVersionFor,
+  ensureLanguagePack, uninstallLanguagePack, registerLanguagePack, unregisterLanguagePack, setLocale, findConflicts, downloadLangpack, langpackVersionFor,
 } from './langpack.js';
 import { readState, writeState } from './state.js';
 import * as win from './platform/win.js';
@@ -358,6 +358,11 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
     const lp = await ensureLanguagePack({ cliPath: o.cliPath, extensionsDir: o.extensionsDir, userDataDir: o.userDataDir, vsixPath: o.vsixPath });
     undo.langpack = lp.installed;
     log(lp.installed ? `已安装语言包：${lp.extensionPath}` : `语言包已存在：${lp.extensionPath}`);
+    // 登记失败不致命：Cursor 启动后会自己重建清单，只是要多重启一次
+    try {
+      const reg = await registerLanguagePack({ userDataDir: o.userDataDir, extensionPath: lp.extensionPath });
+      log(`已登记语言包（首次重启即生效）：${reg.file}`);
+    } catch (e) { log(`⚠ 登记语言包失败（需多重启一次 Cursor 才生效）：${e.message}`); }
     undo.prevLocale = await setLocale({ argvPath: o.argvPath, locale: 'zh-cn' });
     log(`已设置 locale=zh-cn：${o.argvPath}`);
     if (info.commit) {
@@ -380,7 +385,7 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
     const back = await restoreInstall(o, o.installRoot, backupDir, o.macSign).catch((x) => ({ ok: false, error: x.message }));
     if (back.ok) await dropBackup({ backupDir }); else restored = false;
     try { if (undo.prevLocale !== undefined) await setLocale({ argvPath: o.argvPath, locale: undo.prevLocale }); } catch { restored = false; }
-    try { if (undo.langpack) await uninstallLanguagePack(o); } catch { restored = false; }
+    try { if (undo.langpack) { await uninstallLanguagePack(o); await unregisterLanguagePack(o); } } catch { restored = false; }
     await writeState(o.dataDir, { localized: false, carry: state.carry });
     log(restored ? '已回滚' : `⚠ 回滚不完整${back.command ? `，请执行：${back.command}` : ''}`);
     return fail('FINISH_FAILED', e.message, { restored, command: back.command });
@@ -436,7 +441,7 @@ async function cleanupUser(o, state, { stale = false, backupDir } = {}) {
     const prevLocale = state.prevLocale ?? state.pending?.carry?.prevLocale ?? state.carry?.prevLocale ?? null;
     await setLocale({ argvPath: o.argvPath, locale: prevLocale });
     log(`locale 已恢复为 ${prevLocale ?? '(默认)'}`);
-    if (state.installedLangpack || state.carry?.installedLangpack) { await uninstallLanguagePack(o); log('已卸载语言包'); }
+    if (state.installedLangpack || state.carry?.installedLangpack) { await uninstallLanguagePack(o); await unregisterLanguagePack(o); log('已卸载语言包'); }
     if (!stale && backupDir) await dropBackup({ backupDir });
     await writeState(o.dataDir, { localized: false, revertedAt: new Date().toISOString() });
     log('还原完成，重启 Cursor 后生效');

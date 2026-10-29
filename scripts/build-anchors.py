@@ -20,8 +20,15 @@ UNSAFE_PREV = re.compile(r'(===|!==|==|!=|\bcase|\[|\bin|\.has\(|\.get\(|\.delet
 DISPLAY_PREV = re.compile(r'(\b(label|title|children|tooltip|heading|description|placeholder|primaryLabel|secondaryLabel|defaultLabel|accessibleLabel|labelOutsidePicker|displayName|buttonText|text|message|detail|header|subtitle|ariaLabel)|"aria-label")\s*:\s*$')
 
 
+# 这些词条在 bundle 里还当默认值写进用户数据并拿来比较（如 N2i="New Project" 与 t.name===N2i），
+# 静态替换会让汉化前后的旧数据对不上，只走 DOM 补漏
+DOM_ONLY = {'New Project'}
+
+
 def classify(src, s):
     n, bad = 0, []
+    if s in DOM_ONLY:
+        return src.count(s), ['DOM_ONLY']
     for q in '"\'`':
         if q in s:
             continue
@@ -62,6 +69,11 @@ TEMPLATE_RULES = [
     (r'children:\["Upgrade to ",', lambda m: 'children:["升级到 ",'),
     (r'return\["Upgrade to ",', lambda m: 'return["升级到 ",'),
     (r'children:\["Resets ",', lambda m: 'children:["重置于 ",'),
+    # 编辑器标签页标题（标签栏属于文件名区，DOM 补漏不碰，只能静态改 getName）
+    (r'getName\(\)\{return"Customize"\}', lambda m: 'getName(){return"自定义"}'),
+    # Customize 页 "Browse Marketplace" 按钮拆成 ["Browse", <span> Marketplace</span>]
+    (r'children:\["Browse",(\w+)\("span",\{className:"([^"]+)",children:" Marketplace"\}\)\]',
+     lambda m: 'children:["浏览",' + m.group(1) + '("span",{className:"' + m.group(2) + '",children:"插件市场"})]'),
     (r'description:`Accept the next word of a suggestion via \$\{(\w+)\}`', lambda m: 'description:`通过 ${' + m.group(1) + '} 接受建议中的下一个单词`'),
     (r'description:`Automatically import necessary modules for \$\{(\w+)\}`', lambda m: 'description:`自动为 ${' + m.group(1) + '} 导入所需模块`'),
     (r'`Automatically parse links when pasted into Quick Edit \(' + _K + r'K\) input`', lambda m: '`粘贴到快速编辑（' + _k(m) + 'K）输入框时自动解析链接`'),
