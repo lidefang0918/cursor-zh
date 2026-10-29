@@ -67,3 +67,45 @@
 - macOS：修改 .app 内文件会破坏签名，可能需要 `codesign --force --deep -s -`，并处理 Gatekeeper 隔离；还要确认 `/Applications` 下的写权限。
 - Windows：系统级安装需要 UAC；Cursor 运行时文件被占用；检测运行中的进程要用 tasklist。
 - 用户数据目录：`%APPDATA%\Cursor` 和 `~/Library/Application Support/Cursor`；argv.json 都在 `~/.cursor`。
+
+## box 重启后重装 Cursor（2026-10-29 16:55，Asia/Shanghai）
+
+box 重启会清掉 `/usr/share/cursor`（以及 apt 源 `cursor.list`），`~/.config/Cursor`、`~/.cursor`、`~/.config/cursor-zh-localizer` 都还在。
+
+- **安装方式**：官方 apt 仓库里的 deb，用 `apt-get install ./cursor_3.27.22_amd64.deb` 安装（自动装依赖；postinst 会重新写 `/etc/apt/sources.list.d/cursor.sources`）。
+- **URL**：`https://downloads.cursor.com/aptrepo/pool/stable/c/cu/cursor_3.27.22_amd64.deb`（223,442,636 字节，sha256 `863a9dd15ca5fe84dd2f8e74fe2e926e8b438692f202277a89dd0ec3d928bf98`，来自 `https://downloads.cursor.com/aptrepo/dists/stable/main/binary-amd64/Packages` 中的 `3.27.22-1793067078`；同一索引里还有 3.27.20）。
+- **缓存**：`/workspace/cache/cursor_3.27.22_amd64.deb`；原版文件的 sha256 存在 `/workspace/cache/pristine-3.27.22.sha256`（可以 `sha256sum -c`）。
+- **一键重做**：`scripts/reinstall-cursor-box.sh --chown`。脚本会校验缓存的 sha256，不对就重新下载，然后安装，并把 4 个汉化目标文件 chown 给 box（这是 box 专用的权限绕过）。
+- 装好后是 3.27.22，commit `b1aa50cb…`，VS Code 1.128.0，和之前完全一致。4 个目标文件的 sha256 和旧备份 manifest 也逐个相同。
+
+### 过期汉化记录（已修复，有测试）
+
+- 重装后，`state.json` 还写着 `localized: true`，但安装文件已经是原版。
+- 修复前：`status` 显示“已汉化”，`localize` 拒绝执行（“已汉化，如需重做请先还原”）。
+- 修复前的 `revert` 还有更大的风险：它会拿旧备份去覆盖新安装。如果版本不同，就会把旧版本的文件写进新安装。
+- 现在的做法：先检查安装文件里有没有 DOM 运行时标记，再对比 version 和 installRoot，据此判断记录是否过期。
+  - `status` 新增 `patched`、`stale`、`localized` 三个字段。
+  - `localize` 遇到过期记录时，会把旧备份改名为 `backups/<ver>.stale-<时间>` 留档，然后重新汉化。上次留下的语言包和原始 locale 会沿用，还原时能真正恢复，而不是恢复成 zh-cn。
+  - `revert` 遇到过期记录时，不覆盖任何安装文件，只清理语言包和 locale。
+  - 如果安装文件已带补丁但没有汉化记录，`localize` 会拒绝执行，避免把已补丁的文件当成原版备份。
+  - GUI 会显示“汉化已失效（Cursor 被重装或更新），可重新汉化”。
+- `npm test`：35/35 通过。
+
+### 实测
+
+- `localize`：经典窗口 538 处，Agents 窗口 763 处，NLS 163 条，0 条未命中，约 3 秒。
+- `revert`：4 个文件对照 deb 原版 sha256 全部 OK（逐字节一致），locale 已删除，语言包已注销。
+- 再次 `localize`：计数相同。
+- 以 `DISPLAY=:5 setsid nohup /usr/share/cursor/cursor --disable-gpu` 启动（日志在 `/workspace/logs/cursor-run{1,2}.log`）。两次启动都**一次成功**，Agents 窗口是中文，没有空白，日志里没有损坏或 checksum 告警。当前已登录。
+- 截图：`/workspace/shots/run1-{root,agents}.png`、`run2-{agents,classic}.png`。
+  - 没能装上 imagemagick：box 上 apt 访问 deb.debian.org 时，出口代理返回 500，https 也会断开；但 curl 能访问。
+  - 所以改用 `ffmpeg -f x11grab -video_size 1920x1200 -i :5 -frames:v 1 <png>` 截图。
+
+### 登录态下仍是英文的可见文案
+
+- 经典窗口：
+  - 右侧聊天的标签页标题 “New Agent”：词典里有，但 DOM 运行时跳过了 tab label 类名。
+  - 状态栏的 “Cursor Tab”、“Tab Stats: 0/0 (0%)”、“Agent Stats: 0/0 (0%)”：带数字的拼接串，精确匹配命中不了。
+- Agents 窗口：右上角的 “IDE ↗”。
+- 两个窗口都有：模型名 “Cursor Grok 4.6 Medium”（专名，应保留）。
+- 另外，“GitHub”、“bug”、“/create-skill”、“/add-plugin”、文件夹名和用户名都应保留英文。

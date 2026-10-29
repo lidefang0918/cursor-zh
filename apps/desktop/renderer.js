@@ -11,8 +11,8 @@ async function refresh() {
   const s = await window.engine.getStatus();
   $('root').textContent = s.cursor?.root ?? '未找到 Cursor';
   $('version').textContent = s.cursor ? `${s.cursor.version}（VS Code ${s.cursor.vscodeVersion}）${s.supported ? '' : ' — 暂未适配'}` : '-';
-  $('state').textContent = s.state.localized ? `已汉化（${s.state.at}）` : '未汉化';
-  $('localize').disabled = !s.cursor || !s.supported || s.state.localized;
+  $('state').textContent = s.stale ? '汉化已失效（Cursor 被重装或更新），可重新汉化' : s.localized ? `已汉化（${s.state.at}）` : '未汉化';
+  $('localize').disabled = !s.cursor || !s.supported || s.localized;
   $('revert').disabled = !s.state.localized;
 }
 

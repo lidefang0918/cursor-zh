@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { localize, revert, readState } from '../src/localize.js';
+import { localize, revert, readState, status } from '../src/localize.js';
 import { vscodeChecksum } from '../src/patch.js';
 import { readLocale } from '../src/langpack.js';
 
@@ -110,5 +110,57 @@ describe('localize/revert', () => {
     const r = await localize({ ...opts, isCursorRunning: async () => true });
     assert.equal(r.ok, false);
     assert.match(r.error, /退出 Cursor/);
+  });
+
+  it('treats a "localized" state whose install was wiped/reinstalled as stale and re-localizes', async () => {
+    const { root, js, opts } = await setup();
+    const productBefore = await read(path.join(root, 'resources/app/product.json'));
+    assert.equal((await localize(opts)).ok, true);
+    // 模拟重装：安装文件回到原版，state/备份/语言包/locale 都还在
+    await fs.writeFile(path.join(root, REL), js);
+    await fs.writeFile(path.join(root, 'resources/app/product.json'), productBefore);
+    const st = await status(opts);
+    assert.equal(st.stale, true);
+    assert.equal(st.localized, false);
+    assert.equal(st.patched, false);
+
+    const r = await localize(opts);
+    assert.equal(r.ok, true, r.error);
+    assert.match(await read(path.join(root, REL)), /"Cursor 设置"/);
+    const backups = await fs.readdir(path.join(opts.dataDir, 'backups'));
+    assert.ok(backups.some((b) => b.includes('.stale-')), backups.join());
+    const s2 = await readState(opts.dataDir);
+    assert.equal(s2.prevLocale, null); // 记住的是最初的 locale，不是过期记录留下的 zh-cn
+    assert.equal(s2.installedLangpack, true);
+
+    assert.equal((await revert(opts)).ok, true);
+    assert.equal(await read(path.join(root, REL)), js);
+    assert.equal(await read(path.join(root, 'resources/app/product.json')), productBefore);
+    assert.equal(await readLocale(opts.argvPath), null);
+    assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
+  });
+
+  it('revert with stale state never overwrites the new install with old backups', async () => {
+    const { root, opts } = await setup();
+    assert.equal((await localize(opts)).ok, true);
+    const fresh = 'a="Cursor Settings";/*new build*/';
+    await fs.writeFile(path.join(root, REL), fresh);
+    const rv = await revert(opts);
+    assert.equal(rv.ok, true, rv.error);
+    assert.equal(await read(path.join(root, REL)), fresh);
+    assert.equal(await readLocale(opts.argvPath), null);
+    assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
+    assert.equal((await readState(opts.dataDir)).localized, false);
+  });
+
+  it('refuses to back up files that already carry the patch without a state record', async () => {
+    const { root, opts } = await setup();
+    assert.equal((await localize(opts)).ok, true);
+    await fs.rm(path.join(opts.dataDir, 'state.json'));
+    const patched = await read(path.join(root, REL));
+    const r = await localize(opts);
+    assert.equal(r.ok, false);
+    assert.match(r.error, /已带汉化补丁/);
+    assert.equal(await read(path.join(root, REL)), patched);
   });
 });
