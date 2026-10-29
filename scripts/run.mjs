@@ -1,5 +1,6 @@
 // 用法：node scripts/run.mjs status|localize|revert [--close] [--no-relaunch] [--elevate=pkexec,sudo-n,manual] [--root=<安装根>]
 //       macOS：[--mac-sign=adhoc|adhoc-deep|none]（默认 adhoc：改完对 Cursor.app 外层做 ad-hoc 重签名）
+//       revert [--from-backup=<备份目录>]：记录丢失/误判过期但文件仍带补丁时，用该备份（默认自动找 backups/*.stale-*）恢复
 //       node scripts/run.mjs extract-appimage <Cursor-*.AppImage>   （解包 AppImage 到用户目录，之后对解包副本汉化）
 // 只作用于本机探测到的 Cursor。--close：Cursor 在运行时先优雅关闭，完成后按原命令行重新打开。
 import { localize, revert, status } from '../packages/engine/src/index.js';
@@ -17,6 +18,7 @@ const opts = {
   ...(val('elevate') ? { elevateStrategies: val('elevate').split(',') } : {}),
   ...(val('root') ? { installRoot: val('root') } : {}),
   ...(val('mac-sign') ? { macSign: val('mac-sign') } : {}),
+  ...(val('from-backup') ? { fromBackup: val('from-backup') } : {}),
 };
 let r;
 if (cmd === 'localize') r = await localize(opts);

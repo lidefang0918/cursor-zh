@@ -80,13 +80,40 @@ export async function installPatched(installRoot, relatives) {
   return false;
 }
 
-// 记录说“已汉化”，但安装文件是原版（重装/更新/被清掉）→ 过期记录
+// 记录说“已汉化”，但安装文件是原版（重装/更新/被清掉）→ 过期记录。
+// 只看安装文件里有没有我们的标记：版本号/路径对不上不算过期（macOS 上关闭 Cursor 时 Squirrel 可能刚好装完自动更新，
+// 记录里的版本号就会和 product.json 不一致，但文件仍是我们打的补丁，必须按备份还原，而不是丢掉记录）。
+const markerRelatives = (anchors, state) => [...new Set([...domRelatives(anchors, state), ...Object.keys(state?.perFile ?? {})])];
 async function isStale(o, info, anchors, state) {
   if (!state.localized) return false;
-  if (!info) return true;
-  if (state.version && state.version !== info.version) return true;
-  if (state.installRoot && state.installRoot !== info.root) return true;
-  return !(await installPatched(info.root, domRelatives(anchors, state)));
+  const root = state.installRoot ?? info?.root;
+  if (!root) return true;
+  return !(await installPatched(root, markerRelatives(anchors, state)));
+}
+
+// 备份可用 = manifest 里每个文件都在、sha256 对得上
+async function verifyBackup(backupDir) {
+  let items;
+  try { items = await backupItems(backupDir); } catch (e) { return { ok: false, error: `读不到备份清单：${e.message}` }; }
+  for (const i of items) {
+    const sha = await sha256File(i.src).catch(() => null);
+    if (sha !== i.sha256) return { ok: false, error: `备份文件损坏或缺失：${i.relative}` };
+  }
+  return { ok: true, items };
+}
+
+// 找可用于恢复的备份：显式 --from-backup，否则 backups/ 下最新的、属于这个安装根的 *.stale-*
+async function findRecoveryBackup(o, installRoot) {
+  if (o.fromBackup) return o.fromBackup;
+  const dir = path.join(o.dataDir, 'backups');
+  const names = (await fs.readdir(dir).catch(() => [])).filter((n) => n.includes('.stale-')).sort().reverse();
+  for (const n of names) {
+    try {
+      const m = JSON.parse(await fs.readFile(path.join(dir, n, 'manifest.json'), 'utf8'));
+      if (!m.installRoot || m.installRoot === installRoot) return path.join(dir, n);
+    } catch {}
+  }
+  return null;
 }
 
 // 丢弃过期记录：旧备份对应的是已不存在的安装，挪到 backups/<ver>.stale-<时间> 留档，绝不拿它覆盖新安装
@@ -256,6 +283,13 @@ export async function localize(opts = {}) {
       if (pending) await dropBackup({ backupDir });
       await createBackup({ installRoot: o.installRoot, files: backupFiles, backupDir });
       log(`已备份 ${backupFiles.length} 个文件 → ${backupDir}`);
+      // 关闭 Cursor 时 macOS 可能正好装上自动更新：备份到的就不是刚才检查过的版本了 → 放弃，让用户重跑
+      const changed = await backupChanged(backupDir, anchors, info);
+      if (changed) {
+        await dropBackup({ backupDir });
+        log(`✖ ${changed}`);
+        return fail('INSTALL_CHANGED', `${changed}。可能是 Cursor 关闭时装上了自动更新，安装目录未改动，请重新运行汉化`);
+      }
       if (o.platform === 'darwin' && o.macSign === 'adhoc-deep') {
         await mac.cloneBundle(mac.appPathOf(o.installRoot), path.join(backupDir, 'bundle', 'Cursor.app'), { runner: runnerOf(o) });
         log('已克隆整个 Cursor.app（adhoc-deep 还原用）');
@@ -298,6 +332,18 @@ export async function localize(opts = {}) {
     log(`已写入安装目录（${METHOD[a.method] ?? a.method}）`);
     return finishLocalize(o, info, state, backupDir, result, state.carry, a.method);
   });
+}
+
+async function backupChanged(backupDir, anchors, info) {
+  const m = shaMap(await backupItems(backupDir));
+  for (const [rel, sha] of Object.entries(anchors.pristine ?? {})) if (m[rel] && m[rel] !== sha) return `备份时 ${rel.split('/').pop()} 已不是 Cursor ${info.version} 原版`;
+  if (anchors.productJson) {
+    try {
+      const v = JSON.parse(await fs.readFile(path.join(backupDir, 'files', anchors.productJson), 'utf8')).version;
+      if (v && String(v) !== info.version) return `备份时版本已变为 ${v}（检测时为 ${info.version}）`;
+    } catch {}
+  }
+  return null;
 }
 
 // macOS 写入后：直接写入时由引擎重签名、去隔离属性；经管理员授权时 helper 已做过，这里只校验
@@ -407,18 +453,24 @@ export async function revert(opts = {}) {
       return { ok: true, cancelledPending: true };
     }
   }
-  if (!state.localized && !state.pending) return fail('NOT_LOCALIZED', '当前未处于汉化状态');
   const anchors = info ? await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir }) : null;
+  if (!state.localized && !state.pending) {
+    // 记录已丢（旧版误判“过期”），但安装文件仍带补丁 → 用 .stale-* / --from-backup 里的原版恢复
+    if (info && (o.fromBackup || (await installPatched(info.root, markerRelatives(anchors, state))))) return recoverFromBackup(o, info, anchors, state);
+    return fail('NOT_LOCALIZED', '当前未处于汉化状态');
+  }
   const stale = state.localized ? await isStale(o, info, anchors, state) : false;
-  if (stale) {
+  if (stale && !o.fromBackup) {
     // 安装已是原版：不能拿旧备份覆盖（可能是别的版本），只清理语言包/locale
     await retireStale(o, state, log);
     return cleanupUser(o, state, { stale: true });
   }
   const installRoot = state.installRoot ?? state.pending?.installRoot;
-  const backupDir = state.backupDir ?? state.pending?.backupDir;
+  const backupDir = o.fromBackup ?? state.backupDir ?? state.pending?.backupDir;
+  const vb = await verifyBackup(backupDir);
+  if (!vb.ok) return fail('BACKUP_INVALID', `${vb.error}（${backupDir}）。安装文件仍带汉化补丁，未做任何改动；请重装 Cursor`);
   return withCursorClosed(o, async () => {
-    const items = await backupItems(backupDir);
+    const items = vb.items;
     if (await filesMatch(installRoot, shaMap(items))) {
       log('安装文件已是原版（管理员命令已执行），继续清理');
     } else {
@@ -431,6 +483,39 @@ export async function revert(opts = {}) {
       log(`已按备份还原安装文件（${METHOD[a.method] ?? a.method}，sha256 校验通过）`);
     }
     return cleanupUser(o, state, { backupDir });
+  });
+}
+
+// 安装文件带补丁、却没有有效记录：备份逐个校验 sha256 后写回（含 macOS 签名文件），再清理语言包/locale
+async function recoverFromBackup(o, info, anchors, state) {
+  const log = o.onLog;
+  const backupDir = await findRecoveryBackup(o, info.root);
+  if (!backupDir) return fail('NO_BACKUP', '安装文件带汉化补丁，但找不到可用的备份；请重装 Cursor（或用 --from-backup=<备份目录> 指定）');
+  const vb = await verifyBackup(backupDir);
+  if (!vb.ok) return fail('BACKUP_INVALID', `${vb.error}（${backupDir}）。未做任何改动`);
+  // 备份必须是当前版本的原版，避免拿别的版本的文件覆盖
+  for (const [rel, sha] of Object.entries(anchors?.pristine ?? {})) {
+    const b = vb.items.find((i) => i.relative === rel);
+    if (b && b.sha256 !== sha) return fail('BACKUP_MISMATCH', `备份里的 ${rel.split('/').pop()} 不是 Cursor ${info.version} 原版（${backupDir}），未做任何改动`);
+  }
+  log(`安装文件仍带汉化补丁，按备份恢复：${backupDir}（${vb.items.length} 个文件 sha256 校验通过）`);
+  return withCursorClosed(o, async () => {
+    const a = await restoreInstall(o, info.root, backupDir, o.platform === 'darwin' ? (o.macSign === 'adhoc-deep' ? 'adhoc' : o.macSign) : undefined);
+    if (!a.ok) {
+      if (a.code === 'NEED_ELEVATION') log(`需要管理员权限：${a.tried.map((t) => `${t.via}：${t.reason}`).join('；') || '已跳过自动提权'}`);
+      else log(`✖ 还原失败：${a.error}`);
+      return a;
+    }
+    log(`已按备份还原安装文件（${METHOD[a.method] ?? a.method}，sha256 校验通过）`);
+    // 有 carry（语言包/locale 是我们改的）才动用户设置；没有说明旧版已清理过，只清译文缓存
+    if (state.carry) {
+      const r = await cleanupUser(o, { ...state, commit: info.commit }, { stale: true });
+      return r.ok ? { ...r, recovered: backupDir } : r;
+    }
+    if (info.commit) await clearNlsCache({ userDataDir: o.userDataDir, commit: info.commit });
+    await writeState(o.dataDir, { localized: false, revertedAt: new Date().toISOString(), recoveredFrom: backupDir });
+    log('还原完成（语言包/locale 之前已清理），重启 Cursor 后生效');
+    return { ok: true, recovered: backupDir };
   });
 }
 

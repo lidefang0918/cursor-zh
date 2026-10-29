@@ -41,7 +41,9 @@ node scripts/run.mjs status --root="$ROOT"
 - codesign 显示 `valid on disk`，以及 `TeamIdentifier=VDXQ22DGB9`。
 - status 输出里 `version` 是 3.27.14，`"supported": true`，`"kind": "mac-applications"`。
 
-如果 status 显示 3.27.22，说明 Cursor 在退出时自动更新了。这个版本同样支持，但上面的 sha 文件就对不上了。
+如果 status 显示 3.27.22，说明 Cursor 在退出时自动更新了。这个版本同样支持，改用 `pristine-3.27.22-darwin-universal.sha256`（通用版 universal；arm64/universal 的三个 JS/NLS 文件完全相同，只有 product.json 不同）。
+
+> **关于自动更新**：macOS 上 Cursor 退出时（包括本工具 `--close` 关闭它时）可能正好装上已下载的更新。新版工具会在备份后核对文件仍是检测到的那个版本的原版，不是就放弃（`INSTALL_CHANGED`，安装目录不动），重新运行 localize 即可。
 
 ## 2. 汉化
 
@@ -94,3 +96,23 @@ codesign -dv /Applications/Cursor.app 2>&1 | grep TeamIdentifier=VDXQ22DGB9
 
 - 汉化（ad-hoc 签名）期间，Cursor 的自动更新可能失败。**更新 Cursor 前先还原**，更新后再汉化。
 - 每一步的 JSON 输出都请保存下来，用于反馈：`node scripts/run.mjs … | tee -a ~/czl/run.log`。
+
+
+## 恢复：旧版工具把“已汉化”误判成“过期”
+
+症状：旧版 `revert` 打印“⚠ 汉化记录已过期（安装文件是原版…）”，备份被挪到 `backups/<版本>.stale-<时间>`，语言包和 locale 被清掉，但 `/Applications/Cursor.app` 里的文件仍是汉化补丁版（ad-hoc 签名）。
+
+原因：旧版 localize 检测到 3.27.14 后关闭 Cursor，Cursor 退出时装上了 3.27.22 自动更新；工具接着把 3.27.22 原版文件备份进 `backups/3.27.14`、打补丁、记录版本 3.27.14。之后 revert 发现记录版本 ≠ product.json 版本，就判成“过期”，只清了用户设置，没还原文件。
+
+新版工具：
+- 只要安装文件里有汉化标记，就绝不判“过期”，按备份还原；
+- 记录已丢但文件仍带补丁时，`revert` 自动找最新的 `backups/*.stale-*`（也可用 `--from-backup=<目录>` 指定），逐个核对 manifest 里的 sha256，并确认备份是当前版本的原版，然后写回全部文件（含 `MacOS/Cursor` 和 `_CodeSignature/CodeResources`，原 Developer ID 签名随之恢复）。
+
+```sh
+node scripts/run.mjs revert --root="$ROOT" --close     # 自动用最新的 .stale-* 备份
+# 或者指定：
+node scripts/run.mjs revert --root="$ROOT" --close --from-backup="$HOME/Library/Application Support/cursor-zh-localizer/backups/3.27.14.stale-<时间>"
+codesign --verify --deep --strict --verbose=2 /Applications/Cursor.app      # 应为 valid on disk
+(cd "$ROOT/Resources/app" && shasum -a 256 -c ~/czl/czl-cli/pristine-3.27.22-darwin-universal.sha256)
+node scripts/run.mjs localize --root="$ROOT" --close   # 重新汉化
+```

@@ -172,4 +172,66 @@ describe('localize/revert', () => {
     assert.match(r.error, /已带汉化补丁/);
     assert.equal(await read(path.join(root, REL)), patched);
   });
+  // macOS 上关闭 Cursor 时自动更新刚好装上：记录的版本号和 product.json 对不上，但文件仍是我们的补丁
+  it('a patched install whose version no longer matches the record is NOT stale; revert restores the backup', async () => {
+    const { root, js, opts } = await setup();
+    const pj = path.join(root, 'resources/app/product.json');
+    const productBefore = await read(pj);
+    assert.equal((await localize(opts)).ok, true);
+    const p = JSON.parse(await read(pj)); p.version = 'test-nls';
+    await fs.writeFile(pj, JSON.stringify(p));
+    const st = await status(opts);
+    assert.equal(st.stale, false);
+    assert.equal(st.localized, true);
+    const rv = await revert(opts);
+    assert.equal(rv.ok, true, rv.error);
+    assert.equal(rv.stale, false);
+    assert.equal(await read(path.join(root, REL)), js);
+    assert.equal(await read(pj), productBefore);
+    assert.equal(await readLocale(opts.argvPath), null);
+    assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
+  });
+
+  it('recovers from a .stale-* backup when an old version retired the record but left patched files', async () => {
+    const { root, js, opts } = await setup();
+    const pj = path.join(root, 'resources/app/product.json');
+    const productBefore = await read(pj);
+    assert.equal((await localize(opts)).ok, true);
+    // 旧版 revert 的误判：备份挪成 .stale-*，语言包/locale 清掉，state 写成未汉化，安装文件没动
+    const b = path.join(opts.dataDir, 'backups');
+    const [dir] = await fs.readdir(b);
+    await fs.rename(path.join(b, dir), path.join(b, `${dir}.stale-2026-10-29T00-00-00-000Z`));
+    await fs.writeFile(path.join(opts.dataDir, 'state.json'), JSON.stringify({ localized: false, revertedAt: 'x' }));
+    const patched = await read(path.join(root, REL));
+
+    // 备份被篡改 → 拒绝，安装文件不动
+    const bad = await tmp('bad-');
+    await fs.cp(path.join(b, `${dir}.stale-2026-10-29T00-00-00-000Z`), bad, { recursive: true });
+    await fs.appendFile(path.join(bad, 'files', REL), 'x');
+    const r0 = await revert({ ...opts, fromBackup: bad });
+    assert.equal(r0.code, 'BACKUP_INVALID');
+    assert.equal(await read(path.join(root, REL)), patched);
+
+    const rv = await revert(opts);
+    assert.equal(rv.ok, true, rv.error);
+    assert.match(rv.recovered, /\.stale-/);
+    assert.equal(await read(path.join(root, REL)), js);
+    assert.equal(await read(pj), productBefore);
+    assert.equal((await revert(opts)).code, 'NOT_LOCALIZED');
+    // 恢复后能正常重新汉化
+    assert.equal((await localize(opts)).ok, true);
+  });
+
+  it('aborts localize when the install changes while Cursor is being closed (auto-update race)', async () => {
+    const { root, js, opts } = await setup();
+    const pj = path.join(root, 'resources/app/product.json');
+    const r = await localize({
+      ...opts, closeRunning: true, isCursorRunning: undefined, listRunning: async () => [{ pid: 1, main: true }],
+      closeCursor: async () => { const p = JSON.parse(await read(pj)); p.version = '9.9.9'; await fs.writeFile(pj, JSON.stringify(p)); return { ok: true, relaunch: null }; },
+    });
+    assert.equal(r.code, 'INSTALL_CHANGED', r.error);
+    assert.equal(await read(path.join(root, REL)), js);
+    assert.deepEqual(await fs.readdir(path.join(opts.dataDir, 'backups')).catch(() => []), []);
+    assert.equal((await readState(opts.dataDir)).localized, false);
+  });
 });
