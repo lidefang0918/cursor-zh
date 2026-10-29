@@ -6,7 +6,7 @@ import { detectCursor, detectAllCursors, installKind } from './detect.js';
 import { applyFiles, checkWritable, filesMatch, elevationInfo } from './elevate.js';
 import { listCursorProcesses, closeCursor, relaunchCursor } from './process.js';
 import { findAppImages, listExtracted } from './appimage.js';
-import { loadAnchors, loadDict, loadPatterns, supportedVersions as listVersions } from './anchors.js';
+import { loadAnchors, loadDict, loadNlsDict, loadPatterns, supportedVersions as listVersions } from './anchors.js';
 import { createBackup, sha256File, exists } from './backup.js';
 import { dropBackup } from './restore.js';
 import { applyPatch, filesToBackup, updateChecksums } from './patch.js';
@@ -38,6 +38,7 @@ export function defaultPaths(home = os.homedir(), platform = process.platform, e
     anchorsDir: path.join(REPO, 'anchors'),
     dictPath: path.join(REPO, 'dicts/zh-cn.json'),
     patternsPath: path.join(REPO, 'dicts/zh-cn.patterns.json'),
+    nlsDictPath: path.join(REPO, 'dicts/zh-cn.nls.json'),
   };
 }
 
@@ -282,6 +283,7 @@ export async function localize(opts = {}) {
     if (conflicts.length) log(`⚠ 检测到可能冲突的汉化扩展：${conflicts.join(', ')}，建议先禁用`);
 
     const dict = await loadDict(o.dictPath);
+    const nlsDict = await loadNlsDict(o.nlsDictPath);
     const patterns = await loadPatterns(o.patternsPath);
     // 先把需要联网的语言包下好：失败的话什么都还没改
     o.vsixPath ??= await downloadLangpack({ version: langpackVersionFor(info.vscodeVersion), cacheDir: path.join(o.dataDir, 'cache'), vendorDir: path.join(REPO, 'vendor') });
@@ -315,7 +317,7 @@ export async function localize(opts = {}) {
     }
     let result;
     try {
-      result = await patchTree({ root: staging, anchors, dict, patterns, log });
+      result = await patchTree({ root: staging, anchors, dict, nlsDict, patterns, log });
     } catch (e) {
       log(`✖ 失败：${e.message}（安装目录未改动）`);
       await fs.rm(staging, { recursive: true, force: true });
@@ -348,7 +350,7 @@ export async function localize(opts = {}) {
 // 再点“一键汉化”就按原版备份重新打补丁（不用先还原），指纹相同则什么都不做
 async function fingerprint(o, anchors) {
   const h = crypto.createHash('sha256');
-  for (const f of [o.dictPath, o.patternsPath]) h.update(await fs.readFile(f).catch(() => '')).update('\0');
+  for (const f of [o.dictPath, o.patternsPath, o.nlsDictPath]) h.update(await fs.readFile(f).catch(() => '')).update('\0');
   h.update(await readRuntime()).update('\0').update(JSON.stringify(anchors));
   return h.digest('hex').slice(0, 16);
 }
@@ -367,6 +369,7 @@ async function refreshLocalize(o, info, anchors, state, fp) {
   log('检测到汉化内容有更新（词典/运行时），按原版备份重新打补丁');
   return withCursorClosed(o, async () => {
     const dict = await loadDict(o.dictPath);
+    const nlsDict = await loadNlsDict(o.nlsDictPath);
     const patterns = await loadPatterns(o.patternsPath);
     const staging = path.join(o.dataDir, 'staging', info.version);
     await fs.rm(staging, { recursive: true, force: true });
@@ -375,7 +378,7 @@ async function refreshLocalize(o, info, anchors, state, fp) {
       await fs.copyFile(path.join(state.backupDir, 'files', f), path.join(staging, f));
     }
     let result;
-    try { result = await patchTree({ root: staging, anchors, dict, patterns, log }); }
+    try { result = await patchTree({ root: staging, anchors, dict, nlsDict, patterns, log }); }
     catch (e) { await fs.rm(staging, { recursive: true, force: true }); return fail('PATCH_FAILED', `${e.message}（安装未改动，仍是之前的汉化）`); }
     const items = [];
     for (const f of files) items.push({ relative: f, src: path.join(staging, f), sha256: await sha256File(path.join(staging, f)) });
@@ -448,10 +451,10 @@ async function restoreInstall(o, installRoot, backupDir, macSign) {
 }
 
 // 在一棵目录树（暂存区或测试用假安装根）上完成全部补丁：静态替换 + NLS + DOM 补漏注入 + product.json 校验值
-export async function patchTree({ root, anchors, dict, patterns = [], log = () => {} }) {
+export async function patchTree({ root, anchors, dict, nlsDict = {}, patterns = [], log = () => {} }) {
   const p = await applyPatch({ installRoot: root, anchors, dict });
   log(`静态补丁：替换 ${p.replaced} 处，模板片段 ${p.fragmentsReplaced} 处；未命中 ${p.missing.length} 条`);
-  const n = await applyNls({ installRoot: root, anchors, dict });
+  const n = await applyNls({ installRoot: root, anchors, dict: { ...nlsDict, ...dict } });
   if (anchors.nls) log(`NLS 文案：替换 ${n.replaced} 条；未命中 ${n.missing.length} 条`);
   const domTargets = anchors.dom?.relatives ?? [anchors.files[0].relative];
   for (const relative of domTargets) await injectDomRuntime({ installRoot: root, relative, dict, patterns });

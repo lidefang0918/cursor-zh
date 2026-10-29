@@ -3905,8 +3905,44 @@
     "langpack": "ms-ceintl.vscode-language-pack-zh-hans-1.128.0",
     "entries": [
       {
+        "index": 154,
+        "from": "Cursor Data Import Failed"
+      },
+      {
+        "index": 164,
+        "from": "Process Name"
+      },
+      {
+        "index": 165,
+        "from": "CPU (%)"
+      },
+      {
+        "index": 167,
+        "from": "Memory (MB)"
+      },
+      {
+        "index": 168,
+        "from": "Network (KB/s)"
+      },
+      {
+        "index": 169,
+        "from": "Kill Process"
+      },
+      {
+        "index": 170,
+        "from": "Force Kill Process"
+      },
+      {
         "index": 171,
         "from": "Copy"
+      },
+      {
+        "index": 172,
+        "from": "Copy All"
+      },
+      {
+        "index": 173,
+        "from": "Open DevTools (Local Renderer)"
       },
       {
         "index": 174,
@@ -3917,8 +3953,296 @@
         "from": "Debug"
       },
       {
+        "index": 176,
+        "from": "MCP Process"
+      },
+      {
+        "index": 200,
+        "from": "Hold {0} key to mouse over"
+      },
+      {
+        "index": 201,
+        "from": "Loading..."
+      },
+      {
+        "index": 246,
+        "from": "Show 20 more lines above"
+      },
+      {
+        "index": 247,
+        "from": "Show 20 more lines below"
+      },
+      {
+        "index": 250,
+        "from": "Hidden lines summary"
+      },
+      {
+        "index": 251,
+        "from": "Expand the entire hidden region"
+      },
+      {
+        "index": 252,
+        "from": "Expand all"
+      },
+      {
+        "index": 708,
+        "from": "Enable comment view zone when dragging on line numbers."
+      },
+      {
+        "index": 781,
+        "from": "Whether the editor has an active prompt bar"
+      },
+      {
+        "index": 782,
+        "from": "Whether the editor prompt bar input has focus"
+      },
+      {
+        "index": 965,
+        "from": "Waiting for code actions from '{0}' ([configure]({1}))."
+      },
+      {
+        "index": 1154,
+        "from": "Go to Problem at Cursor (Error, Warning, Info)"
+      },
+      {
+        "index": 1222,
+        "from": "Open in Chat"
+      },
+      {
+        "index": 1277,
+        "from": "Increase Hover Verbosity ({0})"
+      },
+      {
+        "index": 1279,
+        "from": "Decrease Hover Verbosity ({0})"
+      },
+      {
+        "index": 1314,
+        "from": "No inline edit is available."
+      },
+      {
+        "index": 1326,
+        "from": "Trigger Next Edit Suggestion"
+      },
+      {
+        "index": 1331,
+        "from": "Accept Next Inline Edit Part"
+      },
+      {
+        "index": 1353,
+        "from": "There is an inline edit available:"
+      },
+      {
+        "index": 1354,
+        "from": "Go To"
+      },
+      {
         "index": 1355,
         "from": "Accept"
+      },
+      {
+        "index": 1360,
+        "from": "Inline Edit"
+      },
+      {
+        "index": 1381,
+        "from": "Whether the active editor has inline diffs"
+      },
+      {
+        "index": 1382,
+        "from": "Whether there are inline diffs in any editor"
+      },
+      {
+        "index": 1476,
+        "from": "Open a text editor first to go to a line."
+      },
+      {
+        "index": 1477,
+        "from": "Go to line {0} and character {1}."
+      },
+      {
+        "index": 1478,
+        "from": "Go to line {0}."
+      },
+      {
+        "index": 1479,
+        "from": "Current Line: {0}, Character: {1}. Type a line number between 1 and {2} to navigate to."
+      },
+      {
+        "index": 1480,
+        "from": "Current Line: {0}, Character: {1}. Type a line number to navigate to."
+      },
+      {
+        "index": 1779,
+        "from": "Configure Icon Visibility"
+      },
+      {
+        "index": 1797,
+        "from": "Agent Host"
+      },
+      {
+        "index": 1799,
+        "from": "Follow 'update.mode': updated unless Cursor updates are turned off."
+      },
+      {
+        "index": 1800,
+        "from": "Update even when Cursor updates are turned off."
+      },
+      {
+        "index": 1801,
+        "from": "Never update; keep the agent packed into this Cursor release."
+      },
+      {
+        "index": 1802,
+        "from": "The airlock is only available in SpaceX mode."
+      },
+      {
+        "index": 1803,
+        "from": "IT hasn't set up the airlock on this computer."
+      },
+      {
+        "index": 1804,
+        "from": "IT's airlock settings on this computer can't be used: {0}"
+      },
+      {
+        "index": 1805,
+        "from": "Sign in with your SpaceX account to use the airlock."
+      },
+      {
+        "index": 1806,
+        "from": "{0} isn't set."
+      },
+      {
+        "index": 1808,
+        "from": "{0} isn't set."
+      },
+      {
+        "index": 1809,
+        "from": "{0} must be an absolute path inside the container."
+      },
+      {
+        "index": 1810,
+        "from": "{0} must be a user name or id, optionally followed by ':' and a group."
+      },
+      {
+        "index": 1811,
+        "from": "{0} must be docker, podman, or an absolute path."
+      },
+      {
+        "index": 1812,
+        "from": "{0} must be an absolute path."
+      },
+      {
+        "index": 1813,
+        "from": "{0} must be a string."
+      },
+      {
+        "index": 1814,
+        "from": "{0} must be a positive number of seconds."
+      },
+      {
+        "index": 1817,
+        "from": "Cursor couldn't get Dev Containers ready to open the airlock: {0}"
+      },
+      {
+        "index": 1821,
+        "from": "Cursor couldn't run the {0} hook at {1}: {2}"
+      },
+      {
+        "index": 1822,
+        "from": "The {0} hook didn't finish within {1} seconds."
+      },
+      {
+        "index": 1823,
+        "from": "The {0} hook failed: {1}"
+      },
+      {
+        "index": 1824,
+        "from": "The {0} hook was stopped by {1}."
+      },
+      {
+        "index": 1825,
+        "from": "The {0} hook failed with exit code {1}."
+      },
+      {
+        "index": 1826,
+        "from": "Restarting container…"
+      },
+      {
+        "index": 1827,
+        "from": "Looking for container {0}…"
+      },
+      {
+        "index": 1828,
+        "from": "Waiting for {0}…"
+      },
+      {
+        "index": 1829,
+        "from": "Container {0} doesn't exist, and IT hasn't set a hook that creates it."
+      },
+      {
+        "index": 1830,
+        "from": "Creating container…"
+      },
+      {
+        "index": 1831,
+        "from": "Resuming container…"
+      },
+      {
+        "index": 1832,
+        "from": "Preparing container…"
+      },
+      {
+        "index": 1833,
+        "from": "Starting container…"
+      },
+      {
+        "index": 1834,
+        "from": "Waiting for container to start…"
+      },
+      {
+        "index": 1835,
+        "from": "Container {0} didn't start within {1} seconds ({2})."
+      },
+      {
+        "index": 1836,
+        "from": "Container {0} no longer exists."
+      },
+      {
+        "index": 1837,
+        "from": "{0} isn't available: {1}"
+      },
+      {
+        "index": 1838,
+        "from": "'{0} {1}' failed: {2}"
+      },
+      {
+        "index": 1839,
+        "from": "Checking for the Cursor server…"
+      },
+      {
+        "index": 1840,
+        "from": "Cursor couldn't check container {0} for its server: {1}"
+      },
+      {
+        "index": 1841,
+        "from": "Cursor couldn't check container {0} for its server: {1}"
+      },
+      {
+        "index": 1843,
+        "from": "{0} isn't on the PATH."
+      },
+      {
+        "index": 1844,
+        "from": "no answer within {0} seconds"
+      },
+      {
+        "index": 1845,
+        "from": "stopped by {0}"
+      },
+      {
+        "index": 1846,
+        "from": "exit code {0}"
       },
       {
         "index": 1847,
@@ -3927,6 +4251,142 @@
       {
         "index": 1848,
         "from": "Cancel"
+      },
+      {
+        "index": 1849,
+        "from": "Open External Link"
+      },
+      {
+        "index": 1850,
+        "from": "Do you want to open this link?"
+      },
+      {
+        "index": 1851,
+        "from": "{0}\n\nThis will open in an external application."
+      },
+      {
+        "index": 1881,
+        "from": "Whether the user is a Cursor developer/employee"
+      },
+      {
+        "index": 1889,
+        "from": "Conversation Search"
+      },
+      {
+        "index": 1916,
+        "from": "Suppress notification popups on startup."
+      },
+      {
+        "index": 1917,
+        "from": "Run all web-capable extensions in a web worker extension host."
+      },
+      {
+        "index": 1918,
+        "from": "Enable the multi-workbench architecture (dev-only)."
+      },
+      {
+        "index": 1919,
+        "from": "Disable glass mode and force classic windows (dev-only)."
+      },
+      {
+        "index": 1950,
+        "from": "Open a standalone chat window without the full IDE."
+      },
+      {
+        "index": 1956,
+        "from": "To read from stdin, append '-' (e.g. 'ps aux | grep code | {0} -')"
+      },
+      {
+        "index": 1973,
+        "from": "Can't install '{0}' extension. {1}"
+      },
+      {
+        "index": 2033,
+        "from": "Extension is not signed."
+      },
+      {
+        "index": 2061,
+        "from": "Extension Monitor"
+      },
+      {
+        "index": 2063,
+        "from": "Script '{0}' failed with exit code {1}"
+      },
+      {
+        "index": 2066,
+        "from": "'{0}' failed with exit code {1}"
+      },
+      {
+        "index": 2077,
+        "from": "Invalid file stat from provider"
+      },
+      {
+        "index": 2165,
+        "from": "MCP Process"
+      },
+      {
+        "index": 2201,
+        "from": "Unable to replace `code` with `Cursor` on the path."
+      },
+      {
+        "index": 2222,
+        "from": "Workspace Process Explorer"
+      },
+      {
+        "index": 2223,
+        "from": "Process Explorer"
+      },
+      {
+        "index": 2224,
+        "from": "Successfully created the trace file"
+      },
+      {
+        "index": 2225,
+        "from": "Please create an issue and manually attach the following file:\n{0}"
+      },
+      {
+        "index": 2226,
+        "from": "&&OK"
+      },
+      {
+        "index": 2255,
+        "from": "Quick Input"
+      },
+      {
+        "index": 2287,
+        "from": "Sign-in"
+      },
+      {
+        "index": 2288,
+        "from": "Storage Error"
+      },
+      {
+        "index": 2289,
+        "from": "Cursor was unable to open local storage. Please reload or contact support."
+      },
+      {
+        "index": 2290,
+        "from": "Cursor may still be closing. Wait a moment, then restart.\n\nThis can also happen if the storage file is corrupted, moved, or there are permission issues.\n\nStorage path: {0}"
+      },
+      {
+        "index": 2291,
+        "from": "Restart"
+      },
+      {
+        "index": 2292,
+        "from": "Quit"
+      },
+      {
+        "index": 2635,
+        "from": "New &&Window"
+      },
+      {
+        "index": 2663,
+        "from": "Enable automatic update checks and install updates automatically without prompting. Updates will be applied automatically when available."
+      },
+      {
+        "index": 2669,
+        "from": "Internal managed release track override for updates."
       },
       {
         "index": 2670,
@@ -3957,8 +4417,28 @@
         "from": "Restart to Update"
       },
       {
+        "index": 2677,
+        "from": "&&Open System Settings"
+      },
+      {
         "index": 2678,
         "from": "&&Cancel"
+      },
+      {
+        "index": 2679,
+        "from": "Allow {0} to Run in the Background"
+      },
+      {
+        "index": 2680,
+        "from": "Enable background activity to run the updater process on {0}. MacOS stops the update installer when {0} quits because {0} isn't allowed to run in the background."
+      },
+      {
+        "index": 2681,
+        "from": "Update {0} with your package manager"
+      },
+      {
+        "index": 2682,
+        "from": "Run this command in a terminal, then restart {0}:\n\n{1}"
       },
       {
         "index": 2683,
@@ -3969,8 +4449,44 @@
         "from": "Cancel"
       },
       {
+        "index": 2692,
+        "from": "Reveal in File Explorer"
+      },
+      {
+        "index": 2693,
+        "from": "Reveal in Finder"
+      },
+      {
         "index": 2694,
         "from": "Open Containing Folder"
+      },
+      {
+        "index": 2695,
+        "from": "{0} Diagnostics"
+      },
+      {
+        "index": 2696,
+        "from": "Start CPU Profiler"
+      },
+      {
+        "index": 2697,
+        "from": "Take Heap Snapshot"
+      },
+      {
+        "index": 2698,
+        "from": "Select a diagnostics action"
+      },
+      {
+        "index": 2699,
+        "from": "{0} is not running; open a command that uses it first."
+      },
+      {
+        "index": 2700,
+        "from": "{0} CPU Profiler is already running."
+      },
+      {
+        "index": 2701,
+        "from": "Failed to start {0} CPU Profiler: {1}"
       },
       {
         "index": 2702,
@@ -3981,12 +4497,312 @@
         "from": "Stop"
       },
       {
+        "index": 2704,
+        "from": "{0} CPU Profiler is running"
+      },
+      {
+        "index": 2705,
+        "from": "Failed to stop {0} CPU Profiler: {1}"
+      },
+      {
+        "index": 2706,
+        "from": "{0} CPU Profiler reached the maximum duration and was stopped."
+      },
+      {
+        "index": 2707,
+        "from": "{0} is not running; open a command that uses it first."
+      },
+      {
+        "index": 2708,
+        "from": "Failed to save {0} heap snapshot: {1}"
+      },
+      {
+        "index": 2709,
+        "from": "Taking {0} heap snapshot…"
+      },
+      {
+        "index": 2710,
+        "from": "{0} returned an empty heap snapshot."
+      },
+      {
+        "index": 2711,
+        "from": "Saved {0} heap snapshot to {1}"
+      },
+      {
+        "index": 2712,
+        "from": "Failed to take {0} heap snapshot: {1}"
+      },
+      {
+        "index": 2713,
+        "from": "{0} CPU Profiler returned an invalid profile: {1}"
+      },
+      {
+        "index": 2714,
+        "from": "Saved {0} CPU profile to {1}"
+      },
+      {
+        "index": 2715,
+        "from": "Failed to save {0} CPU profile: {1}"
+      },
+      {
+        "index": 2769,
+        "from": "Successfully signed out."
+      },
+      {
+        "index": 2771,
+        "from": "Don't Ask Again"
+      },
+      {
+        "index": 2773,
+        "from": "The extension '{0}' wants to access the language models provided by {1}."
+      },
+      {
+        "index": 2783,
+        "from": "Workspace Disconnected"
+      },
+      {
+        "index": 2784,
+        "from": "Cursor lost connection to the workspace while starting tool execution. Reload the window and try again."
+      },
+      {
+        "index": 2785,
+        "from": "Agent Session Initialization Failed"
+      },
+      {
+        "index": 2786,
+        "from": "Failed to initialize the agent execution session. Please reload the window to continue."
+      },
+      {
+        "index": 2787,
+        "from": "Agent Session Not Found"
+      },
+      {
+        "index": 2788,
+        "from": "The agent execution session was lost. Please reload the window to continue."
+      },
+      {
+        "index": 2789,
+        "from": "Agent Stream Start Failed"
+      },
+      {
+        "index": 2790,
+        "from": "Failed to start the agent execution stream. Please reload the window to continue."
+      },
+      {
+        "index": 2791,
+        "from": "Reload Window"
+      },
+      {
+        "index": 2890,
+        "from": "View containers cannot be contributed to the Secondary Side Bar in Cursor. It is reserved for Cursor's agent UI. Contribute to 'activitybar' or 'panel' instead."
+      },
+      {
+        "index": 2998,
+        "from": "Layout • Left"
+      },
+      {
+        "index": 2999,
+        "from": "Layout • Right"
+      },
+      {
+        "index": 3000,
+        "from": "Layout • Zen"
+      },
+      {
         "index": 3001,
         "from": "Browser"
       },
       {
+        "index": 3016,
+        "from": "Cleared Statsig cache. It will be reloaded on next refresh."
+      },
+      {
+        "index": 3017,
+        "from": "Reactive storage saved successfully."
+      },
+      {
+        "index": 3020,
+        "from": "Crashed local extension host (pid {0}). It should restart automatically."
+      },
+      {
+        "index": 3021,
+        "from": "No remote extension host found to crash."
+      },
+      {
+        "index": 3022,
+        "from": "Crashed remote extension host (pid {0}). It should restart automatically."
+      },
+      {
+        "index": 3023,
+        "from": "The current window does not have a remote connection to disconnect."
+      },
+      {
+        "index": 3025,
+        "from": "The current window does not have a remote connection."
+      },
+      {
+        "index": 3027,
+        "from": "Feature gates dumped to {0}"
+      },
+      {
+        "index": 3028,
+        "from": "Reveal in File Explorer"
+      },
+      {
+        "index": 3046,
+        "from": "Clear Statsig Cache"
+      },
+      {
+        "index": 3047,
+        "from": "Save Reactive Storage"
+      },
+      {
+        "index": 3048,
+        "from": "Inject cursor-socket failure"
+      },
+      {
+        "index": 3049,
+        "from": "Crash Extension Host (with slow recovery)"
+      },
+      {
+        "index": 3050,
+        "from": "Crash Remote Extension Host (with slow recovery)"
+      },
+      {
+        "index": 3051,
+        "from": "Connection: Simulate Permanent Disconnect"
+      },
+      {
+        "index": 3052,
+        "from": "Connection: Simulate Connection Drop (transient)"
+      },
+      {
+        "index": 3053,
+        "from": "Dump Feature Gates"
+      },
+      {
+        "index": 3057,
+        "from": "Whether the user has legacy custom composer modes"
+      },
+      {
+        "index": 3058,
+        "from": "No custom modes found in storage."
+      },
+      {
+        "index": 3059,
+        "from": "No custom modes found in storage."
+      },
+      {
+        "index": 3060,
+        "from": "Exported {0} custom mode(s) to {1}"
+      },
+      {
+        "index": 3061,
+        "from": "Export Custom Modes"
+      },
+      {
+        "index": 3062,
+        "from": "Whether the user has notepads in storage"
+      },
+      {
+        "index": 3063,
+        "from": "No notepads found in storage."
+      },
+      {
+        "index": 3064,
+        "from": "Failed to parse notepad data: {0}"
+      },
+      {
+        "index": 3065,
+        "from": "No notepads found in storage."
+      },
+      {
+        "index": 3066,
+        "from": "Exported {0} notepad(s) to {1}"
+      },
+      {
+        "index": 3067,
+        "from": "Failed to export notepads: {0}"
+      },
+      {
+        "index": 3068,
+        "from": "Export Notepads to Files"
+      },
+      {
+        "index": 3071,
+        "from": "Setup Bugbot"
+      },
+      {
+        "index": 3088,
+        "from": "Minimize Chat"
+      },
+      {
+        "index": 3089,
+        "from": "Maximize Chat Size - hides editor, panel, and primary sidebar to focus on AI agent"
+      },
+      {
+        "index": 3090,
+        "from": "Toggle visibility of inline diffs in the editor"
+      },
+      {
+        "index": 3104,
+        "from": "Toggle Agents Side Bar"
+      },
+      {
+        "index": 3105,
+        "from": "Toggle Agents Side Bar"
+      },
+      {
+        "index": 3107,
+        "from": "Minimize Chat"
+      },
+      {
+        "index": 3108,
+        "from": "Open Layout Settings Menu"
+      },
+      {
+        "index": 3113,
+        "from": "Zen Mode"
+      },
+      {
+        "index": 3162,
+        "from": "Maximize Chat Size"
+      },
+      {
+        "index": 3163,
+        "from": "Toggle Inline Diffs"
+      },
+      {
+        "index": 3164,
+        "from": "Open Layout Settings Menu"
+      },
+      {
         "index": 3165,
         "from": "Open Cursor Settings"
+      },
+      {
+        "index": 3166,
+        "from": "Switch Layout"
+      },
+      {
+        "index": 3194,
+        "from": "Toggle Zen Mode"
+      },
+      {
+        "index": 3209,
+        "from": "Represents a side bar in the left position"
+      },
+      {
+        "index": 3210,
+        "from": "Represents a side bar in the left position toggled off"
+      },
+      {
+        "index": 3211,
+        "from": "Represents side bar in the right position"
+      },
+      {
+        "index": 3212,
+        "from": "Represents side bar in the right position toggled off"
       },
       {
         "index": 3213,
@@ -4009,12 +4825,72 @@
         "from": "Untitled"
       },
       {
+        "index": 3301,
+        "from": "Please quit and reopen for the activity bar to be displayed vertically."
+      },
+      {
+        "index": 3306,
+        "from": "Secondary Si&&de Bar"
+      },
+      {
+        "index": 3313,
+        "from": "Show Agents Side Bar"
+      },
+      {
         "index": 3315,
         "from": "New Agent"
       },
       {
+        "index": 3316,
+        "from": "Chat History"
+      },
+      {
         "index": 3318,
         "from": "Close"
+      },
+      {
+        "index": 3319,
+        "from": "More Actions"
+      },
+      {
+        "index": 3334,
+        "from": "Copied"
+      },
+      {
+        "index": 3335,
+        "from": "Version {0}"
+      },
+      {
+        "index": 3336,
+        "from": "Copy version"
+      },
+      {
+        "index": 3337,
+        "from": "Copy build date"
+      },
+      {
+        "index": 3338,
+        "from": "Copy version info"
+      },
+      {
+        "index": 3339,
+        "from": "Version: {0}\nCommit: {1}\nDate: {2}\nLayout: {3}\nBrowser: {4}"
+      },
+      {
+        "index": 3340,
+        "from": "Local Mode: enabled"
+      },
+      {
+        "index": 3393,
+        "from": "Toggle &&Breadcrumbs"
+      },
+      {
+        "index": 3400,
+        "from": "Clone repo needs Git. Install Git, or enable the built-in Git extension, then restart Cursor."
+      },
+      {
+        "index": 3401,
+        "from": "Download Git"
       },
       {
         "index": 3420,
@@ -4029,8 +4905,20 @@
         "from": "Open Browser"
       },
       {
+        "index": 3568,
+        "from": "Reset Editor Group Sizes (Excluding Agent)"
+      },
+      {
+        "index": 3575,
+        "from": "Close all editor tabs. Also matches the previous name: Close All Editors."
+      },
+      {
         "index": 3613,
         "from": "Close All Tabs"
+      },
+      {
+        "index": 3734,
+        "from": "Foreground color for the labels in the editor watermark."
       },
       {
         "index": 3736,
@@ -4041,12 +4929,84 @@
         "from": "Show Terminal"
       },
       {
+        "index": 3739,
+        "from": "Hide Terminal"
+      },
+      {
+        "index": 3740,
+        "from": "Show Files"
+      },
+      {
         "index": 3741,
         "from": "Add Folder"
       },
       {
+        "index": 3742,
+        "from": "Add Repository"
+      },
+      {
         "index": 3743,
         "from": "Maximize Chat"
+      },
+      {
+        "index": 3744,
+        "from": "Foreground color for the labels in the editor watermark."
+      },
+      {
+        "index": 3829,
+        "from": "Extension 'Remote - SSH' is required to open the remote window.\nOK to enable?"
+      },
+      {
+        "index": 3830,
+        "from": "Enable and Reload"
+      },
+      {
+        "index": 3831,
+        "from": "Remove from recents"
+      },
+      {
+        "index": 3847,
+        "from": "You are not signed in to any accounts"
+      },
+      {
+        "index": 3930,
+        "from": "Icon to restore a panel."
+      },
+      {
+        "index": 3935,
+        "from": "&&Panel"
+      },
+      {
+        "index": 3977,
+        "from": "Configure Keybinding"
+      },
+      {
+        "index": 3978,
+        "from": "Configure Keybinding"
+      },
+      {
+        "index": 3979,
+        "from": "Hide '{0}'"
+      },
+      {
+        "index": 3980,
+        "from": "Keep '{0}'"
+      },
+      {
+        "index": 3981,
+        "from": "Move Primary Side Bar Right"
+      },
+      {
+        "index": 3982,
+        "from": "Move Primary Side Bar Left"
+      },
+      {
+        "index": 3983,
+        "from": "Move Primary Side Bar Right"
+      },
+      {
+        "index": 3984,
+        "from": "Move Primary Side Bar Left"
       },
       {
         "index": 3996,
@@ -4081,8 +5041,40 @@
         "from": "Preferences"
       },
       {
+        "index": 4018,
+        "from": "Agents Window Button"
+      },
+      {
+        "index": 4019,
+        "from": "Toggle visibility of the Agents Window button in the title bar"
+      },
+      {
+        "index": 4021,
+        "from": "Restore Native Title Bar"
+      },
+      {
+        "index": 4027,
+        "from": "Left title actions"
+      },
+      {
+        "index": 4028,
+        "from": "Navigation actions"
+      },
+      {
+        "index": 4029,
+        "from": "Move Side Bar Right"
+      },
+      {
+        "index": 4030,
+        "from": "Move Side Bar Left"
+      },
+      {
         "index": 4031,
         "from": "New Agent"
+      },
+      {
+        "index": 4032,
+        "from": "Chat History"
       },
       {
         "index": 4033,
@@ -4091,6 +5083,14 @@
       {
         "index": 4034,
         "from": "Restart to Update"
+      },
+      {
+        "index": 4035,
+        "from": "More Actions"
+      },
+      {
+        "index": 4036,
+        "from": "Toggle Primary Side Bar"
       },
       {
         "index": 4037,
@@ -4113,32 +5113,340 @@
         "from": "Go Forward"
       },
       {
+        "index": 4074,
+        "from": "Agent is still working"
+      },
+      {
+        "index": 4075,
+        "from": "Stopping now will cancel the current task."
+      },
+      {
+        "index": 4076,
+        "from": "{0} agents are still working"
+      },
+      {
+        "index": 4077,
+        "from": "Stopping now will cancel their current tasks."
+      },
+      {
+        "index": 4078,
+        "from": "Cursor will pick this agent back up when you reopen."
+      },
+      {
+        "index": 4079,
+        "from": "Cursor will pick these agents back up when you reopen."
+      },
+      {
+        "index": 4080,
+        "from": "Resume agent automatically"
+      },
+      {
+        "index": 4081,
+        "from": "Resume agents automatically"
+      },
+      {
         "index": 4082,
         "from": "Close"
+      },
+      {
+        "index": 4083,
+        "from": "Quit"
       },
       {
         "index": 4084,
         "from": "Reload"
       },
       {
+        "index": 4085,
+        "from": "Change"
+      },
+      {
+        "index": 4086,
+        "from": "Close Anyway"
+      },
+      {
+        "index": 4087,
+        "from": "Quit Anyway"
+      },
+      {
+        "index": 4088,
+        "from": "Reload Anyway"
+      },
+      {
+        "index": 4089,
+        "from": "Change Anyway"
+      },
+      {
+        "index": 4090,
+        "from": "Archive running agent?"
+      },
+      {
+        "index": 4091,
+        "from": "This agent is still working. Archiving will stop it and cancel the current task."
+      },
+      {
         "index": 4092,
         "from": "Archive"
+      },
+      {
+        "index": 4093,
+        "from": "Background terminal is still running"
+      },
+      {
+        "index": 4094,
+        "from": "Stopping now will kill the background terminal."
+      },
+      {
+        "index": 4095,
+        "from": "{0} background terminals are still running"
+      },
+      {
+        "index": 4096,
+        "from": "Stopping now will kill the background terminals."
+      },
+      {
+        "index": 4209,
+        "from": "Controls the width in pixels of Quick Open and other quick pickers."
+      },
+      {
+        "index": 4227,
+        "from": "Controls the orientation of the activity bar in the workbench. Quit and reopen for changes to take effect."
+      },
+      {
+        "index": 4248,
+        "from": "Controls whether the Agents Window button in the title bar is shown."
+      },
+      {
+        "index": 4308,
+        "from": "Zen Mode"
+      },
+      {
+        "index": 4309,
+        "from": "Controls whether turning on Zen Mode also puts the workbench into full screen mode."
+      },
+      {
+        "index": 4310,
+        "from": "Controls whether turning on Zen Mode also centers the layout."
+      },
+      {
+        "index": 4311,
+        "from": "Controls whether turning on Zen Mode should show multiple editor tabs, a single editor tab, or hide the editor title area completely."
+      },
+      {
+        "index": 4312,
+        "from": "Each editor is displayed as a tab in the editor title area."
+      },
+      {
+        "index": 4313,
+        "from": "The active editor is displayed as a single large tab in the editor title area."
+      },
+      {
+        "index": 4314,
+        "from": "The editor title area is not displayed."
+      },
+      {
+        "index": 4315,
+        "from": "Controls whether turning on Zen Mode also hides the status bar at the bottom of the workbench."
+      },
+      {
+        "index": 4316,
+        "from": "Controls whether turning on Zen Mode also hides the activity bar either at the left or right of the workbench."
+      },
+      {
+        "index": 4317,
+        "from": "Controls whether turning on Zen Mode also hides the editor line numbers."
+      },
+      {
+        "index": 4318,
+        "from": "Controls whether a window should restore to Zen Mode if it was exited in Zen Mode."
+      },
+      {
+        "index": 4319,
+        "from": "Controls whether notifications do not disturb mode should be enabled while in Zen Mode. If true, only error notifications will pop out."
+      },
+      {
+        "index": 4338,
+        "from": "Whether the workbench is in Glass mode"
+      },
+      {
+        "index": 4349,
+        "from": "Whether the active editor is the Review Changes editor"
+      },
+      {
+        "index": 4366,
+        "from": "Editor Part is in an auxiliary window"
+      },
+      {
+        "index": 4394,
+        "from": "Whether the document body has keyboard focus"
+      },
+      {
+        "index": 4774,
+        "from": "All Agents"
+      },
+      {
+        "index": 4775,
+        "from": "Quick Open Previous Recently Used Agent"
+      },
+      {
+        "index": 4776,
+        "from": "Quick Open Least Recently Used Agent"
+      },
+      {
+        "index": 4777,
+        "from": "Chats"
+      },
+      {
+        "index": 4778,
+        "from": "Cloud agents"
+      },
+      {
+        "index": 4779,
+        "from": "No chats available"
+      },
+      {
+        "index": 4780,
+        "from": "Try a different search query"
+      },
+      {
+        "index": 4781,
+        "from": "Start a new agent to see it here"
+      },
+      {
+        "index": 4782,
+        "from": "No chats available"
+      },
+      {
+        "index": 4783,
+        "from": "Chat {0}"
+      },
+      {
+        "index": 4784,
+        "from": "Cloud agent {0}"
+      },
+      {
+        "index": 4785,
+        "from": "Untitled chat"
+      },
+      {
+        "index": 4786,
+        "from": "Search chats and cloud agents"
+      },
+      {
+        "index": 4787,
+        "from": "Search chat history"
+      },
+      {
+        "index": 4788,
+        "from": "No recent agents"
+      },
+      {
+        "index": 4789,
+        "from": "Agent {0}"
+      },
+      {
+        "index": 4790,
+        "from": "Agent {0}"
+      },
+      {
+        "index": 4791,
+        "from": "Cloud agent {0}"
+      },
+      {
+        "index": 4792,
+        "from": "Draft"
+      },
+      {
+        "index": 4793,
+        "from": "Switch between recently used agents"
+      },
+      {
+        "index": 4794,
+        "from": "Switch between recently used agents"
+      },
+      {
+        "index": 4795,
+        "from": "Private Inference"
+      },
+      {
+        "index": 4796,
+        "from": "Restart Cursor to install the pending update."
+      },
+      {
+        "index": 4797,
+        "from": "Restart Cursor to install the pending update to {0}."
+      },
+      {
+        "index": 4798,
+        "from": "Installing update — Cursor will close and reopen automatically."
+      },
+      {
+        "index": 4799,
+        "from": "Update"
+      },
+      {
+        "index": 4800,
+        "from": "Installing"
+      },
+      {
+        "index": 4801,
+        "from": "Whether the Agents sidebar currently contains keyboard focus."
+      },
+      {
+        "index": 4802,
+        "from": "Whether currently in agent navigation mode (hold-and-release to switch)."
       },
       {
         "index": 4803,
         "from": "General"
       },
       {
+        "index": 4804,
+        "from": "Agent Remote Workspace Authorities"
+      },
+      {
+        "index": 4807,
+        "from": "Disable HTTP/2.0"
+      },
+      {
+        "index": 4808,
+        "from": "Disable HTTP/2 for all requests, and use HTTP/1.1 instead. This increases resource utilization and latency, but is useful behind a corporate proxy that blocks HTTP/2."
+      },
+      {
+        "index": 4809,
+        "from": "Debug Timeout Prevention"
+      },
+      {
         "index": 4810,
         "from": "Index Repositories for Instant Grep"
+      },
+      {
+        "index": 4812,
+        "from": "Match Agent chat"
+      },
+      {
+        "index": 4813,
+        "from": "Small"
       },
       {
         "index": 4814,
         "from": "Default"
       },
       {
+        "index": 4815,
+        "from": "Large"
+      },
+      {
+        "index": 4816,
+        "from": "Extra Large"
+      },
+      {
         "index": 4817,
         "from": "Compact"
+      },
+      {
+        "index": 4818,
+        "from": "Balanced"
       },
       {
         "index": 4819,
@@ -4149,8 +5457,40 @@
         "from": "Compact"
       },
       {
+        "index": 4821,
+        "from": "Balanced"
+      },
+      {
         "index": 4822,
         "from": "Detailed"
+      },
+      {
+        "index": 4823,
+        "from": "Whether this window can open the SpaceX airlock"
+      },
+      {
+        "index": 4825,
+        "from": "Connecting to the airlock"
+      },
+      {
+        "index": 4826,
+        "from": "Open Log"
+      },
+      {
+        "index": 4827,
+        "from": "Reload Window"
+      },
+      {
+        "index": 4828,
+        "from": "Connect to Airlock"
+      },
+      {
+        "index": 4829,
+        "from": "[Debug] Score Commit for AI Content"
+      },
+      {
+        "index": 4830,
+        "from": "[Debug] Score Commit with Details"
       },
       {
         "index": 4831,
@@ -4161,24 +5501,256 @@
         "from": "AI Code Tracking"
       },
       {
+        "index": 4833,
+        "from": "Toggle Agents Side Bar"
+      },
+      {
+        "index": 4834,
+        "from": "Toggle Agents Side Bar visibility"
+      },
+      {
         "index": 4835,
         "from": "Toggle Agents"
+      },
+      {
+        "index": 4836,
+        "from": "Toggle Agents visibility"
+      },
+      {
+        "index": 4837,
+        "from": "Toggle Agents Side Bar"
       },
       {
         "index": 4838,
         "from": "Toggle Agents"
       },
       {
+        "index": 4839,
+        "from": "Apply Layout Storage Data"
+      },
+      {
+        "index": 4840,
+        "from": "Paste JSON produced by \"Dump Layout Storage Data\""
+      },
+      {
+        "index": 4841,
+        "from": "Invalid JSON: {0}"
+      },
+      {
+        "index": 4843,
+        "from": "Failed to apply layout storage data: {0}"
+      },
+      {
+        "index": 4844,
+        "from": "Dump Layout Storage Data"
+      },
+      {
+        "index": 4845,
+        "from": "Apply Layout Storage Data"
+      },
+      {
+        "index": 4846,
+        "from": "New Agents Window"
+      },
+      {
+        "index": 4847,
+        "from": "Switch to {0}"
+      },
+      {
+        "index": 4848,
+        "from": "Couldn't open the Agents window to switch the model. Open the Agents window and try again."
+      },
+      {
+        "index": 4849,
+        "from": "Couldn't switch the model in the Agents window. Try again."
+      },
+      {
+        "index": 4850,
+        "from": "New Agents Window"
+      },
+      {
+        "index": 4851,
+        "from": "Developer: New Additional Agents Window"
+      },
+      {
+        "index": 4852,
+        "from": "Switch to {0}"
+      },
+      {
+        "index": 4853,
+        "from": "Open or Focus {0}"
+      },
+      {
+        "index": 4854,
+        "from": "Open or Focus IDE"
+      },
+      {
+        "index": 4855,
+        "from": "Open Glass and Switch Model"
+      },
+      {
+        "index": 4856,
+        "from": "Open Glass and Change to Multitask"
+      },
+      {
+        "index": 4857,
+        "from": "Open Agents Window and Start Cloud Agent"
+      },
+      {
+        "index": 4887,
+        "from": "No accounts requested yet..."
+      },
+      {
+        "index": 4888,
+        "from": "Loading..."
+      },
+      {
+        "index": 4889,
+        "from": "Open Automations"
+      },
+      {
+        "index": 4890,
+        "from": "Save Automation"
+      },
+      {
         "index": 4899,
         "from": "&&Close Window"
+      },
+      {
+        "index": 4901,
+        "from": "Change &&Workspace"
+      },
+      {
+        "index": 4903,
+        "from": "&&Reload Window"
+      },
+      {
+        "index": 4904,
+        "from": "Are you sure you want to quit?"
+      },
+      {
+        "index": 4905,
+        "from": "&&Quit"
+      },
+      {
+        "index": 4969,
+        "from": "Show Less"
+      },
+      {
+        "index": 4970,
+        "from": "Show More"
+      },
+      {
+        "index": 4971,
+        "from": "Search canvases"
+      },
+      {
+        "index": 4972,
+        "from": "Canvases..."
+      },
+      {
+        "index": 4973,
+        "from": "New Canvas"
+      },
+      {
+        "index": 4974,
+        "from": "Results"
       },
       {
         "index": 4975,
         "from": "Recents"
       },
       {
+        "index": 4976,
+        "from": "Open Canvas"
+      },
+      {
+        "index": 4977,
+        "from": "Open visible inline canvas preview"
+      },
+      {
+        "index": 4978,
+        "from": "Sharing canvas…"
+      },
+      {
+        "index": 4979,
+        "from": "Canvas link copied to clipboard."
+      },
+      {
+        "index": 4980,
+        "from": "Canvas shared. Copy the link from the share menu if needed."
+      },
+      {
+        "index": 4981,
+        "from": "Canvas synced."
+      },
+      {
+        "index": 4982,
+        "from": "Canvas is no longer available"
+      },
+      {
+        "index": 4983,
+        "from": "Could not open Canvas"
+      },
+      {
+        "index": 5014,
+        "from": "[[Press {0} to generate code.]] Start typing to dismiss."
+      },
+      {
+        "index": 5015,
+        "from": "Execute {0} to select a language, execute {1} to fill with template, or execute {2} to open a different editor and get started. Start typing to dismiss."
+      },
+      {
         "index": 5050,
         "from": "Skip"
+      },
+      {
+        "index": 5064,
+        "from": "&&Render Whitespace"
+      },
+      {
+        "index": 5136,
+        "from": "Paste Selection Clipboard"
+      },
+      {
+        "index": 5137,
+        "from": "Start TextMate Syntax Grammar Logging"
+      },
+      {
+        "index": 5182,
+        "from": "Comments"
+      },
+      {
+        "index": 5183,
+        "from": "View icon of the comments view."
+      },
+      {
+        "index": 5184,
+        "from": "Collapse All"
+      },
+      {
+        "index": 5185,
+        "from": "Expand All"
+      },
+      {
+        "index": 5186,
+        "from": "{0} Unresolved Comments"
+      },
+      {
+        "index": 5279,
+        "from": "Collapse"
+      },
+      {
+        "index": 5299,
+        "from": "Close Browser Tab"
+      },
+      {
+        "index": 5300,
+        "from": "This browser was created by an Agent. Closing it may impact a running chat."
+      },
+      {
+        "index": 5301,
+        "from": "&&Hide"
       },
       {
         "index": 5302,
@@ -4189,12 +5761,168 @@
         "from": "Open Browser"
       },
       {
+        "index": 5304,
+        "from": "New Browser Tab"
+      },
+      {
+        "index": 5305,
+        "from": "Reload Browser Tab"
+      },
+      {
+        "index": 5306,
+        "from": "Focus Browser Location Bar"
+      },
+      {
+        "index": 5307,
+        "from": "Open cursor.com in Browser"
+      },
+      {
+        "index": 5309,
+        "from": "Custom chime sound path cannot be a URL. Please use a local file path."
+      },
+      {
+        "index": 5311,
+        "from": "Cursor Chimes"
+      },
+      {
+        "index": 5312,
+        "from": "Edit message"
+      },
+      {
+        "index": 5313,
+        "from": "Cursor AI"
+      },
+      {
+        "index": 5314,
+        "from": "Cursor AI"
+      },
+      {
+        "index": 5315,
+        "from": "Cursor Composer"
+      },
+      {
+        "index": 5316,
+        "from": "Failed to Load Conversation"
+      },
+      {
+        "index": 5317,
+        "from": "The conversation checkpoint data may be corrupted. You can start a new conversation or try reloading the window."
+      },
+      {
+        "index": 5318,
+        "from": "Inline diffs have been suppressed for recent changes because there are too many to display."
+      },
+      {
+        "index": 5319,
+        "from": "Disable Protection"
+      },
+      {
+        "index": 5320,
+        "from": "Can't attach this video. Save it to a file and attach it again."
+      },
+      {
+        "index": 5321,
+        "from": "Can't attach this document. Save it to a file and attach it again."
+      },
+      {
+        "index": 5322,
+        "from": "This file can't be attached to a cloud agent."
+      },
+      {
+        "index": 5323,
+        "from": "Preview of {0}"
+      },
+      {
+        "index": 5324,
+        "from": "Voice call"
+      },
+      {
+        "index": 5325,
+        "from": "Subagent not found"
+      },
+      {
+        "index": 5326,
+        "from": "Setting up project"
+      },
+      {
+        "index": 5327,
+        "from": "Chat transcript"
+      },
+      {
+        "index": 5328,
+        "from": "Unable to open {0}"
+      },
+      {
+        "index": 5329,
+        "from": "Cursor ignores {0}, so it cannot be added to chat."
+      },
+      {
         "index": 5330,
         "from": "Open Settings"
       },
       {
+        "index": 5331,
+        "from": "Your message steered Agent without stopping it"
+      },
+      {
+        "index": 5332,
+        "from": "New Messages is set to Steer"
+      },
+      {
+        "index": 5333,
+        "from": "Developer: Crash Browser Webview Renderer"
+      },
+      {
+        "index": 5334,
+        "from": "Developer: Orphan Browser View Entry"
+      },
+      {
+        "index": 5335,
+        "from": "This page is waiting for a passkey or security key. If using a hardware security key, insert and tap it to continue."
+      },
+      {
+        "index": 5336,
+        "from": "This sign-in needs a passkey from your phone or tablet via QR code, which the Cursor browser can't display. Open this page in your regular browser to continue."
+      },
+      {
+        "index": 5337,
+        "from": "Open Link in Browser"
+      },
+      {
+        "index": 5338,
+        "from": "Open Link in New Tab"
+      },
+      {
+        "index": 5339,
+        "from": "Open Link in Background Tab"
+      },
+      {
+        "index": 5340,
+        "from": "Copy Link Address"
+      },
+      {
+        "index": 5341,
+        "from": "Open Media in Browser"
+      },
+      {
+        "index": 5342,
+        "from": "Open Media in New Tab"
+      },
+      {
+        "index": 5343,
+        "from": "Copy Media Address"
+      },
+      {
+        "index": 5344,
+        "from": "Copy Image"
+      },
+      {
         "index": 5345,
         "from": "Back"
+      },
+      {
+        "index": 5346,
+        "from": "Forward"
       },
       {
         "index": 5347,
@@ -4225,12 +5953,52 @@
         "from": "Select All"
       },
       {
+        "index": 5354,
+        "from": "Inspect Element"
+      },
+      {
+        "index": 5355,
+        "from": "Capture Performance Profile"
+      },
+      {
+        "index": 5356,
+        "from": "This operation will create a CPU and allocations profile of the current window. The profile will be uploaded securely for analysis. Continue?"
+      },
+      {
         "index": 5357,
         "from": "Continue"
       },
       {
         "index": 5358,
         "from": "Cancel"
+      },
+      {
+        "index": 5359,
+        "from": "Capturing performance profile..."
+      },
+      {
+        "index": 5360,
+        "from": "Performance profile started.\n\nProfile ID: {0}"
+      },
+      {
+        "index": 5361,
+        "from": "Failed to start performance profile."
+      },
+      {
+        "index": 5362,
+        "from": "Error starting performance profile: {0}"
+      },
+      {
+        "index": 5364,
+        "from": "Capture Performance Profile"
+      },
+      {
+        "index": 5365,
+        "from": "Show Performance Profiling Status"
+      },
+      {
+        "index": 5367,
+        "from": "Capture and Upload Process Snapshot"
       },
       {
         "index": 5368,
@@ -4241,8 +6009,168 @@
         "from": "Give &&Feedback..."
       },
       {
+        "index": 5370,
+        "from": "Reveal in File Explorer"
+      },
+      {
+        "index": 5371,
+        "from": "Reveal in Finder"
+      },
+      {
         "index": 5372,
         "from": "Open Containing Folder"
+      },
+      {
+        "index": 5373,
+        "from": "Add to Chat"
+      },
+      {
+        "index": 5374,
+        "from": "Copy Path"
+      },
+      {
+        "index": 5375,
+        "from": "Open File Blame"
+      },
+      {
+        "index": 5376,
+        "from": "Cursor Blame"
+      },
+      {
+        "index": 5377,
+        "from": "View Commit"
+      },
+      {
+        "index": 5378,
+        "from": "Cursor Blame"
+      },
+      {
+        "index": 5379,
+        "from": "Paste commit hash"
+      },
+      {
+        "index": 5380,
+        "from": "View commit"
+      },
+      {
+        "index": 5381,
+        "from": "Cursor Blame"
+      },
+      {
+        "index": 5382,
+        "from": "No git repository found"
+      },
+      {
+        "index": 5383,
+        "from": "This line has not been committed yet"
+      },
+      {
+        "index": 5384,
+        "from": "Cursor Blame"
+      },
+      {
+        "index": 5385,
+        "from": "Cursor Blame"
+      },
+      {
+        "index": 5386,
+        "from": "Toggle file blame"
+      },
+      {
+        "index": 5387,
+        "from": "View commit"
+      },
+      {
+        "index": 5388,
+        "from": "Cursor Blame"
+      },
+      {
+        "index": 5407,
+        "from": "Local Trace Mode"
+      },
+      {
+        "index": 5408,
+        "from": "Local Trace Mode"
+      },
+      {
+        "index": 5410,
+        "from": "Toggle Editor Mode"
+      },
+      {
+        "index": 5411,
+        "from": "Markdown Plan Editor"
+      },
+      {
+        "index": 5412,
+        "from": "Build Plan"
+      },
+      {
+        "index": 5413,
+        "from": "Markdown Plan Editor"
+      },
+      {
+        "index": 5414,
+        "from": "Find"
+      },
+      {
+        "index": 5415,
+        "from": "Markdown Plan Editor"
+      },
+      {
+        "index": 5416,
+        "from": "Find Next"
+      },
+      {
+        "index": 5417,
+        "from": "Markdown Plan Editor"
+      },
+      {
+        "index": 5418,
+        "from": "Find Previous"
+      },
+      {
+        "index": 5419,
+        "from": "Markdown Plan Editor"
+      },
+      {
+        "index": 5420,
+        "from": "Close Find Widget"
+      },
+      {
+        "index": 5421,
+        "from": "Markdown Plan Editor"
+      },
+      {
+        "index": 5422,
+        "from": "The content of the file is newer. Do you want to overwrite the file with your changes, or revert your changes?"
+      },
+      {
+        "index": 5423,
+        "from": "Overwrite"
+      },
+      {
+        "index": 5424,
+        "from": "Revert"
+      },
+      {
+        "index": 5425,
+        "from": "Cursor Origin"
+      },
+      {
+        "index": 5426,
+        "from": "No file is currently open."
+      },
+      {
+        "index": 5427,
+        "from": "Could not build a cursor.com link. Open a file in a git repository with an eligible remote."
+      },
+      {
+        "index": 5428,
+        "from": "Copy cursor.com link (with selection)"
+      },
+      {
+        "index": 5429,
+        "from": "Copy cursor.com link (file only)"
       },
       {
         "index": 5430,
@@ -4265,12 +6193,464 @@
         "from": "Open Customize"
       },
       {
+        "index": 5453,
+        "from": "Cleared primitive authorship cache."
+      },
+      {
+        "index": 5454,
+        "from": "Cleared primitive source cache."
+      },
+      {
         "index": 5455,
         "from": "Focus Customize Search"
       },
       {
+        "index": 5456,
+        "from": "Open Skill Publishing Logs"
+      },
+      {
+        "index": 5457,
+        "from": "Clear Primitive Authorship Cache"
+      },
+      {
+        "index": 5458,
+        "from": "Clear Primitive Source Cache"
+      },
+      {
+        "index": 5459,
+        "from": "Force Skill Migration Banner"
+      },
+      {
+        "index": 5460,
+        "from": "Clear Forced Skill Migration Banner"
+      },
+      {
+        "index": 5462,
+        "from": "Skill migration banner forced on. Reload the window to see it."
+      },
+      {
+        "index": 5463,
+        "from": "Skill migration banner override cleared."
+      },
+      {
+        "index": 5464,
+        "from": "Skill Publishing"
+      },
+      {
+        "index": 5706,
+        "from": "Record Step By Step"
+      },
+      {
+        "index": 5707,
+        "from": "Stop Recording"
+      },
+      {
+        "index": 5807,
+        "from": "Icon for the debug function action."
+      },
+      {
+        "index": 5808,
+        "from": "Icon for the debug stop recording action."
+      },
+      {
+        "index": 5985,
+        "from": "The Debug: Clear Console command{0} will clear the console output."
+      },
+      {
+        "index": 6033,
+        "from": "To customize Run and Debug [create a launch.json file](command:{0})."
+      },
+      {
+        "index": 6034,
+        "from": "To customize Run and Debug, [open a folder](command:{0}) and create a launch.json file."
+      },
+      {
+        "index": 6038,
+        "from": "Open '{0}'"
+      },
+      {
+        "index": 6042,
+        "from": "Recording state that the focused debug session is in."
+      },
+      {
         "index": 6104,
         "from": "Debug"
+      },
+      {
+        "index": 6105,
+        "from": "Show variable type in variable pane during debug session"
+      },
+      {
+        "index": 6106,
+        "from": "Allow setting breakpoints in any file."
+      },
+      {
+        "index": 6108,
+        "from": "Add Logpoint."
+      },
+      {
+        "index": 6109,
+        "from": "Add Conditional Breakpoint."
+      },
+      {
+        "index": 6110,
+        "from": "Add Triggered Breakpoint."
+      },
+      {
+        "index": 6111,
+        "from": "Don't perform any action."
+      },
+      {
+        "index": 6112,
+        "from": "Automatically open the explorer view at the end of a debug session."
+      },
+      {
+        "index": 6114,
+        "from": "Show variable values inline in editor while debugging."
+      },
+      {
+        "index": 6115,
+        "from": "Always show variable values inline in editor while debugging."
+      },
+      {
+        "index": 6116,
+        "from": "Never show variable values inline in editor while debugging."
+      },
+      {
+        "index": 6119,
+        "from": "Show debug toolbar in all views."
+      },
+      {
+        "index": 6120,
+        "from": "Show debug toolbar only in debug views."
+      },
+      {
+        "index": 6121,
+        "from": "`(Experimental)` Show debug toolbar in the command center."
+      },
+      {
+        "index": 6122,
+        "from": "Do not show debug toolbar."
+      },
+      {
+        "index": 6123,
+        "from": "Never show debug in Status bar"
+      },
+      {
+        "index": 6124,
+        "from": "Always show debug in Status bar"
+      },
+      {
+        "index": 6125,
+        "from": "Show debug in Status bar only after debug was started for the first time"
+      },
+      {
+        "index": 6126,
+        "from": "Controls when the debug Status bar should be visible."
+      },
+      {
+        "index": 6129,
+        "from": "Controls when the debug view should open."
+      },
+      {
+        "index": 6131,
+        "from": "Controls the font size in pixels in the Debug Console."
+      },
+      {
+        "index": 6132,
+        "from": "Controls the font family in the Debug Console."
+      },
+      {
+        "index": 6134,
+        "from": "Controls if the lines should wrap in the Debug Console."
+      },
+      {
+        "index": 6135,
+        "from": "Controls if the Debug Console should suggest previously typed input."
+      },
+      {
+        "index": 6140,
+        "from": "Controls whether the editor should be focused when the debugger breaks."
+      },
+      {
+        "index": 6141,
+        "from": "Ignore task errors and start debugging."
+      },
+      {
+        "index": 6142,
+        "from": "Show the Problems view and do not start debugging."
+      },
+      {
+        "index": 6143,
+        "from": "Prompt user."
+      },
+      {
+        "index": 6144,
+        "from": "Cancel debugging."
+      },
+      {
+        "index": 6145,
+        "from": "Controls what to do when errors are encountered after running a preLaunchTask."
+      },
+      {
+        "index": 6146,
+        "from": "Controls whether breakpoints should be shown in the overview ruler."
+      },
+      {
+        "index": 6148,
+        "from": "Controls what editors to save before starting a debug session."
+      },
+      {
+        "index": 6149,
+        "from": "Save all editors in the active group before starting a debug session."
+      },
+      {
+        "index": 6151,
+        "from": "Don't save any editors before starting a debug session."
+      },
+      {
+        "index": 6153,
+        "from": "Never confirm."
+      },
+      {
+        "index": 6154,
+        "from": "Always confirm if there are debug sessions."
+      },
+      {
+        "index": 6155,
+        "from": "Show Source Code in Disassembly View."
+      },
+      {
+        "index": 6156,
+        "from": "When in screen reader optimized mode, automatically expand lazy variables."
+      },
+      {
+        "index": 6157,
+        "from": "Always automatically expand lazy variables."
+      },
+      {
+        "index": 6158,
+        "from": "Never automatically expand lazy variables."
+      },
+      {
+        "index": 6160,
+        "from": "Color of the Status bar when debugger is active."
+      },
+      {
+        "index": 6162,
+        "from": "Hide the warning shown when a `preLaunchTask` has been running for a while."
+      },
+      {
+        "index": 6261,
+        "from": "at least {0} uncaught errors"
+      },
+      {
+        "index": 6324,
+        "from": "Uncaught Errors (at least {0}, showing most recent {1})"
+      },
+      {
+        "index": 6326,
+        "from": "Messages (at least {0}, showing most recent {1})"
+      },
+      {
+        "index": 6327,
+        "from": "Messages ({0})"
+      },
+      {
+        "index": 6568,
+        "from": "The '{0}' extension is not available in {1} for {2}."
+      },
+      {
+        "index": 6571,
+        "from": "The '{0}' extension is not available in {1}."
+      },
+      {
+        "index": 6572,
+        "from": "Learn Why"
+      },
+      {
+        "index": 6627,
+        "from": "Extensions"
+      },
+      {
+        "index": 6628,
+        "from": "All Extensions"
+      },
+      {
+        "index": 6629,
+        "from": "Only Enabled Extensions"
+      },
+      {
+        "index": 6630,
+        "from": "None"
+      },
+      {
+        "index": 6631,
+        "from": "Download and install updates automatically for all extensions."
+      },
+      {
+        "index": 6632,
+        "from": "Download and install updates automatically only for enabled extensions."
+      },
+      {
+        "index": 6633,
+        "from": "Extensions are not automatically updated."
+      },
+      {
+        "index": 6638,
+        "from": "When enabled, the notifications for extension recommendations will not be shown."
+      },
+      {
+        "index": 6642,
+        "from": "The Web Worker Extension Host will always be launched."
+      },
+      {
+        "index": 6643,
+        "from": "The Web Worker Extension Host will never be launched."
+      },
+      {
+        "index": 6644,
+        "from": "The Web Worker Extension Host will be launched when a web extension needs it."
+      },
+      {
+        "index": 6645,
+        "from": "Enable web worker extension host."
+      },
+      {
+        "index": 6646,
+        "from": "Override the virtual workspaces support of an extension."
+      },
+      {
+        "index": 6647,
+        "from": "Configure an extension to execute in a different extension host process."
+      },
+      {
+        "index": 6649,
+        "from": "Extension will always be enabled."
+      },
+      {
+        "index": 6650,
+        "from": "Extension will only be enabled only when the workspace is trusted."
+      },
+      {
+        "index": 6652,
+        "from": "Defines the untrusted workspace support setting for the extension."
+      },
+      {
+        "index": 6655,
+        "from": "Configure the Marketplace service URL to connect to"
+      },
+      {
+        "index": 6657,
+        "from": "When enabled, extensions to update are fetched from Unpkg service."
+      },
+      {
+        "index": 6659,
+        "from": "No extensions are allowed."
+      },
+      {
+        "index": 6660,
+        "from": "All extensions are allowed."
+      },
+      {
+        "index": 6662,
+        "from": "Allow or disallow the extension."
+      },
+      {
+        "index": 6663,
+        "from": "Extension is allowed."
+      },
+      {
+        "index": 6664,
+        "from": "Extension is not allowed."
+      },
+      {
+        "index": 6665,
+        "from": "Allow only stable versions of the extension."
+      },
+      {
+        "index": 6667,
+        "from": "Allow or disallow all extensions from the publisher."
+      },
+      {
+        "index": 6668,
+        "from": "All extensions from the publisher are allowed."
+      },
+      {
+        "index": 6669,
+        "from": "All extensions from the publisher are not allowed."
+      },
+      {
+        "index": 6670,
+        "from": "Allow only stable versions of the extensions from the publisher."
+      },
+      {
+        "index": 6671,
+        "from": "Allow or disallow all extensions."
+      },
+      {
+        "index": 6672,
+        "from": "Allow all extensions."
+      },
+      {
+        "index": 6673,
+        "from": "Disallow all extensions."
+      },
+      {
+        "index": 6674,
+        "from": "Extension '{0}' not found."
+      },
+      {
+        "index": 6675,
+        "from": "Install the given extension"
+      },
+      {
+        "index": 6676,
+        "from": "Extension id or VSIX resource uri"
+      },
+      {
+        "index": 6679,
+        "from": "When enabled, VS Code do not sync this extension when Settings Sync is on."
+      },
+      {
+        "index": 6683,
+        "from": "Extension '{0}' not found."
+      },
+      {
+        "index": 6684,
+        "from": "Uninstall the given extension"
+      },
+      {
+        "index": 6685,
+        "from": "Id of the extension to uninstall"
+      },
+      {
+        "index": 6686,
+        "from": "Extension id required."
+      },
+      {
+        "index": 6688,
+        "from": "Extension '{0}' is a Built-in extension and cannot be installed"
+      },
+      {
+        "index": 6689,
+        "from": "Search for a specific extension"
+      },
+      {
+        "index": 6690,
+        "from": "Query to use in search"
+      },
+      {
+        "index": 6730,
+        "from": "Click to import all local {0} extensions"
+      },
+      {
+        "index": 6731,
+        "from": "Importing... This can take a minute"
+      },
+      {
+        "index": 6732,
+        "from": "Done importing VS Code setup!"
       },
       {
         "index": 6735,
@@ -4281,6 +6661,194 @@
         "from": "Dismiss"
       },
       {
+        "index": 6772,
+        "from": "Extensions"
+      },
+      {
+        "index": 6773,
+        "from": "Extensions using {0} in the last 30 days"
+      },
+      {
+        "index": 6777,
+        "from": "Marketplace returned 'ECONNREFUSED'. Please check the 'http.proxy' setting."
+      },
+      {
+        "index": 6778,
+        "from": "Open User Settings"
+      },
+      {
+        "index": 6780,
+        "from": "Verified Publisher {0}"
+      },
+      {
+        "index": 6781,
+        "from": "Publisher {0}"
+      },
+      {
+        "index": 6782,
+        "from": "Deprecated"
+      },
+      {
+        "index": 6783,
+        "from": "Rated {0} out of 5 stars by {1} users"
+      },
+      {
+        "index": 6803,
+        "from": "at least {0} uncaught errors"
+      },
+      {
+        "index": 6806,
+        "from": "at least {0} messages"
+      },
+      {
+        "index": 6890,
+        "from": "Restart Extensions"
+      },
+      {
+        "index": 6891,
+        "from": "Reload Now"
+      },
+      {
+        "index": 6892,
+        "from": "Show Running Extensions"
+      },
+      {
+        "index": 6910,
+        "from": "Pick extension host"
+      },
+      {
+        "index": 6911,
+        "from": "Start Debugging Extension Host In New Window"
+      },
+      {
+        "index": 6912,
+        "from": "Debug Extensions"
+      },
+      {
+        "index": 6913,
+        "from": "In order to debug extensions a restart is required. Do you want to restart '{0}' now?"
+      },
+      {
+        "index": 6914,
+        "from": "&&Restart"
+      },
+      {
+        "index": 6915,
+        "from": "Start Debugging Cursor Always Local Extension Host In New Window"
+      },
+      {
+        "index": 6916,
+        "from": "Debug Cursor Always Local Extension Host"
+      },
+      {
+        "index": 6918,
+        "from": "&&Restart"
+      },
+      {
+        "index": 6919,
+        "from": "Attaching Debugger To Extension Host"
+      },
+      {
+        "index": 6920,
+        "from": "Attach Extension Host"
+      },
+      {
+        "index": 6921,
+        "from": "Open Developer Tools for Extension Host"
+      },
+      {
+        "index": 6922,
+        "from": "Open Developer Tools for Cursor Always Local Extension Host"
+      },
+      {
+        "index": 6923,
+        "from": "Open &&Extension Monitor"
+      },
+      {
+        "index": 6924,
+        "from": "Enable extension monitoring. Requires a restart to take effect."
+      },
+      {
+        "index": 6926,
+        "from": "Open Extension Monitor"
+      },
+      {
+        "index": 6927,
+        "from": "Extension Host"
+      },
+      {
+        "index": 6928,
+        "from": "Profiler"
+      },
+      {
+        "index": 6929,
+        "from": "Profiling {0}"
+      },
+      {
+        "index": 6930,
+        "from": "Profiling {0}"
+      },
+      {
+        "index": 6931,
+        "from": "Click to stop profiling."
+      },
+      {
+        "index": 6932,
+        "from": "Profiling {0} ({1} sec)"
+      },
+      {
+        "index": 6933,
+        "from": "Profile Extension Hosts"
+      },
+      {
+        "index": 6934,
+        "from": "In order to profile extension hosts a restart is required. Do you want to restart '{0}' now?"
+      },
+      {
+        "index": 6935,
+        "from": "&&Restart"
+      },
+      {
+        "index": 6936,
+        "from": "Pick extension host to profile"
+      },
+      {
+        "index": 6937,
+        "from": "Profile Remote Extensions"
+      },
+      {
+        "index": 6938,
+        "from": "In order to profile the remote extension host a restart is required. Do you want to restart '{0}' now?"
+      },
+      {
+        "index": 6939,
+        "from": "&&Restart"
+      },
+      {
+        "index": 6940,
+        "from": "Remote Extension Host CPU Profiler is running"
+      },
+      {
+        "index": 6941,
+        "from": "Open a remote workspace to profile the remote server."
+      },
+      {
+        "index": 6942,
+        "from": "Remote Server"
+      },
+      {
+        "index": 6943,
+        "from": "Remote server CPU profiling is not available for this connection."
+      },
+      {
+        "index": 6944,
+        "from": "Remote Server CPU Profiler reached the maximum duration and was stopped."
+      },
+      {
+        "index": 6945,
+        "from": "Remote Server CPU Profiler is running"
+      },
+      {
         "index": 6946,
         "from": "Remote"
       },
@@ -4289,8 +6857,160 @@
         "from": "Local"
       },
       {
+        "index": 6949,
+        "from": "Extensions: {0} (+{1} more)"
+      },
+      {
+        "index": 6950,
+        "from": "Extensions: {0}"
+      },
+      {
+        "index": 6951,
+        "from": "Built-in extensions: {0} (+{1} more)"
+      },
+      {
+        "index": 6952,
+        "from": "Built-in extensions: {0}"
+      },
+      {
+        "index": 6953,
+        "from": "No registered extensions detected"
+      },
+      {
+        "index": 6954,
+        "from": "current workspace remote extension host"
+      },
+      {
+        "index": 6955,
+        "from": "current workspace extension host"
+      },
+      {
+        "index": 6956,
+        "from": "Profile Current Workspace Extension Host"
+      },
+      {
+        "index": 6957,
+        "from": "In order to profile the {0} a restart is required. Do you want to restart '{1}' now?"
+      },
+      {
+        "index": 6958,
+        "from": "&&Restart"
+      },
+      {
+        "index": 6959,
+        "from": "Extension Host"
+      },
+      {
+        "index": 6960,
+        "from": "Remote Extension Host Heap Allocation Profiler is running"
+      },
+      {
+        "index": 6961,
+        "from": "Extension Host Heap Allocation Profiler is running"
+      },
+      {
+        "index": 6962,
+        "from": "Remote Extension Host CPU Profiler is running"
+      },
+      {
+        "index": 6963,
+        "from": "Extension Host CPU Profiler is running"
+      },
+      {
+        "index": 6964,
+        "from": "Running Extensions"
+      },
+      {
+        "index": 6965,
+        "from": "Open Extensions Folder"
+      },
+      {
+        "index": 6966,
+        "from": "Cleanup Extensions Folder"
+      },
+      {
+        "index": 6967,
+        "from": "Performance Issue"
+      },
+      {
         "index": 6968,
         "from": "Report Issue"
+      },
+      {
+        "index": 6969,
+        "from": "Did you attach the CPU-Profile?"
+      },
+      {
+        "index": 6971,
+        "from": "Show Issues"
+      },
+      {
+        "index": 6972,
+        "from": "Did you attach the CPU-Profile?"
+      },
+      {
+        "index": 6974,
+        "from": "Start Extension Host CPU Profiler"
+      },
+      {
+        "index": 6975,
+        "from": "Start Extension Host Heap Allocation Profiler"
+      },
+      {
+        "index": 6976,
+        "from": "Start Current Workspace Extension Host CPU Profiler"
+      },
+      {
+        "index": 6977,
+        "from": "Start Current Workspace Extension Host Heap Allocation Profiler"
+      },
+      {
+        "index": 6978,
+        "from": "Start Remote Server CPU Profiler"
+      },
+      {
+        "index": 6979,
+        "from": "Stop Extension Host Profiler"
+      },
+      {
+        "index": 6980,
+        "from": "Open Extension Host Profile"
+      },
+      {
+        "index": 6981,
+        "from": "Save Extension Host Profile"
+      },
+      {
+        "index": 6982,
+        "from": "Save Extension Host Profile"
+      },
+      {
+        "index": 6986,
+        "from": "Show the integrated terminal action."
+      },
+      {
+        "index": 6987,
+        "from": "Show the external terminal action."
+      },
+      {
+        "index": 6988,
+        "from": "Show both integrated and external terminal actions."
+      },
+      {
+        "index": 6989,
+        "from": "External Terminal"
+      },
+      {
+        "index": 6992,
+        "from": "Customizes which terminal to run on Windows."
+      },
+      {
+        "index": 6993,
+        "from": "Customizes which terminal application to run on macOS."
+      },
+      {
+        "index": 6994,
+        "from": "Customizes which terminal to run on Linux."
       },
       {
         "index": 6995,
@@ -4301,8 +7021,20 @@
         "from": "Open in Browser"
       },
       {
+        "index": 7135,
+        "from": "Parent folder is readonly."
+      },
+      {
         "index": 7333,
         "from": "Explorer"
+      },
+      {
+        "index": 7334,
+        "from": "View icon of the explorer view."
+      },
+      {
+        "index": 7335,
+        "from": "View icon of the open editors view."
       },
       {
         "index": 7336,
@@ -4311,6 +7043,34 @@
       {
         "index": 7337,
         "from": "Open Folder"
+      },
+      {
+        "index": 7338,
+        "from": "add a folder"
+      },
+      {
+        "index": 7339,
+        "from": "Open Recent"
+      },
+      {
+        "index": 7340,
+        "from": "You have not yet added a folder to the workspace.\n{0}"
+      },
+      {
+        "index": 7341,
+        "from": "You have not yet opened a folder.\n{0}\n{1}"
+      },
+      {
+        "index": 7342,
+        "from": "Connected to remote.\n{0}"
+      },
+      {
+        "index": 7343,
+        "from": "You have not yet opened a folder.\n{0}\nOpening a folder will close all currently open editors. To keep them open, {1} instead."
+      },
+      {
+        "index": 7344,
+        "from": "You have not yet opened a folder.\n{0}"
       },
       {
         "index": 7345,
@@ -4325,6 +7085,18 @@
         "from": "Explorer"
       },
       {
+        "index": 7406,
+        "from": "Share"
+      },
+      {
+        "index": 7407,
+        "from": "Reveal in File Explorer"
+      },
+      {
+        "index": 7408,
+        "from": "Reveal in Finder"
+      },
+      {
         "index": 7409,
         "from": "Open Containing Folder"
       },
@@ -4337,36 +7109,204 @@
         "from": "Open &&Process Explorer"
       },
       {
+        "index": 7495,
+        "from": "Creating profile..."
+      },
+      {
+        "index": 7496,
+        "from": "This can take up to one minute to complete."
+      },
+      {
+        "index": 7497,
+        "from": "Creating profile..."
+      },
+      {
+        "index": 7498,
+        "from": "This can take up to one minute to complete."
+      },
+      {
+        "index": 7499,
+        "from": "Creating profile..."
+      },
+      {
+        "index": 7500,
+        "from": "This can take up to one minute to complete."
+      },
+      {
+        "index": 7501,
+        "from": "Tracing requires to launch with a '--trace' argument"
+      },
+      {
+        "index": 7502,
+        "from": "&&Relaunch and Enable Tracing"
+      },
+      {
+        "index": 7503,
+        "from": "Creating trace file..."
+      },
+      {
+        "index": 7504,
+        "from": "This can take up to one minute to complete."
+      },
+      {
         "index": 7505,
         "from": "Open Process Explorer"
+      },
+      {
+        "index": 7506,
+        "from": "Open Workspace Process Explorer"
+      },
+      {
+        "index": 7507,
+        "from": "Start Electron Trace"
+      },
+      {
+        "index": 7508,
+        "from": "Start Memory Profiler"
+      },
+      {
+        "index": 7509,
+        "from": "Start GC Profiler"
+      },
+      {
+        "index": 7510,
+        "from": "Stop Tracing"
+      },
+      {
+        "index": 7576,
+        "from": "Reveal in File Explorer"
+      },
+      {
+        "index": 7577,
+        "from": "Reveal in Finder"
       },
       {
         "index": 7578,
         "from": "Open Containing Folder"
       },
       {
+        "index": 7598,
+        "from": "Would you like to change {0}'s display language to {1} and restart?"
+      },
+      {
+        "index": 7599,
+        "from": "Change Language and Restart"
+      },
+      {
+        "index": 7600,
+        "from": "Don't Show Again"
+      },
+      {
+        "index": 7601,
+        "from": "Search language packs in the Marketplace to change the display language to {0}."
+      },
+      {
+        "index": 7602,
+        "from": "Search Marketplace"
+      },
+      {
+        "index": 7603,
+        "from": "Install language pack to change the display language to {0}."
+      },
+      {
+        "index": 7604,
+        "from": "Install and Restart"
+      },
+      {
+        "index": 7617,
+        "from": "Open Logs Folder"
+      },
+      {
+        "index": 7618,
+        "from": "Open Extension Logs Folder"
+      },
+      {
+        "index": 7619,
+        "from": "Edit Markdown"
+      },
+      {
+        "index": 7620,
+        "from": "Edit Source"
+      },
+      {
+        "index": 7621,
+        "from": "Toggle Editor Mode"
+      },
+      {
+        "index": 7622,
+        "from": "Markdown Editor"
+      },
+      {
+        "index": 7623,
+        "from": "Edit Markdown"
+      },
+      {
+        "index": 7624,
+        "from": "Markdown Editor"
+      },
+      {
+        "index": 7634,
+        "from": "View icon of the markers view."
+      },
+      {
         "index": 7635,
         "from": "&&Problems"
+      },
+      {
+        "index": 7636,
+        "from": "View as Tree"
+      },
+      {
+        "index": 7637,
+        "from": "View as Table"
+      },
+      {
+        "index": 7638,
+        "from": "Show Errors"
       },
       {
         "index": 7639,
         "from": "Problems"
       },
       {
+        "index": 7640,
+        "from": "Show Warnings"
+      },
+      {
         "index": 7641,
         "from": "Problems"
+      },
+      {
+        "index": 7642,
+        "from": "Show Infos"
       },
       {
         "index": 7643,
         "from": "Problems"
       },
       {
+        "index": 7644,
+        "from": "Show Active File Only"
+      },
+      {
         "index": 7645,
         "from": "Problems"
       },
       {
+        "index": 7646,
+        "from": "Show Excluded Files"
+      },
+      {
         "index": 7647,
         "from": "Problems"
+      },
+      {
+        "index": 7648,
+        "from": "Focus problems view"
+      },
+      {
+        "index": 7649,
+        "from": "Focus problems filter"
       },
       {
         "index": 7650,
@@ -4377,8 +7317,44 @@
         "from": "Problems"
       },
       {
+        "index": 7652,
+        "from": "Clear filters text"
+      },
+      {
         "index": 7653,
         "from": "Problems"
+      },
+      {
+        "index": 7654,
+        "from": "Collapse All"
+      },
+      {
+        "index": 7655,
+        "from": "Show the problems view as a tree."
+      },
+      {
+        "index": 7656,
+        "from": "Show the problems view as a table."
+      },
+      {
+        "index": 7657,
+        "from": "Show or hide errors in the problems view."
+      },
+      {
+        "index": 7658,
+        "from": "Show or hide warnings in the problems view."
+      },
+      {
+        "index": 7659,
+        "from": "Show or hide infos in the problems view."
+      },
+      {
+        "index": 7660,
+        "from": "Show or hide problems (errors, warnings, info) only from the active file in the problems view."
+      },
+      {
+        "index": 7661,
+        "from": "Show or hide excluded files in the problems view."
       },
       {
         "index": 7662,
@@ -4393,6 +7369,86 @@
         "from": "Copy Message"
       },
       {
+        "index": 7665,
+        "from": "Show message in multiple lines"
+      },
+      {
+        "index": 7666,
+        "from": "Show message in single line"
+      },
+      {
+        "index": 7667,
+        "from": "Add to Chat"
+      },
+      {
+        "index": 7668,
+        "from": "Fix with Agent"
+      },
+      {
+        "index": 7734,
+        "from": "Global in {0}"
+      },
+      {
+        "index": 7752,
+        "from": "{0} This tool is from '{1}' (MCP Server). Note that MCP servers or malicious conversation content may attempt to misuse '{2}' through tools. Please carefully review any requested actions."
+      },
+      {
+        "index": 7753,
+        "from": "Run `{0}`"
+      },
+      {
+        "index": 7755,
+        "from": "Running `{0}`"
+      },
+      {
+        "index": 7756,
+        "from": "Ran `{0}` "
+      },
+      {
+        "index": 7761,
+        "from": "New Cursor Rule"
+      },
+      {
+        "index": 7762,
+        "from": "Enter Command Name"
+      },
+      {
+        "index": 7763,
+        "from": "e.g., my-custom-command"
+      },
+      {
+        "index": 7764,
+        "from": "Please enter a name for the new command"
+      },
+      {
+        "index": 7765,
+        "from": "Command name cannot be empty"
+      },
+      {
+        "index": 7766,
+        "from": "Command name can only contain lowercase letters, numbers, and hyphens"
+      },
+      {
+        "index": 7767,
+        "from": "A command with this name already exists"
+      },
+      {
+        "index": 7768,
+        "from": "New Project Cursor Command"
+      },
+      {
+        "index": 7769,
+        "from": "New User Cursor Command"
+      },
+      {
+        "index": 7770,
+        "from": "Capture and Upload Renderer Heap Snapshot"
+      },
+      {
+        "index": 7913,
+        "from": "Enter JSON"
+      },
+      {
         "index": 7914,
         "from": "Merge Editor (Dev)"
       },
@@ -4405,12 +7461,116 @@
         "from": "Open Selection In Temporary Merge Editor"
       },
       {
+        "index": 8026,
+        "from": "Notebook Variables"
+      },
+      {
+        "index": 8028,
+        "from": "Notebook Variables"
+      },
+      {
+        "index": 8029,
+        "from": "REPL Variables"
+      },
+      {
+        "index": 8063,
+        "from": "Notebook"
+      },
+      {
+        "index": 8121,
+        "from": "Add Code"
+      },
+      {
+        "index": 8125,
+        "from": "Add Code"
+      },
+      {
+        "index": 8127,
+        "from": "Add Markdown"
+      },
+      {
+        "index": 8130,
+        "from": "Add Markdown"
+      },
+      {
+        "index": 8423,
+        "from": "Toggle Notebook Cell Overlays"
+      },
+      {
+        "index": 8445,
+        "from": "Bring your VS Code setup to Cursor. Import your settings and extensions for a seamless start."
+      },
+      {
         "index": 8446,
         "from": "Import"
       },
       {
+        "index": 8481,
+        "from": "View icon of the outline view."
+      },
+      {
         "index": 8482,
         "from": "Outline"
+      },
+      {
+        "index": 8532,
+        "from": "View icon of the output view."
+      },
+      {
+        "index": 8533,
+        "from": "&&Output"
+      },
+      {
+        "index": 8534,
+        "from": "Output"
+      },
+      {
+        "index": 8535,
+        "from": "Output"
+      },
+      {
+        "index": 8547,
+        "from": "When enabled, slow renderers are automatically profiled."
+      },
+      {
+        "index": 8548,
+        "from": "Successfully created profiles."
+      },
+      {
+        "index": 8549,
+        "from": "Please create an issue and manually attach the following files:\n{0}"
+      },
+      {
+        "index": 8550,
+        "from": "&&Create Issue and Restart"
+      },
+      {
+        "index": 8551,
+        "from": "Restart"
+      },
+      {
+        "index": 8552,
+        "from": "Thanks for helping us."
+      },
+      {
+        "index": 8554,
+        "from": "&&Restart"
+      },
+      {
+        "index": 8555,
+        "from": "View Session Interaction Profiles in Datadog"
+      },
+      {
+        "index": 8566,
+        "from": "{0} results"
+      },
+      {
+        "index": 8580,
+        "from": "Change Keybinding {0}"
+      },
+      {
+        "index": 8582,
+        "from": "Add Keybinding {0}"
       },
       {
         "index": 8598,
@@ -4421,32 +7581,320 @@
         "from": "VS Code Settings"
       },
       {
+        "index": 8627,
+        "from": "Keybindings Editor"
+      },
+      {
+        "index": 8628,
+        "from": "Clear Search Results"
+      },
+      {
+        "index": 8629,
+        "from": "Clear Keyboard Shortcuts Search History"
+      },
+      {
+        "index": 8630,
+        "from": "Show System Keybindings"
+      },
+      {
+        "index": 8631,
+        "from": "Show Extension Keybindings"
+      },
+      {
+        "index": 8632,
+        "from": "Show User Keybindings"
+      },
+      {
+        "index": 8686,
+        "from": "Settings Editor 2"
+      },
+      {
+        "index": 8687,
+        "from": "Focus settings file"
+      },
+      {
+        "index": 8688,
+        "from": "Focus settings file"
+      },
+      {
+        "index": 8689,
+        "from": "Focus settings list"
+      },
+      {
+        "index": 8690,
+        "from": "Focus Setting Control"
+      },
+      {
+        "index": 8691,
+        "from": "Focus Settings Search"
+      },
+      {
+        "index": 8692,
+        "from": "Clear Settings Search Results"
+      },
+      {
+        "index": 8693,
+        "from": "Focus Settings Table of Contents"
+      },
+      {
+        "index": 8694,
+        "from": "Show Setting Context Menu"
+      },
+      {
+        "index": 8695,
+        "from": "Move Focus Up One Level"
+      },
+      {
+        "index": 8696,
+        "from": "Open Settings (JSON)"
+      },
+      {
+        "index": 8910,
+        "from": "Type the name of a view, output channel or terminal to open."
+      },
+      {
+        "index": 8911,
+        "from": "Open View"
+      },
+      {
         "index": 8912,
         "from": "&&Open View..."
+      },
+      {
+        "index": 8942,
+        "from": "Unable to reconnect to the remote workspace."
+      },
+      {
+        "index": 9120,
+        "from": "SpaceX mode"
+      },
+      {
+        "index": 9121,
+        "from": "Whether the platform has the WSL feature installed"
       },
       {
         "index": 9122,
         "from": "Remote"
       },
       {
+        "index": 9123,
+        "from": "When enabled extensions are downloaded locally and installed on remote."
+      },
+      {
+        "index": 9124,
+        "from": "Opening a WSL workspace under /mnt is not recommended"
+      },
+      {
+        "index": 9126,
+        "from": "Don't show this warning again"
+      },
+      {
+        "index": 9127,
+        "from": "&&OK"
+      },
+      {
+        "index": 9128,
+        "from": "Opening a WSL folder without the WSL extension is not recommended"
+      },
+      {
+        "index": 9130,
+        "from": "Don't show this warning again"
+      },
+      {
+        "index": 9131,
+        "from": "&&Install WSL Extension"
+      },
+      {
+        "index": 9132,
+        "from": "&&OK"
+      },
+      {
+        "index": 9133,
+        "from": "Opening a WSL folder without using the WSL extension is not recommended"
+      },
+      {
+        "index": 9135,
+        "from": "Don't show this warning again"
+      },
+      {
+        "index": 9136,
+        "from": "&&OK"
+      },
+      {
+        "index": 9137,
+        "from": "Turn on Remote Tunnel Access..."
+      },
+      {
+        "index": 9138,
+        "from": "Turn off Remote Tunnel Access..."
+      },
+      {
+        "index": 9139,
+        "from": "Show Remote Tunnel Service Log"
+      },
+      {
+        "index": 9140,
+        "from": "Configure Tunnel Name..."
+      },
+      {
+        "index": 9141,
+        "from": "Copy Browser URI to Clipboard"
+      },
+      {
+        "index": 9142,
+        "from": "Get Started with Tunnels"
+      },
+      {
+        "index": 9144,
+        "from": "Show Extension"
+      },
+      {
+        "index": 9145,
+        "from": "Do not show again"
+      },
+      {
+        "index": 9146,
+        "from": "[Looking for remote tunnel](command:{0})"
+      },
+      {
+        "index": 9147,
+        "from": "[Starting remote tunnel](command:{0})"
+      },
+      {
+        "index": 9149,
+        "from": "Sign in to an account to enable remote access"
+      },
+      {
+        "index": 9150,
+        "from": "Signed In"
+      },
+      {
+        "index": 9151,
+        "from": "Others"
+      },
+      {
+        "index": 9152,
+        "from": "Sign in with {0}"
+      },
+      {
         "index": 9154,
         "from": "&&Enable"
+      },
+      {
+        "index": 9155,
+        "from": "Select how you want to enable access"
+      },
+      {
+        "index": 9156,
+        "from": "Turn on for this session"
+      },
+      {
+        "index": 9157,
+        "from": "Run whenever {0} is open"
+      },
+      {
+        "index": 9158,
+        "from": "Install as a service"
+      },
+      {
+        "index": 9159,
+        "from": "Run whenever you're logged in"
+      },
+      {
+        "index": 9161,
+        "from": "Copy Browser Link to Clipboard"
+      },
+      {
+        "index": 9162,
+        "from": "Show Extension"
+      },
+      {
+        "index": 9164,
+        "from": "Remote Tunnel Access is On"
+      },
+      {
+        "index": 9165,
+        "from": "Remote Tunnel Access is Connecting"
+      },
+      {
+        "index": 9167,
+        "from": "Do you want to turn off Remote Tunnel Access?"
+      },
+      {
+        "index": 9168,
+        "from": "Select a command to invoke"
+      },
+      {
+        "index": 9169,
+        "from": "Remote Tunnel Access enabled for {0} (launched externally)"
+      },
+      {
+        "index": 9170,
+        "from": "Remote Tunnel Access enabled for {0}"
+      },
+      {
+        "index": 9171,
+        "from": "Remote Tunnel Access not enabled"
+      },
+      {
+        "index": 9172,
+        "from": "Show Log"
+      },
+      {
+        "index": 9173,
+        "from": "Change Tunnel Name"
+      },
+      {
+        "index": 9176,
+        "from": "Prevent this computer from sleeping when remote tunnel access is turned on."
+      },
+      {
+        "index": 9177,
+        "from": "Remote Tunnels"
       },
       {
         "index": 9204,
         "from": "Review"
       },
       {
+        "index": 9290,
+        "from": "Agent Review Settings"
+      },
+      {
         "index": 9291,
         "from": "Start Agent Review"
+      },
+      {
+        "index": 9292,
+        "from": "View icon of the Source Control view."
       },
       {
         "index": 9293,
         "from": "Source Control"
       },
       {
+        "index": 9294,
+        "from": "No source control providers registered."
+      },
+      {
+        "index": 9295,
+        "from": "None of the registered source control providers work in Restricted Mode."
+      },
+      {
+        "index": 9296,
+        "from": "Manage Workspace Trust"
+      },
+      {
+        "index": 9298,
+        "from": "Source Control Repositories"
+      },
+      {
         "index": 9299,
         "from": "Source &&Control"
+      },
+      {
+        "index": 9300,
+        "from": "Source Control Graph"
       },
       {
         "index": 9301,
@@ -4461,24 +7909,312 @@
         "from": "Changes"
       },
       {
+        "index": 9304,
+        "from": "Graph"
+      },
+      {
         "index": 9305,
         "from": "Agent Review"
+      },
+      {
+        "index": 9352,
+        "from": "All Changes ({0} ↔ {1})"
+      },
+      {
+        "index": 9353,
+        "from": "Open in Cursor Blame"
+      },
+      {
+        "index": 9354,
+        "from": "Email"
+      },
+      {
+        "index": 9355,
+        "from": "{0} file changed"
+      },
+      {
+        "index": 9356,
+        "from": "{0} files changed"
+      },
+      {
+        "index": 9357,
+        "from": "{0} insertion{1}"
+      },
+      {
+        "index": 9358,
+        "from": "{0} insertions{1}"
+      },
+      {
+        "index": 9359,
+        "from": "{0} deletion{1}"
+      },
+      {
+        "index": 9360,
+        "from": "{0} deletions{1}"
+      },
+      {
+        "index": 9381,
+        "from": "Review Branch"
+      },
+      {
+        "index": 9382,
+        "from": "Diff with Default Branch"
+      },
+      {
+        "index": 9383,
+        "from": "Diff with {0}"
+      },
+      {
+        "index": 9392,
+        "from": "More Actions..."
       },
       {
         "index": 9393,
         "from": "Cancel"
       },
       {
+        "index": 9394,
+        "from": "{0}, Use {1} to open Source Control Accessibility Help."
+      },
+      {
+        "index": 9395,
+        "from": "{0}, Run the Open Accessibility Help command for more information."
+      },
+      {
         "index": 9396,
         "from": "Close"
+      },
+      {
+        "index": 9416,
+        "from": "other results"
+      },
+      {
+        "index": 9431,
+        "from": "Create File '{0}'"
+      },
+      {
+        "index": 9432,
+        "from": "Create a new file at this path"
+      },
+      {
+        "index": 9433,
+        "from": "Failed to create file: {0}"
+      },
+      {
+        "index": 9447,
+        "from": "Search files, content, and symbols (append {0} to go to line or {1} to go to symbol)"
+      },
+      {
+        "index": 9448,
+        "from": "Go to File"
+      },
+      {
+        "index": 9449,
+        "from": "Type the name of a symbol to open."
+      },
+      {
+        "index": 9450,
+        "from": "Go to Symbol in Workspace"
+      },
+      {
+        "index": 9569,
+        "from": "No indexed results found in '{0}' excluding '{1}' - "
+      },
+      {
+        "index": 9570,
+        "from": "No indexed results found in '{0}' - "
+      },
+      {
+        "index": 9571,
+        "from": "No indexed results found excluding '{0}' - "
+      },
+      {
+        "index": 9572,
+        "from": "No indexed results found - "
       },
       {
         "index": 9580,
         "from": "Learn More"
       },
       {
+        "index": 9584,
+        "from": "Search all files in the workspace without using the index"
+      },
+      {
+        "index": 9585,
+        "from": "search all"
+      },
+      {
+        "index": 9594,
+        "from": "Open search results in chat"
+      },
+      {
+        "index": 9595,
+        "from": "{0} result in {1} indexed file"
+      },
+      {
+        "index": 9596,
+        "from": "{0} result in {1} indexed files"
+      },
+      {
+        "index": 9597,
+        "from": "{0} results in {1} indexed file"
+      },
+      {
+        "index": 9598,
+        "from": "{0} results in {1} indexed files"
+      },
+      {
         "index": 9616,
         "from": "Search"
+      },
+      {
+        "index": 9621,
+        "from": "Search in the search view, either in the panel or side bars."
+      },
+      {
+        "index": 9623,
+        "from": "Search in a new search editor."
+      },
+      {
+        "index": 9624,
+        "from": "This setting is deprecated and now falls back on \"search.usePCRE2\"."
+      },
+      {
+        "index": 9625,
+        "from": "Deprecated. Consider \"search.usePCRE2\" for advanced regex feature support."
+      },
+      {
+        "index": 9636,
+        "from": "Controls sorting order of editor history in quick open when filtering."
+      },
+      {
+        "index": 9638,
+        "from": "Controls whether to follow symlinks while searching."
+      },
+      {
+        "index": 9644,
+        "from": "Files with less than 10 results are expanded. Others are collapsed."
+      },
+      {
+        "index": 9645,
+        "from": "Controls whether the search results will be collapsed or expanded."
+      },
+      {
+        "index": 9646,
+        "from": "Controls whether to open Replace Preview when selecting or replacing a match."
+      },
+      {
+        "index": 9647,
+        "from": "Controls whether to show line numbers for search results."
+      },
+      {
+        "index": 9651,
+        "from": "Always position the actionbar to the right."
+      },
+      {
+        "index": 9652,
+        "from": "Controls the positioning of the actionbar on rows in the search view."
+      },
+      {
+        "index": 9653,
+        "from": "Search all files as you type."
+      },
+      {
+        "index": 9657,
+        "from": "Double-clicking selects the word under the cursor."
+      },
+      {
+        "index": 9658,
+        "from": "Double-clicking opens the result in the active editor group."
+      },
+      {
+        "index": 9660,
+        "from": "Configure effect of double-clicking a result in a search editor."
+      },
+      {
+        "index": 9661,
+        "from": "Single-clicking does nothing."
+      },
+      {
+        "index": 9662,
+        "from": "Single-clicking opens a Peek Definition window."
+      },
+      {
+        "index": 9663,
+        "from": "Configure effect of single-clicking a result in a search editor."
+      },
+      {
+        "index": 9667,
+        "from": "Results are sorted by folder and file names, in alphabetical order."
+      },
+      {
+        "index": 9668,
+        "from": "Results are sorted by file names ignoring folder order, in alphabetical order."
+      },
+      {
+        "index": 9669,
+        "from": "Results are sorted by file extensions, in alphabetical order."
+      },
+      {
+        "index": 9670,
+        "from": "Results are sorted by file last modified date, in descending order."
+      },
+      {
+        "index": 9671,
+        "from": "Results are sorted by count per file, in descending order."
+      },
+      {
+        "index": 9672,
+        "from": "Results are sorted by count per file, in ascending order."
+      },
+      {
+        "index": 9673,
+        "from": "Controls sorting order of search results."
+      },
+      {
+        "index": 9674,
+        "from": "Controls whether search file decorations should use colors."
+      },
+      {
+        "index": 9675,
+        "from": "Controls whether search file decorations should use badges."
+      },
+      {
+        "index": 9676,
+        "from": "Shows search results as a tree."
+      },
+      {
+        "index": 9677,
+        "from": "Shows search results as a list."
+      },
+      {
+        "index": 9678,
+        "from": "Controls the default search result view mode."
+      },
+      {
+        "index": 9866,
+        "from": "The task '{0}' is already active."
+      },
+      {
+        "index": 9867,
+        "from": "Terminate Task"
+      },
+      {
+        "index": 9868,
+        "from": "Restart Task"
+      },
+      {
+        "index": 10256,
+        "from": "There is a task running. Do you want to terminate it?"
+      },
+      {
+        "index": 10257,
+        "from": "&&Terminate Task"
+      },
+      {
+        "index": 10259,
+        "from": "&&Exit Anyways"
       },
       {
         "index": 10270,
@@ -4497,8 +8233,292 @@
         "from": "Terminal"
       },
       {
+        "index": 10284,
+        "from": "Add Tooltip"
+      },
+      {
+        "index": 10359,
+        "from": "Configure Terminal Settings"
+      },
+      {
+        "index": 10408,
+        "from": "Split Terminal"
+      },
+      {
+        "index": 10442,
+        "from": "Rich"
+      },
+      {
+        "index": 10443,
+        "from": "Basic"
+      },
+      {
+        "index": 10444,
+        "from": "Injection failed to activate"
+      },
+      {
+        "index": 10445,
+        "from": "No"
+      },
+      {
+        "index": 10446,
+        "from": "Shell integration"
+      },
+      {
+        "index": 10447,
+        "from": "Shell integration"
+      },
+      {
+        "index": 10452,
+        "from": "Terminal contribution actions"
+      },
+      {
+        "index": 10454,
+        "from": "Add to Current Chat"
+      },
+      {
+        "index": 10621,
+        "from": "Disable the indicator."
+      },
+      {
+        "index": 10622,
+        "from": "Enable the indicator."
+      },
+      {
+        "index": 10686,
+        "from": "Whether the active terminal has contribution-owned actions."
+      },
+      {
+        "index": 10714,
+        "from": "Send Custom Sequence to Terminal"
+      },
+      {
+        "index": 10715,
+        "from": "Create New Integrated Terminal (Local)"
+      },
+      {
+        "index": 10758,
+        "from": "Cursor CLI is already installed."
+      },
+      {
+        "index": 10759,
+        "from": "Install Cursor CLI"
+      },
+      {
         "index": 10760,
         "from": "Debug: Check Terminal Execution Service Version"
+      },
+      {
+        "index": 10761,
+        "from": "External Agent Actions"
+      },
+      {
+        "index": 10762,
+        "from": "Second Opinion"
+      },
+      {
+        "index": 10763,
+        "from": "Side Chat"
+      },
+      {
+        "index": 10764,
+        "from": "Side Chat"
+      },
+      {
+        "index": 10765,
+        "from": "Second Opinion"
+      },
+      {
+        "index": 10766,
+        "from": "External Agent Actions"
+      },
+      {
+        "index": 10767,
+        "from": "Whether the terminal prompt bar is currently visible"
+      },
+      {
+        "index": 10768,
+        "from": "Whether terminal prompt-bar generation can be cancelled"
+      },
+      {
+        "index": 10769,
+        "from": "Whether terminal prompt-bar generated command can be rejected"
+      },
+      {
+        "index": 10847,
+        "from": ", hold shift for your browser"
+      },
+      {
+        "index": 10910,
+        "from": "Request Completions"
+      },
+      {
+        "index": 11183,
+        "from": "Running tests..."
+      },
+      {
+        "index": 11184,
+        "from": "Running tests, {0}/{1} passed ({2}%)"
+      },
+      {
+        "index": 11185,
+        "from": "Running tests, {0}/{1} tests passed ({2}%, {3} skipped)"
+      },
+      {
+        "index": 11186,
+        "from": "{0}/{1} tests passed ({2}%)"
+      },
+      {
+        "index": 11187,
+        "from": "{0}/{1} tests passed ({2}%, {3} skipped)"
+      },
+      {
+        "index": 11380,
+        "from": "View icon of the timeline view."
+      },
+      {
+        "index": 11403,
+        "from": "Report Bug"
+      },
+      {
+        "index": 11404,
+        "from": "Could not submit the bug report. Try again."
+      },
+      {
+        "index": 11405,
+        "from": "Bug report submitted. Thanks for helping us improve Cursor!"
+      },
+      {
+        "index": 11406,
+        "from": "Lag reported — thanks!"
+      },
+      {
+        "index": 11407,
+        "from": "Report Lag"
+      },
+      {
+        "index": 11408,
+        "from": "$(bug) Report Bug"
+      },
+      {
+        "index": 11409,
+        "from": "Flag this session and add context."
+      },
+      {
+        "index": 11410,
+        "from": "$(watch) Report Lag"
+      },
+      {
+        "index": 11411,
+        "from": "Send a one-click lag report."
+      },
+      {
+        "index": 11412,
+        "from": "[Internal] Report"
+      },
+      {
+        "index": 11413,
+        "from": "What do you want to report?"
+      },
+      {
+        "index": 11414,
+        "from": "Report Bug or Lag"
+      },
+      {
+        "index": 11415,
+        "from": "[Internal] Report"
+      },
+      {
+        "index": 11416,
+        "from": "[Internal] Report - Click to report a bug or lag"
+      },
+      {
+        "index": 11417,
+        "from": "Report a bug or lag with automatic session context"
+      },
+      {
+        "index": 11418,
+        "from": "Agent host heap snapshots"
+      },
+      {
+        "index": 11420,
+        "from": "Renderer heap snapshot"
+      },
+      {
+        "index": 11422,
+        "from": "User database"
+      },
+      {
+        "index": 11424,
+        "from": "Logs"
+      },
+      {
+        "index": 11425,
+        "from": "Includes recent Cursor log sessions."
+      },
+      {
+        "index": 11426,
+        "from": "Feature flags and extension summary"
+      },
+      {
+        "index": 11427,
+        "from": "Includes feature gates, experiments, dynamic configs, and installed extensions."
+      },
+      {
+        "index": 11428,
+        "from": "Process diagnostics"
+      },
+      {
+        "index": 11429,
+        "from": "Includes recent process memory and CPU history."
+      },
+      {
+        "index": 11430,
+        "from": "Agent transcripts (last 7 days)"
+      },
+      {
+        "index": 11432,
+        "from": "Capture and Send Debugging Data"
+      },
+      {
+        "index": 11433,
+        "from": "Select debugging data to collect. Press Enter to continue."
+      },
+      {
+        "index": 11434,
+        "from": "Capture and Send Debugging Data"
+      },
+      {
+        "index": 11435,
+        "from": "What went wrong? (optional)"
+      },
+      {
+        "index": 11436,
+        "from": "Capturing and sending debugging data..."
+      },
+      {
+        "index": 11437,
+        "from": "Capturing debugging data..."
+      },
+      {
+        "index": 11438,
+        "from": "Debugging data saved locally."
+      },
+      {
+        "index": 11439,
+        "from": "Reveal in File Explorer"
+      },
+      {
+        "index": 11440,
+        "from": "Debugging data was sent successfully."
+      },
+      {
+        "index": 11441,
+        "from": "Failed to capture or send debugging data. {0}"
+      },
+      {
+        "index": 11442,
+        "from": "Toggle Watch for Crashes"
       },
       {
         "index": 11444,
@@ -4509,24 +8529,220 @@
         "from": "Cancel"
       },
       {
+        "index": 11446,
+        "from": "Watching for crashes."
+      },
+      {
+        "index": 11447,
+        "from": "Stopped watching for crashes."
+      },
+      {
+        "index": 11448,
+        "from": "Force Renderer OOM Crash"
+      },
+      {
+        "index": 11450,
+        "from": "Crash Now"
+      },
+      {
         "index": 11451,
         "from": "Cancel"
+      },
+      {
+        "index": 11452,
+        "from": "Capture and Send Debugging Data"
+      },
+      {
+        "index": 11453,
+        "from": "Toggle Watch for Crashes"
+      },
+      {
+        "index": 11454,
+        "from": "Force Renderer OOM Crash"
+      },
+      {
+        "index": 11473,
+        "from": "Remove mention"
+      },
+      {
+        "index": 11474,
+        "from": "Meet the new Cursor"
+      },
+      {
+        "index": 11475,
+        "from": "Run Many Agents in Parallel"
+      },
+      {
+        "index": 11476,
+        "from": "All your agents across repos—locally, on remote SSH, and in the cloud"
+      },
+      {
+        "index": 11477,
+        "from": "Dig Deeper Anytime"
+      },
+      {
+        "index": 11478,
+        "from": "Access the best parts of the editor when you need them, like files and browser"
       },
       {
         "index": 11479,
         "from": "Agents Window"
       },
       {
+        "index": 11480,
+        "from": "Restart Cursor to install the pending update."
+      },
+      {
+        "index": 11481,
+        "from": "Restart Cursor to install the pending update to {0}."
+      },
+      {
+        "index": 11482,
+        "from": "Installing update — Cursor will close and reopen automatically."
+      },
+      {
+        "index": 11483,
+        "from": "Update"
+      },
+      {
+        "index": 11484,
+        "from": "Installing"
+      },
+      {
+        "index": 11492,
+        "from": "{0} couldn't finish updating to version {1}. Downloading the update again."
+      },
+      {
+        "index": 11493,
+        "from": "{0} couldn't finish installing the update to version {1}."
+      },
+      {
+        "index": 11494,
+        "from": "Try Again"
+      },
+      {
+        "index": 11495,
+        "from": "Updates are disabled because you are running the user-scope installation of {0} as Administrator."
+      },
+      {
         "index": 11496,
         "from": "Learn More"
+      },
+      {
+        "index": 11501,
+        "from": "Update Service"
+      },
+      {
+        "index": 11503,
+        "from": "There is an available update."
       },
       {
         "index": 11504,
         "from": "Download Update"
       },
       {
+        "index": 11505,
+        "from": "Later"
+      },
+      {
+        "index": 11507,
+        "from": "A newer {0} package ({1}) is available via {2}."
+      },
+      {
+        "index": 11508,
+        "from": "Update"
+      },
+      {
+        "index": 11509,
+        "from": "Later"
+      },
+      {
+        "index": 11524,
+        "from": "&&Always Open This Domain"
+      },
+      {
+        "index": 11661,
+        "from": "Utility Host RPC Trace"
+      },
+      {
+        "index": 11666,
+        "from": "Opens Developer Tools for active webviews"
+      },
+      {
+        "index": 11667,
+        "from": "Using standard dev tools to debug iframe based webview"
+      },
+      {
+        "index": 11668,
+        "from": "Do not ignore menu shortcuts"
+      },
+      {
+        "index": 11669,
+        "from": "Open Webview Developer Tools"
+      },
+      {
+        "index": 11670,
+        "from": "Reload CSS"
+      },
+      {
+        "index": 11803,
+        "from": "Open a Walkthrough..."
+      },
+      {
+        "index": 11804,
+        "from": "View a walkthrough on the editor or an extension"
+      },
+      {
+        "index": 11818,
+        "from": "Security"
+      },
+      {
+        "index": 11837,
+        "from": "You are trying to open untrusted files in a workspace which is trusted."
+      },
+      {
+        "index": 11838,
+        "from": "You are trying to open untrusted files in a window which is trusted."
+      },
+      {
+        "index": 11840,
+        "from": "Do you want to allow untrusted files in this workspace?"
+      },
+      {
+        "index": 11841,
+        "from": "Do you want to allow untrusted files in this window?"
+      },
+      {
         "index": 11842,
         "from": "&&Open"
+      },
+      {
+        "index": 11843,
+        "from": "Open in &&Restricted Mode"
+      },
+      {
+        "index": 11844,
+        "from": "Remember my decision for all workspaces"
+      },
+      {
+        "index": 11845,
+        "from": "Do you trust the authors of the files in this workspace?"
+      },
+      {
+        "index": 11846,
+        "from": "Do you trust the authors of the files in this folder?"
+      },
+      {
+        "index": 11847,
+        "from": "A feature you are trying to use may be a security risk if you do not trust the source of the files or folders you currently have open."
+      },
+      {
+        "index": 11848,
+        "from": "&&Trust Workspace & Continue"
+      },
+      {
+        "index": 11849,
+        "from": "&&Trust Folder & Continue"
       },
       {
         "index": 11850,
@@ -4537,6 +8753,62 @@
         "from": "Cancel"
       },
       {
+        "index": 11853,
+        "from": "Do you trust the authors of the files in this folder?"
+      },
+      {
+        "index": 11854,
+        "from": "You are adding files that are not currently trusted to a trusted workspace. Do you trust the authors of these new files?"
+      },
+      {
+        "index": 11855,
+        "from": "No"
+      },
+      {
+        "index": 11856,
+        "from": "Do you trust the authors of the files in this workspace?"
+      },
+      {
+        "index": 11857,
+        "from": "Do you trust the authors of the files in this folder?"
+      },
+      {
+        "index": 11858,
+        "from": "Trust the authors of all files in the parent folder '{0}'"
+      },
+      {
+        "index": 11859,
+        "from": "&&Yes, I trust the authors"
+      },
+      {
+        "index": 11860,
+        "from": "Trust folder and enable all features"
+      },
+      {
+        "index": 11861,
+        "from": "Trust workspace and enable all features"
+      },
+      {
+        "index": 11862,
+        "from": "&&No, I don't trust the authors"
+      },
+      {
+        "index": 11863,
+        "from": "Browse folder in restricted mode"
+      },
+      {
+        "index": 11864,
+        "from": "Browse workspace in restricted mode"
+      },
+      {
+        "index": 11865,
+        "from": "{0} provides features that may automatically execute files in this workspace."
+      },
+      {
+        "index": 11866,
+        "from": "{0} provides features that may automatically execute files in this folder."
+      },
+      {
         "index": 11868,
         "from": "Manage"
       },
@@ -4545,12 +8817,160 @@
         "from": "Learn More"
       },
       {
+        "index": 11870,
+        "from": "Restricted Mode is intended for safe code browsing. Trust this window to enable all features. Use navigation keys to access banner actions."
+      },
+      {
+        "index": 11871,
+        "from": "Restricted Mode is intended for safe code browsing. Trust this folder to enable all features. Use navigation keys to access banner actions."
+      },
+      {
+        "index": 11872,
+        "from": "Restricted Mode is intended for safe code browsing. Trust this workspace to enable all features. Use navigation keys to access banner actions."
+      },
+      {
+        "index": 11873,
+        "from": "Restricted Mode is intended for safe code browsing. Trust this window to enable all features."
+      },
+      {
+        "index": 11874,
+        "from": "Restricted Mode is intended for safe code browsing. Trust this folder to enable all features."
+      },
+      {
+        "index": 11875,
+        "from": "Restricted Mode is intended for safe code browsing. Trust this workspace to enable all features."
+      },
+      {
+        "index": 11876,
+        "from": "Restricted Mode: Some features are disabled because this window is not trusted."
+      },
+      {
+        "index": 11877,
+        "from": "Running in Restricted Mode\n\nSome [features are disabled]({0}) because this [window is not trusted]({1})."
+      },
+      {
+        "index": 11878,
+        "from": "Restricted Mode: Some features are disabled because this folder is not trusted."
+      },
+      {
+        "index": 11879,
+        "from": "Running in Restricted Mode\n\nSome [features are disabled]({0}) because this [folder is not trusted]({1})."
+      },
+      {
+        "index": 11880,
+        "from": "Restricted Mode: Some features are disabled because this workspace is not trusted."
+      },
+      {
+        "index": 11881,
+        "from": "Running in Restricted Mode\n\nSome [features are disabled]({0}) because this [workspace is not trusted]({1})."
+      },
+      {
+        "index": 11882,
+        "from": "Workspace Trust"
+      },
+      {
+        "index": 11883,
+        "from": "Restricted Mode"
+      },
+      {
+        "index": 11884,
+        "from": "Workspace Name"
+      },
+      {
+        "index": 11885,
+        "from": "Workspace: {0}"
+      },
+      {
+        "index": 11886,
+        "from": "Current workspace: {0}"
+      },
+      {
+        "index": 11887,
+        "from": "Workspace Trust Editor"
+      },
+      {
+        "index": 11953,
+        "from": "Trust the authors of all files in the current folder or its parent '{0}'."
+      },
+      {
+        "index": 11954,
+        "from": "Trust Parent"
+      },
+      {
+        "index": 11968,
+        "from": "Log Data Directories"
+      },
+      {
+        "index": 11969,
+        "from": "Reload With HMR"
+      },
+      {
+        "index": 11970,
+        "from": "Hang Renderer Thread (30 s)"
+      },
+      {
+        "index": 11971,
+        "from": "Dev Force Next Auto-review Block"
+      },
+      {
+        "index": 11972,
+        "from": "Dev Delay Next Auto-review ({0} s)"
+      },
+      {
+        "index": 11973,
+        "from": "Restart in Temporary Profile"
+      },
+      {
+        "index": 11974,
+        "from": "Start Infinite Composer Session"
+      },
+      {
+        "index": 11975,
+        "from": "Stop Infinite Composer Session"
+      },
+      {
+        "index": 11995,
+        "from": "Simulate New User"
+      },
+      {
         "index": 11996,
         "from": "Toggle Developer Tools"
       },
       {
+        "index": 11997,
+        "from": "Configure Runtime Arguments"
+      },
+      {
+        "index": 11998,
+        "from": "Reload with Extensions Disabled"
+      },
+      {
+        "index": 11999,
+        "from": "Reveal User Data Folder"
+      },
+      {
+        "index": 12000,
+        "from": "Show GPU Info"
+      },
+      {
+        "index": 12002,
+        "from": "Shell command '{0}' successfully installed."
+      },
+      {
         "index": 12003,
         "from": "Install 'code' command"
+      },
+      {
+        "index": 12004,
+        "from": "Successfully installed Cursor in the 'code' command."
+      },
+      {
+        "index": 12005,
+        "from": "Successfully unlinked Cursor from the 'code' command."
+      },
+      {
+        "index": 12006,
+        "from": "Shell command '{0}' successfully uninstalled from PATH."
       },
       {
         "index": 12007,
@@ -4569,6 +8989,26 @@
         "from": "Uninstall '{0}' command from PATH"
       },
       {
+        "index": 12011,
+        "from": "Quit Cursor?"
+      },
+      {
+        "index": 12012,
+        "from": "Close this window?"
+      },
+      {
+        "index": 12013,
+        "from": "Are you sure you want to quit?"
+      },
+      {
+        "index": 12014,
+        "from": "Are you sure you want to close this window?"
+      },
+      {
+        "index": 12015,
+        "from": "Quit"
+      },
+      {
         "index": 12016,
         "from": "Close"
       },
@@ -4583,6 +9023,10 @@
       {
         "index": 12019,
         "from": "&&Zoom In"
+      },
+      {
+        "index": 12020,
+        "from": "&&Set Zoom Level"
       },
       {
         "index": 12021,
@@ -4601,12 +9045,36 @@
         "from": "Close Window"
       },
       {
+        "index": 12025,
+        "from": "window group"
+      },
+      {
+        "index": 12026,
+        "from": "{0}, window with unsaved changes"
+      },
+      {
+        "index": 12027,
+        "from": "Current Window"
+      },
+      {
+        "index": 12028,
+        "from": "Current Window"
+      },
+      {
+        "index": 12029,
+        "from": "Select a window to switch to"
+      },
+      {
         "index": 12030,
         "from": "Close Window"
       },
       {
         "index": 12031,
         "from": "Zoom In"
+      },
+      {
+        "index": 12032,
+        "from": "Set Zoom Level"
       },
       {
         "index": 12033,
@@ -4621,12 +9089,144 @@
         "from": "Switch Window..."
       },
       {
+        "index": 12036,
+        "from": "Quick Switch Window..."
+      },
+      {
         "index": 12037,
         "from": "E&&xit"
       },
       {
+        "index": 12039,
+        "from": "Window"
+      },
+      {
+        "index": 12041,
+        "from": "Open a new empty window."
+      },
+      {
+        "index": 12042,
+        "from": "Focus the last active running instance."
+      },
+      {
+        "index": 12049,
+        "from": "Controls how windows and editors within are being restored when opening."
+      },
+      {
+        "index": 12053,
+        "from": "Open new windows in the center of the screen."
+      },
+      {
+        "index": 12054,
+        "from": "Open new windows with same dimension as last active one."
+      },
+      {
+        "index": 12055,
+        "from": "Open new windows with same dimension as last active one with an offset position."
+      },
+      {
+        "index": 12056,
+        "from": "Open new windows maximized."
+      },
+      {
+        "index": 12057,
+        "from": "Open new windows in full screen mode."
+      },
+      {
+        "index": 12059,
+        "from": "Controls whether closing the last editor should also close the window. This setting only applies for windows that do not show folders."
+      },
+      {
+        "index": 12063,
+        "from": "Adjust the appearance of dialog windows."
+      },
+      {
+        "index": 12067,
+        "from": "Telemetry"
+      },
+      {
+        "index": 12070,
+        "from": "Keyboard"
+      },
+      {
+        "index": 12071,
+        "from": "Enables the macOS touchbar buttons on the keyboard if available."
+      },
+      {
+        "index": 12075,
+        "from": "The display Language to use. Picking a different language requires the associated language pack to be installed."
+      },
+      {
+        "index": 12076,
+        "from": "Disables LCD font antialiasing."
+      },
+      {
+        "index": 12078,
+        "from": "Disables hardware acceleration. ONLY change this option if you encounter graphic issues."
+      },
+      {
+        "index": 12081,
+        "from": "Unique id used for correlating crash reports sent from this app instance."
+      },
+      {
+        "index": 12089,
+        "from": "New Window Tab"
+      },
+      {
+        "index": 12090,
+        "from": "Show Previous Window Tab"
+      },
+      {
+        "index": 12091,
+        "from": "Show Next Window Tab"
+      },
+      {
+        "index": 12092,
+        "from": "Move Window Tab to New Window"
+      },
+      {
+        "index": 12093,
+        "from": "Merge All Windows"
+      },
+      {
+        "index": 12094,
+        "from": "Toggle Window Tabs Bar"
+      },
+      {
+        "index": 12095,
+        "from": "Saving UI state"
+      },
+      {
+        "index": 12096,
+        "from": "Saving UI state"
+      },
+      {
+        "index": 12097,
+        "from": "Local Mode: enabled"
+      },
+      {
         "index": 12098,
         "from": "&&Copy"
+      },
+      {
+        "index": 12099,
+        "from": "OK"
+      },
+      {
+        "index": 12102,
+        "from": "Copyright © 2026 Anysphere. All rights reserved."
+      },
+      {
+        "index": 12103,
+        "from": "A shared background process terminated unexpectedly. Please restart the application to recover."
+      },
+      {
+        "index": 12104,
+        "from": "Restart"
+      },
+      {
+        "index": 12105,
+        "from": "Restart"
       },
       {
         "index": 12106,
@@ -4637,12 +9237,52 @@
         "from": "Learn More"
       },
       {
+        "index": 12108,
+        "from": "Writing login information to the keychain failed with error '{0}'."
+      },
+      {
+        "index": 12109,
+        "from": "Troubleshooting Guide"
+      },
+      {
+        "index": 12110,
+        "from": "You are running an emulated version of {0}. For better performance download the native arm64 version of {0} build for your machine."
+      },
+      {
+        "index": 12111,
+        "from": "Download"
+      },
+      {
+        "index": 12112,
+        "from": "The runtime arguments file 'argv.json' contains errors. Please correct them and restart."
+      },
+      {
         "index": 12113,
         "from": "Open File"
       },
       {
+        "index": 12114,
+        "from": "Proxy Authentication Required"
+      },
+      {
         "index": 12115,
         "from": "&&Log In"
+      },
+      {
+        "index": 12116,
+        "from": "Username"
+      },
+      {
+        "index": 12117,
+        "from": "Password"
+      },
+      {
+        "index": 12118,
+        "from": "The proxy {0} requires a username and password."
+      },
+      {
+        "index": 12119,
+        "from": "Remember my credentials"
       },
       {
         "index": 12120,
@@ -4653,8 +9293,64 @@
         "from": "Cancel"
       },
       {
+        "index": 12122,
+        "from": "Error: {0}"
+      },
+      {
+        "index": 12123,
+        "from": "The following operations are still running: \n{0}"
+      },
+      {
+        "index": 12124,
+        "from": "An unexpected error prevented the window to close"
+      },
+      {
+        "index": 12125,
+        "from": "An unexpected error prevented the application to quit"
+      },
+      {
+        "index": 12126,
+        "from": "An unexpected error prevented the window to reload"
+      },
+      {
+        "index": 12127,
+        "from": "An unexpected error prevented to change the workspace"
+      },
+      {
+        "index": 12128,
+        "from": "Closing the window is taking a bit longer..."
+      },
+      {
+        "index": 12129,
+        "from": "Quitting the application is taking a bit longer..."
+      },
+      {
+        "index": 12130,
+        "from": "Reloading the window is taking a bit longer..."
+      },
+      {
+        "index": 12131,
+        "from": "Changing the workspace is taking a bit longer..."
+      },
+      {
+        "index": 12132,
+        "from": "It is not recommended to run {0} as root user."
+      },
+      {
+        "index": 12133,
+        "from": "Files you store within the installation folder ('{0}') may be OVERWRITTEN or DELETED IRREVERSIBLY without warning at update time."
+      },
+      {
+        "index": 12134,
+        "from": "{0} on {1} will soon stop receiving updates. Consider upgrading your macOS version."
+      },
+      {
         "index": 12135,
         "from": "Learn More"
+      },
+      {
+        "index": 12136,
+        "from": "Resolving shell environment..."
       },
       {
         "index": 12137,
@@ -4669,12 +9365,156 @@
         "from": "Zoom In"
       },
       {
+        "index": 12140,
+        "from": "Reset"
+      },
+      {
         "index": 12142,
         "from": "Settings"
       },
       {
+        "index": 12143,
+        "from": "Window Zoom"
+      },
+      {
+        "index": 12144,
+        "from": "Zoom Level: {0} ({1}%)"
+      },
+      {
+        "index": 12173,
+        "from": "The Source Control history item hover menu"
+      },
+      {
+        "index": 12219,
+        "from": "The chat model picker dropdown menu"
+      },
+      {
+        "index": 12280,
+        "from": "Agent Stream Start Timeout"
+      },
+      {
+        "index": 12281,
+        "from": "The extension host did not respond in time. Please reload the window to continue."
+      },
+      {
+        "index": 12282,
+        "from": "Reload Window"
+      },
+      {
+        "index": 12283,
+        "from": "Agent Execution Timed Out"
+      },
+      {
+        "index": 12284,
+        "from": "The agent execution provider did not respond in time. This may indicate the extension host is not running or is unresponsive."
+      },
+      {
+        "index": 12285,
+        "from": "Reload Window"
+      },
+      {
+        "index": 12287,
+        "from": "The Prompt Quality upload link is invalid"
+      },
+      {
+        "index": 12288,
+        "from": "Failed to upload the local agent run to Prompt Quality: {0}"
+      },
+      {
+        "index": 12289,
+        "from": "Upload this local agent run to Prompt Quality?"
+      },
+      {
+        "index": 12291,
+        "from": "Upload to Prompt Quality"
+      },
+      {
+        "index": 12292,
+        "from": "Failed to update queued message."
+      },
+      {
+        "index": 12293,
+        "from": "Only the teammate who started this agent can open it."
+      },
+      {
+        "index": 12294,
+        "from": "Opening {0} in Cursor Browser"
+      },
+      {
+        "index": 12295,
+        "from": "Don't Open"
+      },
+      {
+        "index": 12296,
+        "from": "Whether the client is pointed at a backend running on this machine"
+      },
+      {
+        "index": 12321,
+        "from": "Try saving or reverting the editors with unsaved changes first and then try again."
+      },
+      {
+        "index": 12411,
+        "from": "Cursor Auth"
+      },
+      {
+        "index": 12419,
+        "from": "SpaceX Airlock"
+      },
+      {
+        "index": 12430,
+        "from": "Managed Deployment"
+      },
+      {
+        "index": 12439,
+        "from": "Enter Command Name"
+      },
+      {
+        "index": 12440,
+        "from": "e.g., my-custom-command"
+      },
+      {
+        "index": 12441,
+        "from": "Please enter a name for the new command"
+      },
+      {
+        "index": 12442,
+        "from": "Command name cannot be empty"
+      },
+      {
+        "index": 12443,
+        "from": "Command name can only contain lowercase letters, numbers, and hyphens"
+      },
+      {
+        "index": 12444,
+        "from": "A command with this name already exists"
+      },
+      {
         "index": 12445,
         "from": "New Rule"
+      },
+      {
+        "index": 12446,
+        "from": "e.g. my-rule"
+      },
+      {
+        "index": 12447,
+        "from": "Enter a name for the new rule"
+      },
+      {
+        "index": 12448,
+        "from": "Rule name cannot be empty"
+      },
+      {
+        "index": 12449,
+        "from": "Rule name can only contain lowercase letters, numbers, and hyphens"
+      },
+      {
+        "index": 12450,
+        "from": "A rule with this name already exists"
+      },
+      {
+        "index": 12527,
+        "from": "Invalid JSON: {0}"
       },
       {
         "index": 12532,
@@ -4683,6 +9523,10 @@
       {
         "index": 12540,
         "from": "Cancel"
+      },
+      {
+        "index": 12578,
+        "from": "Invalid JSON: {0}"
       },
       {
         "index": 12583,
@@ -4701,6 +9545,18 @@
         "from": "Cancel"
       },
       {
+        "index": 12704,
+        "from": "Cannot change enablement of {0} extension in workspace because it contributes authentication providers"
+      },
+      {
+        "index": 12753,
+        "from": "{0} is now configured to a different Marketplace. Please restart to apply the changes."
+      },
+      {
+        "index": 12754,
+        "from": "&&Restart"
+      },
+      {
         "index": 12755,
         "from": "Local"
       },
@@ -4709,32 +9565,460 @@
         "from": "Remote"
       },
       {
+        "index": 12757,
+        "from": "Can't install '{0}' extension. {1}"
+      },
+      {
+        "index": 12758,
+        "from": "Can't install release version of '{0}' extension because it has no release version."
+      },
+      {
+        "index": 12759,
+        "from": "Can't install '{0}' extension because it is not compatible with the current version of {1} (version {2})."
+      },
+      {
+        "index": 12784,
+        "from": "Captured diagnostics for the {0} (PID {1}) while it was unresponsive."
+      },
+      {
+        "index": 12785,
+        "from": "Reveal in File Explorer"
+      },
+      {
+        "index": 12792,
+        "from": "Start Network & IPC Profiler"
+      },
+      {
+        "index": 12838,
+        "from": "An activation event emitted when terminal completions are requested."
+      },
+      {
+        "index": 12881,
+        "from": "Extensions have been modified on disk. Please reload the window."
+      },
+      {
+        "index": 12882,
+        "from": "Reload Window"
+      },
+      {
         "index": 12883,
         "from": "Copy"
+      },
+      {
+        "index": 12884,
+        "from": "Reload Window"
+      },
+      {
+        "index": 12885,
+        "from": "Extension host did not start in 10 seconds, it might be stopped on the first line and needs a debugger to continue."
+      },
+      {
+        "index": 12886,
+        "from": "Extension host did not start in 10 seconds"
+      },
+      {
+        "index": 12887,
+        "from": "Terminating extension debug session"
+      },
+      {
+        "index": 12888,
+        "from": "The following extension(s) were blocked due to signature verification: {0}. Please reinstall them from a trusted source."
+      },
+      {
+        "index": 12889,
+        "from": "extension files have been modified"
+      },
+      {
+        "index": 12890,
+        "from": "failed to verify extension integrity"
+      },
+      {
+        "index": 12891,
+        "from": "extension was not verified at install time - please reinstall"
+      },
+      {
+        "index": 12892,
+        "from": "Extension host cannot start: version mismatch."
+      },
+      {
+        "index": 12893,
+        "from": "Relaunch {0}"
+      },
+      {
+        "index": 12894,
+        "from": "The extension host terminated unexpectedly. Restarting..."
+      },
+      {
+        "index": 12895,
+        "from": "Start Extension Bisect"
+      },
+      {
+        "index": 12896,
+        "from": "Open Developer Tools"
+      },
+      {
+        "index": 12897,
+        "from": "Restart Extension Host"
       },
       {
         "index": 12898,
         "from": "Learn More"
       },
       {
+        "index": 12899,
+        "from": "Extension host terminated unexpectedly 3 times within the last 5 minutes."
+      },
+      {
+        "index": 12900,
+        "from": "Allow connecting to the remote server '{0}:{1}'?"
+      },
+      {
         "index": 12902,
         "from": "Connect"
+      },
+      {
+        "index": 12903,
+        "from": "Connection to '{0}:{1}' was not allowed."
+      },
+      {
+        "index": 12904,
+        "from": "Could not fetch remote environment"
+      },
+      {
+        "index": 12905,
+        "from": "Extension '{0}' is required to open the remote window.\nOK to enable?"
+      },
+      {
+        "index": 12906,
+        "from": "Enable and Reload"
+      },
+      {
+        "index": 12907,
+        "from": "Extension '{0}' is required to open the remote window.\nDo you want to install the extension?"
+      },
+      {
+        "index": 12908,
+        "from": "Install and Reload"
+      },
+      {
+        "index": 12909,
+        "from": "`{0}` not found on marketplace"
+      },
+      {
+        "index": 12910,
+        "from": "An explicit request"
+      },
+      {
+        "index": 12911,
+        "from": "Restart Extension Host"
+      },
+      {
+        "index": 12912,
+        "from": "File Watcher"
+      },
+      {
+        "index": 12913,
+        "from": "You are about to save '{0}' as admin."
+      },
+      {
+        "index": 12914,
+        "from": "You are about to save '{0}' as super user."
+      },
+      {
+        "index": 12915,
+        "from": "Workspace is not trusted."
+      },
+      {
+        "index": 12921,
+        "from": "File watch recording requires the \"{0}\" feature flag to be enabled."
+      },
+      {
+        "index": 12922,
+        "from": "File watch recording stopped. Collected {0} unique paths and {1} watcher stats."
       },
       {
         "index": 12923,
         "from": "Stop"
       },
       {
+        "index": 12924,
+        "from": "Stop Recording"
+      },
+      {
+        "index": 12926,
+        "from": "Open Recording Folder"
+      },
+      {
+        "index": 12927,
+        "from": "File watch recording is running. Make file changes to record them."
+      },
+      {
+        "index": 12928,
+        "from": "Start File Watch Recording"
+      },
+      {
+        "index": 12938,
+        "from": "Your {0} installation appears to be corrupt. Please reinstall."
+      },
+      {
+        "index": 12939,
+        "from": "More Information"
+      },
+      {
+        "index": 12940,
+        "from": "Don't Show Again"
+      },
+      {
+        "index": 13010,
+        "from": "Unable to write display language. Please open the runtime settings, correct errors/warnings in it and try again."
+      },
+      {
+        "index": 13011,
+        "from": "Open Runtime Settings"
+      },
+      {
+        "index": 13012,
+        "from": "Installing {0} language support..."
+      },
+      {
+        "index": 13013,
+        "from": "Restart {0} to switch to {1}?"
+      },
+      {
+        "index": 13014,
+        "from": "To change the display language to {0}, {1} needs to restart."
+      },
+      {
+        "index": 13015,
+        "from": "&&Restart"
+      },
+      {
         "index": 13028,
         "from": "VS Code Settings"
+      },
+      {
+        "index": 13089,
+        "from": "Open in browser"
+      },
+      {
+        "index": 13090,
+        "from": "Failed to connect to the remote extension host server (Error: {0})"
       },
       {
         "index": 13091,
         "from": "Network"
       },
       {
+        "index": 13093,
+        "from": "Open troubleshooting guide"
+      },
+      {
+        "index": 13094,
+        "from": "An OS keyring couldn't be identified for storing the encryption related data in your current desktop environment."
+      },
+      {
+        "index": 13095,
+        "from": "Open the troubleshooting guide to address this or you can use weaker encryption that doesn't use the OS keyring."
+      },
+      {
+        "index": 13096,
+        "from": "Use weaker encryption"
+      },
+      {
+        "index": 13098,
+        "from": "You're running in a KDE environment but the OS keyring is not available for encryption. Ensure you have kwallet running."
+      },
+      {
+        "index": 13130,
+        "from": "Saving text files"
+      },
+      {
+        "index": 13348,
+        "from": "Native widget colors match the system colors."
+      },
+      {
+        "index": 13349,
+        "from": "Use light native widget colors for light color themes and dark for dark color themes."
+      },
+      {
+        "index": 13350,
+        "from": "Use light native widget colors."
+      },
+      {
+        "index": 13351,
+        "from": "Use dark native widget colors."
+      },
+      {
+        "index": 13353,
+        "from": "Some extensions from the imported profile could not be installed: {0}"
+      },
+      {
+        "index": 13355,
+        "from": "Extensions data in the imported profile is not valid JSON."
+      },
+      {
+        "index": 13356,
+        "from": "Extensions data in the imported profile must be a JSON array."
+      },
+      {
+        "index": 13357,
+        "from": "Extension entry {0} in the imported profile is empty."
+      },
+      {
+        "index": 13358,
+        "from": "Extension entry {0} in the imported profile is malformed."
+      },
+      {
+        "index": 13359,
+        "from": "Extension entry {0} in the imported profile is missing a valid identifier."
+      },
+      {
+        "index": 13360,
+        "from": "Extension entry {0} in the imported profile is invalid and was skipped."
+      },
+      {
+        "index": 13361,
+        "from": "Extension entries {0} in the imported profile are invalid and were skipped."
+      },
+      {
+        "index": 13374,
+        "from": "Failed to create profile from '{0}'."
+      },
+      {
+        "index": 13376,
+        "from": "Profile '{0}' was created, but some extension entries in the imported profile were skipped."
+      },
+      {
+        "index": 13377,
+        "from": "Profile '{0}' was created, but no extensions from the imported profile were applied."
+      },
+      {
+        "index": 13378,
+        "from": "Profile '{0}' was created, but some extension entries in the imported profile were skipped."
+      },
+      {
+        "index": 13379,
+        "from": "Failed to create profile from the imported file."
+      },
+      {
+        "index": 13588,
+        "from": "Backup working copies"
+      },
+      {
+        "index": 13589,
+        "from": "The following editors with unsaved changes could not be saved to the backup location."
+      },
+      {
+        "index": 13590,
+        "from": "The following editors with unsaved changes could not be saved or reverted."
+      },
+      {
+        "index": 13591,
+        "from": "Try saving or reverting the editors with unsaved changes first and then try again."
+      },
+      {
+        "index": 13592,
+        "from": "&&OK"
+      },
+      {
+        "index": 13593,
+        "from": "Close Anyway"
+      },
+      {
+        "index": 13594,
+        "from": "Quit Anyway"
+      },
+      {
+        "index": 13595,
+        "from": "Reload Anyway"
+      },
+      {
+        "index": 13596,
+        "from": "Backing up editors with unsaved changes is taking a bit longer..."
+      },
+      {
+        "index": 13597,
+        "from": "Click 'Cancel' to stop waiting and to save or revert editors with unsaved changes."
+      },
+      {
+        "index": 13598,
+        "from": "Saving editors with unsaved changes is taking a bit longer..."
+      },
+      {
+        "index": 13599,
+        "from": "Reverting editors with unsaved changes is taking a bit longer..."
+      },
+      {
+        "index": 13600,
+        "from": "Discarding backups is taking a bit longer..."
+      },
+      {
+        "index": 13601,
+        "from": "Closing workspaces"
+      },
+      {
+        "index": 13602,
+        "from": "Try again"
+      },
+      {
+        "index": 13603,
+        "from": "Reconnect"
+      },
+      {
+        "index": 13604,
+        "from": "Reconnect failed. The workspace is still disconnected."
+      },
+      {
+        "index": 13605,
+        "from": "Could not reconnect to the remote workspace."
+      },
+      {
+        "index": 13606,
+        "from": "Reconnect failed. \"{0}\" is still disconnected."
+      },
+      {
+        "index": 13607,
+        "from": "Could not reconnect to \"{0}\"."
+      },
+      {
+        "index": 13614,
+        "from": "Do you want to save your workspace configuration as a file?"
+      },
+      {
+        "index": 13615,
+        "from": "Save your workspace if you plan to open it again."
+      },
+      {
         "index": 13616,
         "from": "&&Save"
+      },
+      {
+        "index": 13617,
+        "from": "Do&&n't Save"
+      },
+      {
+        "index": 13618,
+        "from": "Always discard untitled workspaces without asking"
+      },
+      {
+        "index": 13619,
+        "from": "Unable to save workspace '{0}'"
+      },
+      {
+        "index": 13620,
+        "from": "The workspace is already opened in another window. Please close that window first and then try again."
+      },
+      {
+        "index": 13621,
+        "from": "Opening a multi-root workspace"
+      },
+      {
+        "index": 13622,
+        "from": "Run Cursor Worktree Cleanup (Dev)"
+      },
+      {
+        "index": 13623,
+        "from": "Worktree cleanup skipped: another window already holds the cleanup lease."
       }
     ]
   }

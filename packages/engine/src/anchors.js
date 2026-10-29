@@ -51,6 +51,13 @@ export async function loadDict(file) {
   return JSON.parse(await fs.readFile(file, 'utf8'));
 }
 
+// NLS 专用词典（Cursor 自己加的菜单/命令/对话框文案，只写进 nls.messages.json，不进静态补丁和 DOM 补漏）；缺失当空
+export async function loadNlsDict(file) {
+  if (!file) return {};
+  try { return JSON.parse(await fs.readFile(file, 'utf8')); }
+  catch (e) { if (e.code === 'ENOENT') return {}; throw e; }
+}
+
 // 数字模板（"Tab Stats: {n} ({n}%)" → "Tab 统计：{n} ({n}%)"）：只给 DOM 补漏在界面外壳区域用；文件缺失就当没有
 export async function loadPatterns(file) {
   if (!file) return [];

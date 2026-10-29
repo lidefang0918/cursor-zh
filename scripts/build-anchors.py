@@ -58,6 +58,9 @@ _K = r'\$\{(\w+)\?"\\u2318":"Ctrl\+"\}'
 def _k(m):
     return '${' + m.group(1) + '?"\\u2318":"Ctrl+"}'
 WORDS = json.load(open(os.path.join(REPO, 'dicts/zh-cn.json')))
+# NLS 专用词典：只用于 nls.messages.json（按下标替换，天然只是展示文案），不参与 bundle 静态替换
+_nls = os.path.join(REPO, 'dicts/zh-cn.nls.json')
+NLS_WORDS = json.load(open(_nls)) if os.path.exists(_nls) else {}
 
 # 智能体窗口（glass）原生菜单栏：菜单项标题是菜单对象里的字面量（"New Agent" 等），同名字面量在别处被当 key 比较，
 # 整串替换不安全；这里只改 {column:X.MenubarYMenu,group,order,title:"…"} 里的 title（上下文唯一，安全）
@@ -181,7 +184,7 @@ def main():
         f"~/.cursor/extensions/ms-ceintl.vscode-language-pack-zh-hans-{product.get('vscodeVersion')}*/translations/main.i18n.json"))) or [None])[-1]
     if lp:
         anchors['nls'] = {'relative': 'resources/app/out/nls.messages.json', 'langpack': os.path.basename(os.path.dirname(os.path.dirname(lp))),
-                          'entries': nls_entries(app, words, lp)}
+                          'entries': nls_entries(app, {**NLS_WORDS, **words}, lp)}
         print(f"nls: {len(anchors['nls']['entries'])} untranslated messages covered by dict")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     json.dump(anchors, open(out, 'w'), ensure_ascii=False, indent=2)

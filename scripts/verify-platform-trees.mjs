@@ -9,10 +9,11 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { loadAnchors, loadDict, loadPatterns, patchTree, defaultPaths } from '../packages/engine/src/index.js';
+import { loadAnchors, loadDict, loadNlsDict, loadPatterns, patchTree, defaultPaths } from '../packages/engine/src/index.js';
 
 const P = defaultPaths();
 const dict = await loadDict(P.dictPath);
+const nlsDict = await loadNlsDict(P.nlsDictPath);
 const patterns = await loadPatterns(P.patternsPath);
 const b64 = (buf) => crypto.createHash('sha256').update(buf).digest('base64').replace(/=+$/, '');
 const sha = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
@@ -34,7 +35,7 @@ for (const spec of process.argv.slice(2)) {
   const before = Object.fromEntries(await Promise.all(rels.map(async (r) => [r, await fs.readFile(path.join(root, r))])));
   for (const [r, s] of Object.entries(anchors.pristine ?? {})) ok(sha(before[r]) === s, `${name}: 原版 sha256 与锚点 pristine 一致 ${r.split('/').pop()}`);
 
-  const res = await patchTree({ root, anchors, dict, patterns });
+  const res = await patchTree({ root, anchors, dict, nlsDict, patterns });
   ok(res.missing.length === 0, `${name}: 静态补丁 ${res.replaced} 处 + 片段 ${res.fragmentsReplaced} 处，未命中 ${res.missing.length}${res.missing.length ? '：' + res.missing.slice(0, 5).join('；') : ''}`);
   ok(res.nlsMissing.length === 0, `${name}: NLS ${res.nlsReplaced} 条，未命中 ${res.nlsMissing.length}`);
   for (const f of anchors.dom?.relatives ?? []) {

@@ -124,3 +124,26 @@ describe('applyFragments', () => {
   });
 });
 
+
+describe('NLS-only dictionary', () => {
+  it('patchTree uses it for nls.messages.json only: never as a static literal or in the DOM runtime', async () => {
+    const { patchTree } = await import('../src/localize.js');
+    const { loadNlsDict } = await import('../src/anchors.js');
+    const js = 'a="Cursor Settings";b="Rich";c="New Agent";';
+    const root = await fakeInstall(js);
+    const nlsRel = 'resources/app/out/nls.messages.json';
+    await fs.writeFile(path.join(root, nlsRel), JSON.stringify(['Rich', 'Capture Performance Profile', 'Cursor Settings']));
+    const anchors = { ...(await loadAnchors({ platform: 'linux', version: 'test-fixture', anchorsDir })),
+      nls: { relative: nlsRel, entries: [{ index: 0, from: 'Rich' }, { index: 1, from: 'Capture Performance Profile' }, { index: 2, from: 'Cursor Settings' }] } };
+    const dict = { 'Cursor Settings': 'Cursor 设置', 'New Agent': '新建智能体' };
+    const nlsDict = { Rich: '富文本', 'Capture Performance Profile': '捕获性能分析', 'Cursor Settings': '不该覆盖主词典' };
+    const r = await patchTree({ root, anchors, dict, nlsDict });
+    assert.equal(r.nlsReplaced, 3);
+    assert.deepEqual(JSON.parse(await fs.readFile(path.join(root, nlsRel), 'utf8')), ['富文本', '捕获性能分析', 'Cursor 设置']);
+    const out = await fs.readFile(path.join(root, REL), 'utf8');
+    assert.ok(out.startsWith('a="Cursor 设置";b="Rich";'), 'bundle literal "Rich" must stay English');
+    assert.ok(!out.includes('富文本') && !out.includes('捕获性能分析'), 'NLS-only words must not reach the DOM runtime');
+    assert.deepEqual(await loadNlsDict(path.join(root, 'nope.json')), {});
+    assert.deepEqual(await loadNlsDict(undefined), {});
+  });
+});
