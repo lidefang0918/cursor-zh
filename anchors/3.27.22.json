@@ -1516,6 +1516,81 @@
         },
         {
           "from": "Updates unavailable"
+        },
+        {
+          "from": "Restart Cloud Agent Environment Setup"
+        },
+        {
+          "from": "Start Cloud Agent Setup"
+        },
+        {
+          "from": "Developer: Copy Recent Cursor Tab Actions"
+        },
+        {
+          "from": "Developer: Get Last Command K ID"
+        },
+        {
+          "from": "Developer: Get Last Running AI Action ID"
+        },
+        {
+          "from": "Developer: Report AI Action"
+        },
+        {
+          "from": "Developer: Report Bad AI Action"
+        },
+        {
+          "from": "Developer: Report Good AI Action"
+        },
+        {
+          "from": "Developer: Report Bad Command K Suggestion"
+        },
+        {
+          "from": "Developer: Report Good Command K Suggestion"
+        },
+        {
+          "from": "Developer: Toggle Auth Debugging"
+        },
+        {
+          "from": "Developer: Use Localhost Update Server"
+        },
+        {
+          "from": "Increment Shown Model Fallbacks Count"
+        },
+        {
+          "from": "Show Subscription Tiers Modal"
+        },
+        {
+          "from": "Show Usage Pricing Modal"
+        },
+        {
+          "from": "Skip pending shell tool"
+        },
+        {
+          "from": "Toggle OpenAI key"
+        },
+        {
+          "from": "Trigger Token Refresh"
+        },
+        {
+          "from": "Shell Command"
+        },
+        {
+          "from": "Merge Editor (Dev)"
+        },
+        {
+          "from": "Open Merge Editor State from JSON"
+        },
+        {
+          "from": "Open Selection In Temporary Merge Editor"
+        },
+        {
+          "from": "Install '{0}' command"
+        },
+        {
+          "from": "Uninstall '{0}' command from PATH"
+        },
+        {
+          "from": "Debug: Check Terminal Execution Service Version"
         }
       ],
       "fragments": [
@@ -3390,6 +3465,90 @@
         },
         {
           "from": "Updates unavailable"
+        },
+        {
+          "from": "Restart Cloud Agent Environment Setup"
+        },
+        {
+          "from": "Start Cloud Agent Setup"
+        },
+        {
+          "from": "Developer: Copy Recent Cursor Tab Actions"
+        },
+        {
+          "from": "Developer: Get Last Command K ID"
+        },
+        {
+          "from": "Developer: Get Last Running AI Action ID"
+        },
+        {
+          "from": "Developer: Report AI Action"
+        },
+        {
+          "from": "Developer: Report Bad AI Action"
+        },
+        {
+          "from": "Developer: Report Good AI Action"
+        },
+        {
+          "from": "Developer: Report Bad Command K Suggestion"
+        },
+        {
+          "from": "Developer: Report Good Command K Suggestion"
+        },
+        {
+          "from": "Developer: Toggle Auth Debugging"
+        },
+        {
+          "from": "Developer: Use Localhost Update Server"
+        },
+        {
+          "from": "Increment Shown Model Fallbacks Count"
+        },
+        {
+          "from": "Show Subscription Tiers Modal"
+        },
+        {
+          "from": "Show Usage Pricing Modal"
+        },
+        {
+          "from": "Skip pending shell tool"
+        },
+        {
+          "from": "Toggle OpenAI key"
+        },
+        {
+          "from": "Trigger Token Refresh"
+        },
+        {
+          "from": "Shell Command"
+        },
+        {
+          "from": "Merge Editor (Dev)"
+        },
+        {
+          "from": "Open Merge Editor State from JSON"
+        },
+        {
+          "from": "Open Selection In Temporary Merge Editor"
+        },
+        {
+          "from": "Search or enter URL"
+        },
+        {
+          "from": "Cursor Docs"
+        },
+        {
+          "from": "Cursor Changelog"
+        },
+        {
+          "from": "Install '{0}' command"
+        },
+        {
+          "from": "Uninstall '{0}' command from PATH"
+        },
+        {
+          "from": "Debug: Check Terminal Execution Service Version"
         }
       ],
       "fragments": [
@@ -4109,6 +4268,18 @@
         "from": "Copy Message"
       },
       {
+        "index": 7914,
+        "from": "Merge Editor (Dev)"
+      },
+      {
+        "index": 7915,
+        "from": "Open Merge Editor State from JSON"
+      },
+      {
+        "index": 7916,
+        "from": "Open Selection In Temporary Merge Editor"
+      },
+      {
         "index": 8446,
         "from": "Import"
       },
@@ -4201,6 +4372,10 @@
         "from": "Terminal"
       },
       {
+        "index": 10760,
+        "from": "Debug: Check Terminal Execution Service Version"
+      },
+      {
         "index": 11444,
         "from": "Continue"
       },
@@ -4247,6 +4422,26 @@
       {
         "index": 11996,
         "from": "Toggle Developer Tools"
+      },
+      {
+        "index": 12003,
+        "from": "Install 'code' command"
+      },
+      {
+        "index": 12007,
+        "from": "Shell Command"
+      },
+      {
+        "index": 12008,
+        "from": "Install '{0}' command"
+      },
+      {
+        "index": 12009,
+        "from": "Uninstall '{0}' command from PATH"
+      },
+      {
+        "index": 12010,
+        "from": "Uninstall '{0}' command from PATH"
       },
       {
         "index": 12016,
