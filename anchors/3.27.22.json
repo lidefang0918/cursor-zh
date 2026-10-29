@@ -1654,6 +1654,30 @@
         },
         {
           "from": "No tools, prompts, or resources"
+        },
+        {
+          "from": "Delete Old Chats..."
+        },
+        {
+          "from": "Initialize user level hooks"
+        },
+        {
+          "from": "Toggle Sandbox Debug Logging"
+        },
+        {
+          "from": "Hide Chat"
+        },
+        {
+          "from": "Generate in Terminal"
+        },
+        {
+          "from": "Toggle Keyboard Shortcuts Troubleshooting"
+        },
+        {
+          "from": "Upgrade your plan"
+        },
+        {
+          "from": "Choose a plan with more usage"
         }
       ],
       "fragments": [
@@ -3675,6 +3699,27 @@
         },
         {
           "from": "No tools, prompts, or resources"
+        },
+        {
+          "from": "Delete Old Chats..."
+        },
+        {
+          "from": "Initialize user level hooks"
+        },
+        {
+          "from": "Toggle Sandbox Debug Logging"
+        },
+        {
+          "from": "Hide Chat"
+        },
+        {
+          "from": "Toggle Keyboard Shortcuts Troubleshooting"
+        },
+        {
+          "from": "Upgrade your plan"
+        },
+        {
+          "from": "Choose a plan with more usage"
         }
       ],
       "fragments": [

@@ -904,5 +904,13 @@
   "Hooks that run during the agent's loop will show up here.": "智能体循环中运行的钩子会显示在这里。",
   "No tools, prompts, or resources": "没有工具、提示词或资源",
   "User": "用户",
-  "Sources": "来源"
+  "Sources": "来源",
+  "Delete Old Chats...": "删除旧对话...",
+  "Initialize user level hooks": "初始化用户级钩子",
+  "Toggle Sandbox Debug Logging": "切换沙盒调试日志",
+  "Hide Chat": "隐藏聊天",
+  "Generate in Terminal": "在终端中生成",
+  "Toggle Keyboard Shortcuts Troubleshooting": "切换键盘快捷方式疑难解答",
+  "Upgrade your plan": "升级套餐",
+  "Choose a plan with more usage": "选择用量更多的套餐"
 }

@@ -205,6 +205,14 @@ describe('DOM runtime injection', () => {
     assert.equal(alias.nodeValue, 'Close Tab', 'English alias kept for search');
     assert.equal(file.nodeValue, 'Updates', 'quick open file names untouched');
     assert.equal(tab.nodeValue, 'Updates', 'explorer names untouched');
+    // “分类: 标题”在一个文本节点里：只翻标题；快速打开（非 ">"）里同样的文字不动
+    const cat = text('开发人员: Close Tab'), catAlias = text('Developer: Close Tab'), catFile = text('docs: Close Tab');
+    const w2 = widget('>', rowOf(cat, catAlias)); w2.firstChild.nextSibling.value = '>';
+    const w3 = widget('', rowOf(catFile, text('x'))); w3.firstChild.nextSibling.value = 'docs';
+    runInFakeDom(buildInjection({ dict: d, runtimeSource: RUNTIME }), el('BODY', [w2, w3]));
+    assert.equal(cat.nodeValue, '开发人员: 关闭标签页');
+    assert.equal(catAlias.nodeValue, 'Developer: Close Tab');
+    assert.equal(catFile.nodeValue, 'docs: Close Tab');
   });
 
   it('isolates errors: a throwing node never breaks other mutations, too many errors disable the observer', () => {

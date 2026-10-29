@@ -174,6 +174,10 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
     if (mode === 2 || mode === 3) { // 2 聊天标签页标题：只翻默认名；3 命令面板主标题：整段精确匹配
       var n = (t.nodeValue || '').trim();
       if ((mode === 3 || has.call(DEFAULT_TITLES, n)) && has.call(DICT, n)) t.nodeValue = t.nodeValue.replace(n, DICT[n]);
+      else if (mode === 3) { // “分类: 标题”整段在一个文本节点里（分类已由语言包译好、标题是 Cursor 自加的英文）：只翻标题
+        var c = /^([^:]{1,40}): (.+)$/.exec(n);
+        if (c && has.call(DICT, c[2]) && !has.call(OUT, c[2])) t.nodeValue = t.nodeValue.replace(n, c[1] + ': ' + DICT[c[2]]);
+      }
       return;
     }
     if (sentence(t)) return;
