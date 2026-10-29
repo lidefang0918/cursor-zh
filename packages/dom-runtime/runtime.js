@@ -58,10 +58,14 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
     if (m && has.call(DICT, m[1]) && !has.call(OUT, m[1])) return s.replace(t, DICT[m[1]] + ' ' + m[2]);
     return null;
   }
-  function hasClass(node, list) {
-    if (!node.classList) return false;
-    for (var i = 0; i < list.length; i++) if (node.classList.contains(list[i])) return true;
-    return false;
+  function reOf(list) { return new RegExp('(?:^|\\s)(?:' + list.join('|') + ')(?:\\s|$)'); }
+  var SKIP_RE = reOf(SKIP_CLASSES), NAME_RE = reOf(NAME_CLASSES), CHROME_RE = reOf(CHROME_CLASSES);
+  // 一次读出 class 字符串再用正则判断，比对每个类名逐个 classList.contains 快得多（祖先链上每层都要判断）
+  function cls(node) {
+    var c = node.className;
+    if (typeof c === 'string') return c;
+    if (c && typeof c.baseVal === 'string') return c.baseVal; // SVG
+    return node.getAttribute ? node.getAttribute('class') || '' : '';
   }
   // 0 = 正常；1 = 整棵子树跳过；2 = 文件名/标题区（只在聊天标签页里翻默认标题）
   function skip(node) {
@@ -72,8 +76,10 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
       if (node.getAttribute('role') === 'textbox') return 1;
       for (var i = 0; i < SKIP_ATTRS.length; i++) if (node.hasAttribute(SKIP_ATTRS[i])) return 1;
     }
-    if (hasClass(node, SKIP_CLASSES)) return 1;
-    if (hasClass(node, NAME_CLASSES)) return 2;
+    var c = cls(node);
+    if (!c) return 0;
+    if (SKIP_RE.test(c)) return 1;
+    if (NAME_RE.test(c)) return 2;
     return 0;
   }
   // 名字区里允许翻的两种位置：2 = 聊天标签页标题（只翻默认名）；3 = 命令面板（输入以 ">" 开头）条目的主标题（整段精确匹配）
@@ -92,18 +98,25 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
     }
     return 0;
   }
-  // 返回节点所处的模式（按祖先链）：1 跳过，2 名字区，0 正常
+  // 祖先链（含自身）判定：1 有跳过区，2 有名字区，0 都没有。同一批变更里很多节点共享祖先，
+  // 按批缓存（MEMO 在每次回调结束时清空；我们自己的改动只动文本/title 类属性，不影响判定）
+  var MEMO = null;
+  function chain(p) {
+    if (!p || p.nodeType !== 1 && p.nodeType !== 3) return 0;
+    if (MEMO && MEMO.has(p)) return MEMO.get(p);
+    var m = p.nodeType === 1 ? skip(p) : 0;
+    var r = m === 1 ? 1 : (function (up) { return up === 1 ? 1 : m === 2 || up === 2 ? 2 : 0; })(chain(p.parentNode));
+    if (MEMO) MEMO.set(p, r);
+    return r;
+  }
+  // 返回节点所处的模式（按祖先链）：1 跳过，2/3 名字区，0 正常
   function modeOf(node) {
-    var mode = 0;
-    for (var p = node; p; p = p.parentNode) {
-      var m = p.nodeType === 1 ? skip(p) : 0;
-      if (m === 1) return 1;
-      if (m === 2) mode = 2;
-    }
+    var mode = chain(node);
+    if (mode === 1) return 1;
     return mode === 2 ? (nameArea(node) || 1) : 0;
   }
   function inChrome(node) {
-    for (var p = node; p; p = p.parentNode) if (p.nodeType === 1 && hasClass(p, CHROME_CLASSES)) return true;
+    for (var p = node; p; p = p.parentNode) if (p.nodeType === 1 && CHROME_RE.test(cls(p))) return true;
     return false;
   }
   function pattern(s) {
@@ -180,18 +193,45 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
     if (mode !== 2 && mode !== 3) attrs(node);
     for (var c = node.firstChild; c; c = c.nextSibling) walk(c, mode);
   }
-  function start() {
-    walk(doc.body);
-    new MO(function (muts) {
-      for (var i = 0; i < muts.length; i++) {
+  // 出错隔离：任何异常只影响当前这一条变更；累计出错太多就自动停用，绝不拖垮 Cursor 界面
+  var MAX_ERRORS = 50;
+  var STATS = { version: 2, batches: 0, mutations: 0, ms: 0, maxMs: 0, startMs: 0, errors: 0, disabled: false };
+  try { if (doc.defaultView) doc.defaultView.__cursorZhDom = STATS; } catch (_) {}
+  var now = (typeof performance !== 'undefined' && performance.now) ? function () { return performance.now(); } : function () { return Date.now(); };
+  var observer = null;
+  function fail(e) {
+    STATS.errors++;
+    if (STATS.errors === 1) { try { console.warn('[cursor-zh] dom runtime error', e); } catch (_) {} }
+    if (STATS.errors >= MAX_ERRORS && !STATS.disabled) {
+      STATS.disabled = true;
+      try { if (observer) observer.disconnect(); } catch (_) {}
+      try { console.warn('[cursor-zh] too many errors, DOM 补漏已停用（静态汉化不受影响）'); } catch (_) {}
+    }
+  }
+  function onMutations(muts) {
+    if (STATS.disabled) return;
+    var t0 = now();
+    MEMO = typeof Map === 'function' ? new Map() : null;
+    for (var i = 0; i < muts.length; i++) {
+      try {
         var m = muts[i];
         var mode = modeOf(m.target || {});
         if (mode === 1) continue;
         if (m.type === 'childList') for (var j = 0; j < m.addedNodes.length; j++) walk(m.addedNodes[j], mode);
         else if (m.type === 'characterData') text(m.target, mode);
         else if (m.type === 'attributes' && mode === 0) attrs(m.target);
-      }
-    }).observe(doc.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+      } catch (e) { fail(e); }
+    }
+    MEMO = null;
+    var dt = now() - t0;
+    STATS.batches++; STATS.mutations += muts.length; STATS.ms += dt; if (dt > STATS.maxMs) STATS.maxMs = dt;
+  }
+  function start() {
+    var t0 = now();
+    try { walk(doc.body); } catch (e) { fail(e); }
+    STATS.startMs = now() - t0;
+    observer = new MO(onMutations);
+    observer.observe(doc.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
   }
   if (doc.body) start();
   else doc.addEventListener('DOMContentLoaded', start);

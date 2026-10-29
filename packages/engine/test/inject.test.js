@@ -9,7 +9,7 @@ const RUNTIME = await fs.readFile(new URL('../../dom-runtime/runtime.js', import
 
 // 极简假 DOM，够跑 runtime
 function el(tag, children = [], attrs = {}, classes = []) {
-  const n = { nodeType: 1, tagName: tag, attrs: { ...attrs }, classList: { contains: (c) => classes.includes(c) },
+  const n = { nodeType: 1, tagName: tag, attrs: { ...attrs }, className: classes.join(" "), classList: { contains: (c) => classes.includes(c) },
     getAttribute(a) { return this.attrs[a] ?? null; }, setAttribute(a, v) { this.attrs[a] = v; },
     hasAttribute(a) { return a in this.attrs; },
     get textContent() { let s = ''; for (let c = this.firstChild; c; c = c.nextSibling) s += c.nodeType === 3 ? c.nodeValue : c.textContent; return s; } };
@@ -206,4 +206,58 @@ describe('DOM runtime injection', () => {
     assert.equal(file.nodeValue, 'Updates', 'quick open file names untouched');
     assert.equal(tab.nodeValue, 'Updates', 'explorer names untouched');
   });
+
+  it('isolates errors: a throwing node never breaks other mutations, too many errors disable the observer', () => {
+    let cb, disconnected = false;
+    const MutationObserver = class { constructor(f) { cb = f; } observe() {} disconnect() { disconnected = true; } };
+    const win = {};
+    const body = el('BODY', [el('SPAN', [text('Search')])]);
+    const document = { body, documentElement: body, readyState: 'complete', addEventListener() {}, defaultView: win };
+    const warns = [];
+    vm.runInNewContext(buildInjection({ dict, runtimeSource: RUNTIME }), { document, MutationObserver, console: { warn: (...a) => warns.push(a) }, performance: { now: () => 0 } });
+    const bad = el('DIV', [text('Search')]); bad.getAttribute = () => { throw new Error('boom'); };
+    const good = text('Search');
+    assert.doesNotThrow(() => cb([{ type: 'childList', addedNodes: [bad] }, { type: 'childList', addedNodes: [el('DIV', [good])] }]));
+    assert.equal(good.nodeValue, '搜索', 'later mutations in the same batch still processed');
+    assert.equal(win.__cursorZhDom.errors, 1);
+    assert.equal(warns.length, 1);
+    for (let i = 0; i < 60; i++) cb([{ type: 'childList', addedNodes: [bad] }]);
+    assert.ok(disconnected, 'observer disconnected after too many errors');
+    assert.equal(win.__cursorZhDom.disabled, true);
+    const after = text('Search');
+    cb([{ type: 'childList', addedNodes: [el('DIV', [after])] }]);
+    assert.equal(after.nodeValue, 'Search', 'disabled runtime does nothing');
+    assert.ok(warns.length <= 2, 'no console spam');
+  });
+
+  it('fuzz: random trees never throw, are idempotent and never touch protected subtrees', () => {
+    let seed = 12345; const rnd = (n) => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed % n; };
+    const words = ['Search', 'New Agent', 'Close Tab', 'IDE', 'Use /goal to set an objective', 'foo', '  Search  ', 'Close Pane (Ctrl+W)', '', '123', 'Tab Stats: 1/2 (50%)'];
+    const d = { Search: '搜索', 'New Agent': '新建智能体', 'Close Tab': '关闭标签页', IDE: 'IDE', 'Use /goal to set an objective': '使用 /goal 设定目标', 'Close Pane': '关闭窗格' };
+    const patterns = [{ from: 'Tab Stats: {n} ({n}%)', to: 'Tab 统计：{n} ({n}%)' }];
+    const guards = [['DIV', {}, ['monaco-editor']], ['DIV', { 'data-message-role': 'ai' }, []], ['DIV', { contenteditable: 'true' }, []], ['PRE', {}, []], ['DIV', {}, ['markdown-root']], ['SPAN', {}, ['label-name']]];
+    const plain = ['DIV', 'SPAN', 'BUTTON', 'P', 'A'];
+    for (let round = 0; round < 200; round++) {
+      const protectedTexts = [];
+      const build = (depth, prot) => {
+        const kids = [];
+        for (let i = 0, n = rnd(4); i < n; i++) {
+          if (depth > 4 || rnd(2)) { const t = text(words[rnd(words.length)]); if (prot) protectedTexts.push([t, t.nodeValue]); kids.push(t); continue; }
+          if (rnd(5) === 0) { const [tag, at, cl] = guards[rnd(guards.length)]; kids.push(el(tag, build(depth + 1, true), at, cl)); }
+          else kids.push(el(plain[rnd(plain.length)], build(depth + 1, prot), rnd(3) ? {} : { title: words[rnd(words.length)] }, rnd(4) ? [] : ['statusbar']));
+        }
+        return kids;
+      };
+      const body = el('BODY', build(0, false));
+      const snapshot = (n) => n.nodeType === 3 ? n.nodeValue : `${n.tagName}${JSON.stringify(n.attrs)}[${(() => { let s = ''; for (let c = n.firstChild; c; c = c.nextSibling) s += snapshot(c) + ','; return s; })()}]`;
+      let fire;
+      assert.doesNotThrow(() => { fire = runInFakeDom(buildInjection({ dict: d, patterns, runtimeSource: RUNTIME }), body); });
+      const once = snapshot(body);
+      assert.doesNotThrow(() => fire([{ type: 'childList', target: body, addedNodes: [body.firstChild].filter(Boolean) }]));
+      runInFakeDom(buildInjection({ dict: d, patterns, runtimeSource: RUNTIME }), body);
+      assert.equal(snapshot(body), once, `round ${round}: second pass changes nothing`);
+      for (const [t, v] of protectedTexts) assert.equal(t.nodeValue, v, `round ${round}: protected text changed`);
+    }
+  });
 });
+
