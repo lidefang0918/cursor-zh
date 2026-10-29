@@ -2,6 +2,8 @@
 
 Cursor 一键汉化工具（Electron GUI + Node 引擎：微软官方简体语言包 + 静态补丁 + DOM 补漏）。
 
+> 普通用户请看 **[docs/使用说明.md](docs/使用说明.md)**。
+
 > ⚠️ 开发与验证只在 box（Grok Bot 的 Linux 机器）上进行，只修改 box 上安装的 Cursor；绝不修改用户自己电脑上的 Cursor。本工具会改动 Cursor 安装目录，改动前强制备份，可一键还原；与 Cursor 官方无关。
 
 ## 使用（Linux）
@@ -35,6 +37,9 @@ Cursor 一键汉化工具（Electron GUI + Node 引擎：微软官方简体语�
 - 冒烟检查（只读）：`node scripts/smoke-check.mjs pristine|patched|checksums <安装根> <linux|win32|darwin>`、`node scripts/smoke-check.mjs ui <调试端口>`；CI 草稿：`.github/workflows/platform-smoke.yml`。
 
 ## 开发
+
+- 新版本 Cursor 适配：`sh scripts/new-version.sh [版本号|latest] [--all-platforms]`（下载官方包 → 生成锚点 → 全流程校验 → 测试，打印缺失词条和下一步）；CI 草稿 `.github/workflows/ci.yml` 每周自动检查一次
+- 术语一致性：`node scripts/check-glossary.mjs`（也在 `npm test` 里）
 
 - `npm test`
 - GUI：`cd apps/desktop && npx electron .`（指定安装目录：`CZL_ROOT=<dir>`）
