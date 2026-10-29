@@ -115,6 +115,14 @@ describe('applyFragments', () => {
     assert.equal(r.replaced, 0);
     assert.equal(r.missing.length, 2);
   });
+  it('single-pass fast path gives the same result as per-fragment search, and falls back when one fragment hides another', () => {
+    const frs = [{ from: '`$(tab) Tab Stats: ${', to: '`$(tab) Tab 统计：${', count: 1 }, { from: '} percent acceptance rate`', to: '}%`', count: 2 }];
+    assert.deepEqual(applyFragments(src, frs), applyFragments(src, frs.map(({ count, ...f }) => f)));
+    // "Bar ${" 两处都在 "`Foo Bar ${" 里：正则只会数到 0 次 → 退回逐条查找，结果与旧行为一致（第二条未命中）
+    const r = applyFragments('`Foo Bar ${x}`+`Foo Bar ${y}`', [{ from: '`Foo Bar ${', to: '`甲 ${', count: 2 }, { from: 'Bar ${', to: '乙 ${', count: 2 }]);
+    assert.equal(r.out, '`甲 ${x}`+`甲 ${y}`');
+    assert.equal(r.missing.length, 1);
+  });
   it('falls back to in-order replacement when fragments overlap', () => {
     const r = applyFragments('`Foo Bar ${x}`', [{ from: '`Foo Bar ${', to: '`甲 ${' }, { from: 'Bar ${', to: '乙 ${' }]);
     // 第一条先替换掉了 "Bar ${"，第二条随之未命中（与逐条 split/join 一致）
