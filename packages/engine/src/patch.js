@@ -51,10 +51,27 @@ export function replaceAllLiterals(src, map) {
   return { out, counts };
 }
 
+// 模板字面量里的固定片段（如 "`$(tab) Tab Stats: ${"）：带足上下文，出现次数必须和锚点里的 count 完全一致才替换，
+// 否则整条跳过并记为未命中（版本变了、上下文对不上就不冒险）
+export function applyFragments(src, fragments = []) {
+  let out = src;
+  let replaced = 0;
+  const missing = [];
+  for (const { from, to, count } of fragments) {
+    const n = out.split(from).length - 1;
+    if (n === 0 || (count !== undefined && n !== count)) { missing.push(`fragment:${from}（${n}/${count ?? '≥1'}）`); continue; }
+    out = out.split(from).join(to);
+    replaced += n;
+  }
+  return { out, replaced, missing };
+}
+
 export async function applyPatch({ installRoot, anchors, dict }) {
   const patched = [];
   const missing = [];
   let replaced = 0;
+  let fragmentsReplaced = 0;
+  const perFileFragments = {};
   const changed = new Map(); // relative -> Buffer
   const perFile = {};
 
@@ -70,7 +87,13 @@ export async function applyPatch({ installRoot, anchors, dict }) {
       }
       map.set(s.from, to);
     }
-    const { out, counts } = replaceAllLiterals(src, map);
+    const lit = replaceAllLiterals(src, map);
+    const { counts } = lit;
+    const fr = applyFragments(lit.out, file.fragments);
+    const out = fr.out;
+    missing.push(...fr.missing);
+    perFileFragments[file.relative] = fr.replaced;
+    fragmentsReplaced += fr.replaced;
     let fileCount = 0;
     for (const s of file.strings) {
       if (!map.has(s.from)) continue;
@@ -82,7 +105,7 @@ export async function applyPatch({ installRoot, anchors, dict }) {
       fileCount += n;
     }
     perFile[file.relative] = fileCount;
-    if (fileCount > 0) {
+    if (fileCount > 0 || fr.replaced > 0) {
       changed.set(file.relative, Buffer.from(out, 'utf8'));
       replaced += fileCount;
     }
@@ -95,7 +118,7 @@ export async function applyPatch({ installRoot, anchors, dict }) {
   }
 
   const { checksumsUpdated } = await updateChecksums({ installRoot, anchors, relatives: [...changed.keys()] });
-  return { patched, missing, replaced, perFile, checksumsUpdated };
+  return { patched, missing, replaced, perFile, fragmentsReplaced, perFileFragments, checksumsUpdated };
 }
 
 // 按文件当前内容重算 product.json 里对应的 checksum（Cursor/VS Code 启动时校验，不一致会提示"安装已损坏"）

@@ -93,5 +93,87 @@ describe('DOM runtime injection', () => {
     assert.equal(out.split(BEGIN).length - 1, 1);
     assert.ok(out.trimEnd().endsWith(END));
   });
+
+  it('translates only the default title of a chat (composer) tab, never file names or user titles', () => {
+    const d = { 'New Agent': '新建智能体', 'New Chat': '新建智能体', Search: '搜索' };
+    const tabTitle = text('New Agent'), userTitle = text('Search'), fileTab = text('Search');
+    const composerTab = (t) => el('DIV', [el('DIV', [el('A', [el('SPAN', [t], {}, ['monaco-highlighted-label'])], {}, ['label-name'])], {}, ['monaco-icon-name-container'])], {}, ['monaco-icon-label', 'composer-tab-label']);
+    const tab1 = composerTab(tabTitle), tab2 = composerTab(userTitle);
+    const file = el('DIV', [el('A', [fileTab], {}, ['label-name'])], {}, ['monaco-icon-label']);
+    const body = el('BODY', [el('DIV', [tab1, tab2, file], {}, ['tabs-container'])]);
+    const fire = runInFakeDom(buildInjection({ dict: d, runtimeSource: RUNTIME }), body);
+    assert.equal(tabTitle.nodeValue, '新建智能体');
+    assert.equal(userTitle.nodeValue, 'Search', 'user-chosen chat titles stay as is');
+    assert.equal(fileTab.nodeValue, 'Search', 'file names stay as is');
+    // 标签页标题被 Cursor 改回默认名（characterData）时也要翻
+    userTitle.nodeValue = 'New Chat';
+    fire([{ type: 'characterData', target: userTitle }]);
+    assert.equal(userTitle.nodeValue, '新建智能体');
+    fileTab.nodeValue = 'New Agent';
+    fire([{ type: 'characterData', target: fileTab }]);
+    assert.equal(fileTab.nodeValue, 'New Agent', 'a file literally named "New Agent" is not a chat tab');
+  });
+
+  it('applies number templates only in chrome areas (status bar, hovers), on text and attributes', () => {
+    const patterns = [
+      { from: 'Tab Stats: {n} ({n}%)', to: 'Tab 统计：{n} ({n}%)' },
+      { from: 'Tab AI Stats: {n} accepted out of {n} suggested, {n} percent acceptance rate', to: 'Tab AI 统计：已采纳 {n}，共建议 {n}，采纳率 {n}%' },
+    ];
+    const sb = text(' Tab Stats: 12/40 (30%)'), chat = text('Tab Stats: 12/40 (30%)'), notNum = text('Tab Stats: lots (30%)');
+    const item = el('A', [el('SPAN', [], {}, ['codicon']), sb], { 'aria-label': 'Tab AI Stats: 12 accepted out of 40 suggested, 30 percent acceptance rate' }, ['statusbar-item-label']);
+    const statusbar = el('FOOTER', [el('DIV', [item], {}, ['statusbar-item']), el('SPAN', [notNum])], {}, ['part', 'statusbar']);
+    const panel = el('DIV', [el('P', [chat])], { 'aria-label': 'Tab AI Stats: 1 accepted out of 2 suggested, 50 percent acceptance rate' });
+    const body = el('BODY', [statusbar, panel]);
+    const fire = runInFakeDom(buildInjection({ dict: {}, patterns, runtimeSource: RUNTIME }), body);
+    assert.equal(sb.nodeValue, ' Tab 统计：12/40 (30%)');
+    assert.equal(item.attrs['aria-label'], 'Tab AI 统计：已采纳 12，共建议 40，采纳率 30%');
+    assert.equal(notNum.nodeValue, 'Tab Stats: lots (30%)', '{n} only matches numbers');
+    assert.equal(chat.nodeValue, 'Tab Stats: 12/40 (30%)', 'templates never apply outside chrome areas');
+    assert.equal(panel.attrs['aria-label'], 'Tab AI Stats: 1 accepted out of 2 suggested, 50 percent acceptance rate');
+    // 状态栏数字刷新（characterData）后再次翻译
+    sb.nodeValue = 'Tab Stats: 13/41 (31%)';
+    fire([{ type: 'characterData', target: sb }]);
+    assert.equal(sb.nodeValue, 'Tab 统计：13/41 (31%)');
+  });
+
+  it('never translates user/AI content: chat messages, markdown, editors, inputs, code', () => {
+    const d = { Search: '搜索', 'Keep All': '全部保留', 'Use /goal to set an objective': '使用 /goal 设定目标' };
+    const cases = [];
+    const mk = (wrap) => { const t = text('Search'); cases.push(t); return wrap(t); };
+    const nodes = [
+      mk((t) => el('DIV', [el('P', [t])], { 'data-message-role': 'ai', 'data-message-kind': 'assistant' })),
+      mk((t) => el('DIV', [el('SPAN', [t])], { 'data-message-role': 'human' })),
+      mk((t) => el('DIV', [el('P', [t])], {}, ['markdown-root'])),
+      mk((t) => el('DIV', [el('P', [t])], {}, ['ui-markdown'])),
+      mk((t) => el('DIV', [t], {}, ['rendered-markdown'])),
+      mk((t) => el('DIV', [el('SPAN', [t])], {}, ['agent-transcript-row-markdown'])),
+      mk((t) => el('DIV', [t], {}, ['agent-transcript-row-human'])),
+      mk((t) => el('DIV', [t], {}, ['composer-human-message-content'])),
+      mk((t) => el('DIV', [t], { 'data-sent-message-bubble-text': '' })),
+      mk((t) => el('DIV', [el('DIV', [t], {}, ['view-line'])], {}, ['monaco-editor'])),
+      mk((t) => el('DIV', [el('P', [t])], { contenteditable: 'plaintext-only' })),
+      mk((t) => el('DIV', [el('P', [t])], { role: 'textbox' })),
+      mk((t) => el('DIV', [el('P', [t])], {}, ['ProseMirror'])),
+      mk((t) => el('PRE', [t])),
+      mk((t) => el('CODE', [t])),
+    ];
+    const sentence = [text('Use '), text('/goal'), text(' to set an objective')];
+    nodes.push(el('DIV', [el('P', sentence)], { 'data-message-role': 'ai' }));
+    const ok = text('Keep All');
+    const notEditable = text('Search');
+    const body = el('BODY', [...nodes, el('BUTTON', [ok]), el('DIV', [notEditable], { contenteditable: 'false' })]);
+    const fire = runInFakeDom(buildInjection({ dict: d, runtimeSource: RUNTIME }), body);
+    cases.forEach((t, i) => assert.equal(t.nodeValue, 'Search', `case ${i} must stay untouched`));
+    assert.equal(sentence.map((t) => t.nodeValue).join(''), 'Use /goal to set an objective');
+    assert.equal(ok.nodeValue, '全部保留', 'normal UI still translated');
+    assert.equal(notEditable.nodeValue, '搜索', 'contenteditable="false" is not an input');
+    // 流式输出：AI 消息里后来追加的节点，以及消息里文本的变化，都不能被翻
+    const streamed = text('Search');
+    const msg = nodes[0];
+    fire([{ type: 'childList', target: msg, addedNodes: [el('SPAN', [streamed])] }]);
+    const p = el('SPAN', [streamed]); p.parentNode = msg;
+    fire([{ type: 'characterData', target: streamed }]);
+    assert.equal(streamed.nodeValue, 'Search');
+  });
 });
 

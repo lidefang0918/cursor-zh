@@ -109,3 +109,49 @@ box 重启会清掉 `/usr/share/cursor`（以及 apt 源 `cursor.list`），`~/.
 - Agents 窗口：右上角的 “IDE ↗”。
 - 两个窗口都有：模型名 “Cursor Grok 4.6 Medium”（专名，应保留）。
 - 另外，“GitHub”、“bug”、“/create-skill”、“/add-plugin”、文件夹名和用户名都应保留英文。
+
+## 第 3 轮：剩余英文 + DOM 误翻风险（2026-10-29 17:00–17:10，Asia/Shanghai）
+
+定位方法：临时用 `--remote-debugging-port=9333` 启动 box 上的 Cursor，用 `scripts/box-cdp-eval.mjs` 在渲染进程里查 DOM。验证完已改回普通方式启动，调试端口已关闭。
+
+1. **经典窗口聊天标签页 “New Agent”**
+   - bundle 里约 30 处 `"New Agent"`，大多是默认会话名、常量或比较值（`JHe="New Agent"`、`name||"New Agent"`），静态替换不安全。
+   - 标签页标题渲染在 `.composer-tab-label .label-name` 里，而 DOM 运行时为了保护文件名，会整棵跳过 `label-name`。
+   - 现在：`label-name` 位于 `composer-tab-label` 内时，**只翻默认标题**（New Agent / New Chat → 新建智能体）。用户自己起的会话名和普通文件名都不动（有测试）。
+2. **状态栏 “Tab Stats / Agent Stats”**
+   - 文案是模板字面量 `` `$(tab) Tab Stats: ${…}/${…} (${e}%)` ``。
+   - 静态层新增 `fragments`：带上下文的固定片段，出现次数必须和锚点里的 `count` 一致才替换，否则跳过并记为未命中。3.27.22 每个 bundle 12 处，共 24 处。覆盖状态栏文字、悬浮提示 “(Today) … lines” 和 ariaLabel。
+   - DOM 层新增 `dicts/zh-cn.patterns.json`：`{n}` 只匹配数字（`\d[\d.,/]*`），只在外壳区域生效（statusbar、titlebar、tabs-container、hover、action-bar），文本不超过 120 字符，作为静态层的兜底。
+3. **Agents 窗口 “IDE ↗”**
+   - 只有 `aria-label:"IDE"`，没有 tooltip（悬停截图已确认）。
+   - 按术语表保留 IDE，不做修改。
+4. **P1：DOM 误翻用户/AI 内容**
+   - 现在一律跳过以下内容：
+     - 标签：PRE、CODE、TEXTAREA、INPUT
+     - 可编辑区域：`contenteditable`（值不是 "false" 时）、`role=textbox`
+     - 编辑器与终端：`.monaco-editor`、`.view-lines`、`.xterm`
+     - 输入框：`ProseMirror`、`tiptap`
+     - markdown 容器：`markdown-root`、`ui-markdown`、`rendered-markdown`
+     - 聊天消息：`agent-transcript-row-markdown`、`agent-transcript-row-human`、`composer-human-message-content`
+     - 消息属性：`data-message-role`、`data-message-kind`、`data-sent-message-bubble(-text)`、`data-agent-transcript-human-bubble`
+   - MutationObserver 的增量路径同样按祖先链判断（流式输出不会被翻，有测试）。
+   - 代价：Cursor 的模型选择器用 `ui-markdown` 渲染模型名，所以模型列表里的 “Default” 不再被 DOM 翻译（本来就算模型名）。
+   - 设置页其余文案主要靠静态补丁，这次逐页扫描没有发现退化。
+
+- `npm test`：40/40 通过（新增 5 条）。
+- revert：4 个文件对照 deb 原版 sha256 全部 OK。localize 结果：经典 538 处，Agents 763 处，模板片段 24 处，NLS 163 条，0 条未命中，两个 bundle 都能通过 `node --check`。
+- 截图：
+  - `/workspace/shots/run3-agents.png`
+  - `/workspace/shots/run3-classic.png`
+  - `/workspace/shots/run3-classic-statusbar-hover.png`
+  - `/workspace/shots/run3-agents-ide-hover.png`
+  - `/workspace/shots/run3-agents-settings.png`
+  - `/workspace/shots/run3-agents-settings-models.png`
+- 设置页逐页扫描（Agents 窗口）还剩的英文（词典里没有，下一轮补）：
+  - **外观**：Agent Conversations、Colors、High Contrast
+  - **套餐与用量**：Included Usage、Resets、Upgrade to Pro（拼接串）
+  - **智能体**：Cursor Default、“Control whether agents can read files outside the workspace…”、“Automatically parse links when pasted into Quick Edit…”
+  - **源代码管理**：Pull Requests、“Mark Agent commits as 'Made with Cursor'”、worktree 清理的两条说明
+  - **浏览器与网络**：Browser Tab、Network protocol、Show、Required domains、Network diagnostics
+  - **代码智能**：“Accept the next word of a suggestion…”、“Automatically import necessary modules for TypeScript”、“Automatically index repositories…”、Codebase options、“Use with caution. Skip symlinks…”
+  - **测试版**：Update Access、Updates

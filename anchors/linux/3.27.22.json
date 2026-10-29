@@ -2,7 +2,7 @@
   "version": "3.27.22",
   "vscodeVersion": "1.128.0",
   "commit": "b1aa50cb6db84fd3e8c808259cb172ea73425c10",
-  "note": "静态锚点只收录所有出现位置都像展示文案的整段字面量；其余词条只走 DOM 补漏。由 scripts/build-anchors.py 生成",
+  "note": "静态锚点只收录所有出现位置都像展示文案的整段字面量；其余词条只走 DOM 补漏。由 scripts/build-anchors.py 生成；fragments 是模板字面量里的固定片段（带上下文、按次数精确校验），用于 `Tab Stats: ${…}` 这类拼接文案",
   "productJson": "resources/app/product.json",
   "checksumBase": "resources/app/out",
   "dom": {
@@ -910,6 +910,63 @@
         },
         {
           "from": "Cursor Account"
+        }
+      ],
+      "fragments": [
+        {
+          "from": "`$(tab) Tab Stats: ${",
+          "to": "`$(tab) Tab 统计：${",
+          "count": 1
+        },
+        {
+          "from": "`$(comment-discussion) Agent Stats: ${",
+          "to": "`$(comment-discussion) 智能体统计：${",
+          "count": 1
+        },
+        {
+          "from": "tooltip:`Tab AI Stats (Today): ${",
+          "to": "tooltip:`Tab AI 统计（今日）：${",
+          "count": 1
+        },
+        {
+          "from": "tooltip:`Agent AI Stats (Today): ${",
+          "to": "tooltip:`智能体 AI 统计（今日）：${",
+          "count": 1
+        },
+        {
+          "from": "${this.todayStats.tabSuggestedLines} lines (${",
+          "to": "${this.todayStats.tabSuggestedLines} 行 (${",
+          "count": 1
+        },
+        {
+          "from": "${this.todayStats.composerSuggestedLines} lines (${",
+          "to": "${this.todayStats.composerSuggestedLines} 行 (${",
+          "count": 1
+        },
+        {
+          "from": "ariaLabel:`Tab AI Stats: ${",
+          "to": "ariaLabel:`Tab AI 统计：已采纳 ${",
+          "count": 1
+        },
+        {
+          "from": "ariaLabel:`Agent AI Stats: ${",
+          "to": "ariaLabel:`智能体 AI 统计：已采纳 ${",
+          "count": 1
+        },
+        {
+          "from": "} accepted out of ${this.todayStats.tabSuggestedLines} suggested, ${",
+          "to": "}，共建议 ${this.todayStats.tabSuggestedLines}，采纳率 ${",
+          "count": 1
+        },
+        {
+          "from": "} accepted out of ${this.todayStats.composerSuggestedLines} suggested, ${",
+          "to": "}，共建议 ${this.todayStats.composerSuggestedLines}，采纳率 ${",
+          "count": 1
+        },
+        {
+          "from": "} percent acceptance rate`",
+          "to": "}%`",
+          "count": 2
         }
       ]
     },
@@ -1932,6 +1989,63 @@
         },
         {
           "from": "Cursor Account"
+        }
+      ],
+      "fragments": [
+        {
+          "from": "`$(tab) Tab Stats: ${",
+          "to": "`$(tab) Tab 统计：${",
+          "count": 1
+        },
+        {
+          "from": "`$(comment-discussion) Agent Stats: ${",
+          "to": "`$(comment-discussion) 智能体统计：${",
+          "count": 1
+        },
+        {
+          "from": "tooltip:`Tab AI Stats (Today): ${",
+          "to": "tooltip:`Tab AI 统计（今日）：${",
+          "count": 1
+        },
+        {
+          "from": "tooltip:`Agent AI Stats (Today): ${",
+          "to": "tooltip:`智能体 AI 统计（今日）：${",
+          "count": 1
+        },
+        {
+          "from": "${this.todayStats.tabSuggestedLines} lines (${",
+          "to": "${this.todayStats.tabSuggestedLines} 行 (${",
+          "count": 1
+        },
+        {
+          "from": "${this.todayStats.composerSuggestedLines} lines (${",
+          "to": "${this.todayStats.composerSuggestedLines} 行 (${",
+          "count": 1
+        },
+        {
+          "from": "ariaLabel:`Tab AI Stats: ${",
+          "to": "ariaLabel:`Tab AI 统计：已采纳 ${",
+          "count": 1
+        },
+        {
+          "from": "ariaLabel:`Agent AI Stats: ${",
+          "to": "ariaLabel:`智能体 AI 统计：已采纳 ${",
+          "count": 1
+        },
+        {
+          "from": "} accepted out of ${this.todayStats.tabSuggestedLines} suggested, ${",
+          "to": "}，共建议 ${this.todayStats.tabSuggestedLines}，采纳率 ${",
+          "count": 1
+        },
+        {
+          "from": "} accepted out of ${this.todayStats.composerSuggestedLines} suggested, ${",
+          "to": "}，共建议 ${this.todayStats.composerSuggestedLines}，采纳率 ${",
+          "count": 1
+        },
+        {
+          "from": "} percent acceptance rate`",
+          "to": "}%`",
+          "count": 2
         }
       ]
     }

@@ -10,8 +10,8 @@ export async function readRuntime() {
 }
 
 // 包成自执行块；任何异常都吞掉，绝不影响 Cursor 工作台启动
-export function buildInjection({ dict, runtimeSource }) {
-  return `${BEGIN}\n;(function(DICT){try{\n${runtimeSource}\nif(typeof document!=='undefined'&&typeof MutationObserver!=='undefined')cursorZhDom(DICT,document,MutationObserver);\n}catch(e){try{console.warn('[cursor-zh] dom runtime failed',e)}catch(_){}}})(${JSON.stringify(dict)});\n${END}\n`;
+export function buildInjection({ dict, patterns = [], runtimeSource }) {
+  return `${BEGIN}\n;(function(DICT,PATTERNS){try{\n${runtimeSource}\nif(typeof document!=='undefined'&&typeof MutationObserver!=='undefined')cursorZhDom(DICT,document,MutationObserver,PATTERNS);\n}catch(e){try{console.warn('[cursor-zh] dom runtime failed',e)}catch(_){}}})(${JSON.stringify(dict)},${JSON.stringify(patterns)});\n${END}\n`;
 }
 
 export function stripInjection(src) {
@@ -22,10 +22,10 @@ export function stripInjection(src) {
 }
 
 // 追加到工作台主 bundle 末尾（扩展宿主没有 DOM，所以不用扩展形式）。还原靠备份覆盖。
-export async function injectDomRuntime({ installRoot, relative, dict, runtimeSource }) {
+export async function injectDomRuntime({ installRoot, relative, dict, patterns, runtimeSource }) {
   const file = path.join(installRoot, relative);
   const src = stripInjection(await fs.readFile(file, 'utf8'));
-  const code = buildInjection({ dict, runtimeSource: runtimeSource ?? (await readRuntime()) });
+  const code = buildInjection({ dict, patterns, runtimeSource: runtimeSource ?? (await readRuntime()) });
   await fs.writeFile(file, src + '\n' + code);
   return { relative, bytes: Buffer.byteLength(code) };
 }

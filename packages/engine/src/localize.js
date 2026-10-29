@@ -4,7 +4,7 @@ import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { detectCursor } from './detect.js';
-import { loadAnchors, loadDict } from './anchors.js';
+import { loadAnchors, loadDict, loadPatterns } from './anchors.js';
 import { createBackup } from './backup.js';
 import { restoreBackup, dropBackup } from './restore.js';
 import { applyPatch, filesToBackup, updateChecksums } from './patch.js';
@@ -27,6 +27,7 @@ export function defaultPaths(home = os.homedir()) {
     dataDir: path.join(home, '.config/cursor-zh-localizer'),
     anchorsDir: path.join(REPO, 'anchors'),
     dictPath: path.join(REPO, 'dicts/zh-cn.json'),
+    patternsPath: path.join(REPO, 'dicts/zh-cn.patterns.json'),
   };
 }
 
@@ -125,6 +126,7 @@ export async function localize(opts = {}) {
   if (conflicts.length) log(`⚠ 检测到可能冲突的汉化扩展：${conflicts.join(', ')}，建议先禁用`);
 
   const dict = await loadDict(o.dictPath);
+  const patterns = await loadPatterns(o.patternsPath);
   const backupDir = path.join(o.dataDir, 'backups', info.version);
   await createBackup({ installRoot: o.installRoot, files, backupDir });
   log(`已备份 ${files.length} 个文件 → ${backupDir}`);
@@ -140,7 +142,7 @@ export async function localize(opts = {}) {
     log(`已设置 locale=zh-cn：${o.argvPath}`);
 
     const p = await applyPatch({ installRoot: o.installRoot, anchors, dict });
-    log(`静态补丁：替换 ${p.replaced} 处；未命中 ${p.missing.length} 条`);
+    log(`静态补丁：替换 ${p.replaced} 处，模板片段 ${p.fragmentsReplaced} 处；未命中 ${p.missing.length} 条`);
 
     const n = await applyNls({ installRoot: o.installRoot, anchors, dict });
     if (anchors.nls) {
@@ -149,7 +151,7 @@ export async function localize(opts = {}) {
     }
 
     const domTargets = anchors.dom?.relatives ?? [anchors.files[0].relative];
-    for (const relative of domTargets) await injectDomRuntime({ installRoot: o.installRoot, relative, dict });
+    for (const relative of domTargets) await injectDomRuntime({ installRoot: o.installRoot, relative, dict, patterns });
     const { checksumsUpdated } = await updateChecksums({ installRoot: o.installRoot, anchors, relatives: [...new Set([...p.patched, ...domTargets])] });
     log(`DOM 补漏已注入；已更新校验：${checksumsUpdated.join(', ') || '无'}`);
 
@@ -158,10 +160,10 @@ export async function localize(opts = {}) {
       localized: true, version: info.version, installRoot: o.installRoot, backupDir, at: new Date().toISOString(),
       installedLangpack: undo.langpack || !!carry?.installedLangpack,
       prevLocale: carry && undo.prevLocale === 'zh-cn' ? carry.prevLocale : undo.prevLocale, replaced: p.replaced, missing: p.missing,
-      perFile: p.perFile, nlsReplaced: n.replaced, nlsMissing: n.missing, commit: info.commit,
+      perFile: p.perFile, fragmentsReplaced: p.fragmentsReplaced, nlsReplaced: n.replaced, nlsMissing: n.missing, commit: info.commit,
     });
     log('完成，请重启 Cursor');
-    return { ok: true, replaced: p.replaced, perFile: p.perFile, missing: p.missing, nlsReplaced: n.replaced, nlsMissing: n.missing, checksumsUpdated };
+    return { ok: true, replaced: p.replaced, perFile: p.perFile, fragmentsReplaced: p.fragmentsReplaced, perFileFragments: p.perFileFragments, missing: p.missing, nlsReplaced: n.replaced, nlsMissing: n.missing, checksumsUpdated };
   } catch (e) {
     log(`✖ 失败：${e.message}，正在回滚`);
     let restored = true;

@@ -6,7 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { loadAnchors, loadDict } from '../src/anchors.js';
-import { applyPatch, vscodeChecksum, filesToBackup, replaceAllLiterals } from '../src/patch.js';
+import { applyPatch, vscodeChecksum, filesToBackup, replaceAllLiterals, applyFragments } from '../src/patch.js';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const anchorsDir = path.join(repo, 'packages/engine/test/fixtures/anchors');
@@ -97,3 +97,23 @@ describe('shipped dictionary', () => {
     assert.deepEqual(bad, []);
   });
 });
+
+describe('applyFragments', () => {
+  const src = 'a={text:`$(tab) Tab Stats: ${x}/${y} (${e}%)`};b=`${e} percent acceptance rate`;c=`${t} percent acceptance rate`;';
+  it('replaces template-literal fragments when the occurrence count matches exactly', () => {
+    const r = applyFragments(src, [
+      { from: '`$(tab) Tab Stats: ${', to: '`$(tab) Tab 统计：${', count: 1 },
+      { from: '} percent acceptance rate`', to: '}%`', count: 2 },
+    ]);
+    assert.equal(r.replaced, 3);
+    assert.deepEqual(r.missing, []);
+    assert.equal(r.out, 'a={text:`$(tab) Tab 统计：${x}/${y} (${e}%)`};b=`${e}%`;c=`${t}%`;');
+  });
+  it('skips (and reports) a fragment whose count does not match, leaving the source untouched', () => {
+    const r = applyFragments(src, [{ from: '} percent acceptance rate`', to: '}%`', count: 1 }, { from: 'Nope ${', to: 'x' }]);
+    assert.equal(r.out, src);
+    assert.equal(r.replaced, 0);
+    assert.equal(r.missing.length, 2);
+  });
+});
+

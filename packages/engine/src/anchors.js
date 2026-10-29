@@ -15,3 +15,10 @@ export async function loadAnchors({ platform, version, anchorsDir }) {
 export async function loadDict(file) {
   return JSON.parse(await fs.readFile(file, 'utf8'));
 }
+
+// 数字模板（"Tab Stats: {n} ({n}%)" → "Tab 统计：{n} ({n}%)"）：只给 DOM 补漏在界面外壳区域用；文件缺失就当没有
+export async function loadPatterns(file) {
+  if (!file) return [];
+  try { return JSON.parse(await fs.readFile(file, 'utf8')); }
+  catch (e) { if (e.code === 'ENOENT') return []; throw e; }
+}

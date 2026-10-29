@@ -1,0 +1,8 @@
+[
+  { "from": "Tab Stats: {n} ({n}%)", "to": "Tab 统计：{n} ({n}%)" },
+  { "from": "Agent Stats: {n} ({n}%)", "to": "智能体统计：{n} ({n}%)" },
+  { "from": "Tab AI Stats (Today): {n} lines ({n}%)", "to": "Tab AI 统计（今日）：{n} 行 ({n}%)" },
+  { "from": "Agent AI Stats (Today): {n} lines ({n}%)", "to": "智能体 AI 统计（今日）：{n} 行 ({n}%)" },
+  { "from": "Tab AI Stats: {n} accepted out of {n} suggested, {n} percent acceptance rate", "to": "Tab AI 统计：已采纳 {n}，共建议 {n}，采纳率 {n}%" },
+  { "from": "Agent AI Stats: {n} accepted out of {n} suggested, {n} percent acceptance rate", "to": "智能体 AI 统计：已采纳 {n}，共建议 {n}，采纳率 {n}%" }
+]
