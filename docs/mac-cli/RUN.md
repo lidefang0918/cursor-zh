@@ -56,7 +56,7 @@ node scripts/run.mjs localize --root="$ROOT" --mac-sign=adhoc
 - `--mac-sign` 默认就是 `adhoc`，可以不写。
 - 如果 Cursor 还开着，命令会返回 `"code": "CURSOR_RUNNING"`，什么都不改。也可以加 `--close`：工具会正常关闭 Cursor（SIGTERM，最多等 20 秒），写完后用 `open /Applications/Cursor.app` 重新打开。加 `--no-relaunch` 则写完后不重新打开。
 - 如果返回 `"code": "MAC_APP_MANAGEMENT"`，说明 macOS 的“App 管理”权限拦住了。打开 系统设置 → 隐私与安全性 → App 管理，给“终端”打开开关，然后**完全退出并重开终端**，再执行一次 localize。
-- 成功时输出 `"ok": true`，日志里会有“静态补丁：替换 1549 处，模板片段 74 处；未命中 0 条”和“NLS 文案：替换 176 条”。
+- 成功时输出 `"ok": true`，日志里会有“静态补丁：替换 1999 处，模板片段 91 处；未命中 0 条”和“NLS 文案：替换 199 条”（3.27.14 / 3.27.22 相同）。
 
 ## 3. 汉化后检查
 

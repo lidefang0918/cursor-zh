@@ -42,4 +42,15 @@ describe('shared anchors', () => {
       assert.ok(a.files[0].relative.startsWith(platform === 'darwin' ? 'Resources/app/' : 'resources/app/'));
     }
   });
+  // 智能体窗口（glass）原生菜单栏：菜单对象里的 title 字面量 + 编辑菜单 N({key:"glassOsEdit…"},"&&Undo") 默认串
+  it('translates the Agents-window native menu bar items (3.27.14 and 3.27.22)', async () => {
+    for (const version of ['3.27.14', '3.27.22']) {
+      const a = await loadAnchors({ platform: 'darwin', version, anchorsDir: repoAnchors });
+      const glass = a.files.find((f) => f.relative.endsWith('workbench.glass.main.js'));
+      const to = glass.fragments.map((f) => f.to).join('\n');
+      for (const t of ['title:"新建智能体"', 'order:1,title:"更改"', 'order:2,title:"浏览器"', 'order:3,title:"文件"', 'order:4,title:"终端"', '"撤销(&&U)"', '"重做(&&R)"', '"剪切(&&T)"', '"复制(&&C)"', '"粘贴(&&P)"', '"全选(&&A)"', '"0_glassMacApp",order:0,title:"设置"']) {
+        assert.ok(to.includes(t), `${version}: ${t}`);
+      }
+    }
+  });
 });

@@ -822,5 +822,13 @@
   "Change owner": "更改所有者",
   "Add Models": "添加模型",
   "Show all models…": "显示所有模型…",
-  "Searching files…": "正在搜索文件…"
+  "Searching files…": "正在搜索文件…",
+  "Checking for Updates...": "正在检查更新...",
+  "Download Update": "下载更新",
+  "Downloading Update...": "正在下载更新...",
+  "Install Update": "安装更新",
+  "Installing Update...": "正在安装更新...",
+  "Restart to Update": "重启以更新",
+  "No updates available": "没有可用的更新",
+  "Updates unavailable": "无法更新"
 }

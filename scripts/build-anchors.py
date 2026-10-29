@@ -57,7 +57,21 @@ def classify(src, s):
 _K = r'\$\{(\w+)\?"\\u2318":"Ctrl\+"\}'
 def _k(m):
     return '${' + m.group(1) + '?"\\u2318":"Ctrl+"}'
+WORDS = json.load(open(os.path.join(REPO, 'dicts/zh-cn.json')))
+
+# 智能体窗口（glass）原生菜单栏：菜单项标题是菜单对象里的字面量（"New Agent" 等），同名字面量在别处被当 key 比较，
+# 整串替换不安全；这里只改 {column:X.MenubarYMenu,group,order,title:"…"} 里的 title（上下文唯一，安全）
+def _menu_title(m):
+    t = WORDS.get(m.group(2))
+    return m.group(1) + json.dumps(t, ensure_ascii=False) if t else None
+# 编辑菜单的 N({key:"glassOsEditUndo",comment:[…]},"&&Undo")：非索引 localize，直接用默认串 → 改默认串（带助记符）
+def _keyed_nls(m):
+    t = nls_translate(m.group(2), WORDS)
+    return m.group(1) + json.dumps(t, ensure_ascii=False) if t else None
+
 TEMPLATE_RULES = [
+    (r'(\{column:[\w$]+\.Menubar\w+Menu,group:"[^"]*",order:\d+,title:)"([^"\\]+)"', _menu_title),
+    (r'([\w$]+\(\{key:"glass\w+",comment:\[[^\]]*\]\},)"([^"\\]+)"', _keyed_nls),
     (r'`Control whether agents can read files outside the workspace without approval\$\{', lambda m: '`控制智能体能否不经审批读取工作区外的文件${'),
     (r"`Mark Agent commits as 'Made with Cursor'\$\{", lambda m: '`将智能体提交标记为“Made with Cursor”${'),
     (r'`Automatically index repositories to speed up Grep searches\. All data is stored locally\.\$\{', lambda m: '`自动为仓库建立索引以加快 Grep 搜索。所有数据均存储在本地。${'),
@@ -89,7 +103,9 @@ def template_fragments(src):
         for m in re.finditer(rx, src):
             t = m.group(0)
             if t not in out:
-                out[t] = {'from': t, 'to': fn(m), 'count': src.count(t)}
+                to = fn(m)
+                if to and to != t:
+                    out[t] = {'from': t, 'to': to, 'count': src.count(t)}
     return list(out.values())
 
 
@@ -141,7 +157,11 @@ def main():
             report.append(f"{'SAFE' if n and not bad else 'UNSAFE' if n else 'MISSING':7} {b[10:20]} n={n:<3} {s!r} {bad[:1]}")
         rel = f'resources/app/out/vs/workbench/{b}'
         frags = [f for f in old.get(rel, []) if srcs[b].count(f['from']) == f['count']]  # 保留手写片段（仍能精确匹配的）
+        safe = {x['from'] for x in strings}
         for f in template_fragments(srcs[b]):
+            # 引擎先做整串替换再做片段：片段里含已被整串替换的字面量就会对不上，跳过（那条本来就会被翻）
+            if any(f'"{x}"' in f['from'] for x in safe):
+                continue
             if all(f['from'] != g['from'] for g in frags):
                 frags.append(f)
         report.append(f"FRAGS   {b[10:20]} {len(frags)}")

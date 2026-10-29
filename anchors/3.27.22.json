@@ -1492,6 +1492,30 @@
         },
         {
           "from": "Add Models"
+        },
+        {
+          "from": "Checking for Updates..."
+        },
+        {
+          "from": "Download Update"
+        },
+        {
+          "from": "Downloading Update..."
+        },
+        {
+          "from": "Install Update"
+        },
+        {
+          "from": "Installing Update..."
+        },
+        {
+          "from": "Restart to Update"
+        },
+        {
+          "from": "No updates available"
+        },
+        {
+          "from": "Updates unavailable"
         }
       ],
       "fragments": [
@@ -3342,6 +3366,30 @@
         },
         {
           "from": "Add Models"
+        },
+        {
+          "from": "Checking for Updates..."
+        },
+        {
+          "from": "Download Update"
+        },
+        {
+          "from": "Downloading Update..."
+        },
+        {
+          "from": "Install Update"
+        },
+        {
+          "from": "Installing Update..."
+        },
+        {
+          "from": "Restart to Update"
+        },
+        {
+          "from": "No updates available"
+        },
+        {
+          "from": "Updates unavailable"
         }
       ],
       "fragments": [
@@ -3489,6 +3537,71 @@
           "from": "children:[\"Browse\",g0(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\" Marketplace\"})]",
           "to": "children:[\"浏览\",g0(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\"插件市场\"})]",
           "count": 1
+        },
+        {
+          "from": "{column:Ot.MenubarFileMenu,group:\"1_new\",order:0,title:\"New Agent\"",
+          "to": "{column:Ot.MenubarFileMenu,group:\"1_new\",order:0,title:\"新建智能体\"",
+          "count": 1
+        },
+        {
+          "from": "{column:Ot.MenubarViewMenu,group:\"9_settings\",order:0,title:\"Settings\"",
+          "to": "{column:Ot.MenubarViewMenu,group:\"9_settings\",order:0,title:\"设置\"",
+          "count": 1
+        },
+        {
+          "from": "{column:Ot.MenubarMainMenu,group:\"0_glassMacApp\",order:0,title:\"Settings\"",
+          "to": "{column:Ot.MenubarMainMenu,group:\"0_glassMacApp\",order:0,title:\"设置\"",
+          "count": 1
+        },
+        {
+          "from": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:2,title:\"Browser\"",
+          "to": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:2,title:\"浏览器\"",
+          "count": 1
+        },
+        {
+          "from": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:3,title:\"Files\"",
+          "to": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:3,title:\"文件\"",
+          "count": 1
+        },
+        {
+          "from": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:1,title:\"Changes\"",
+          "to": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:1,title:\"更改\"",
+          "count": 1
+        },
+        {
+          "from": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:4,title:\"Terminal\"",
+          "to": "{column:Ot.MenubarViewMenu,group:\"1_open\",order:4,title:\"终端\"",
+          "count": 1
+        },
+        {
+          "from": "N({key:\"glassOsEditUndo\",comment:[\"&& denotes a mnemonic\"]},\"&&Undo\"",
+          "to": "N({key:\"glassOsEditUndo\",comment:[\"&& denotes a mnemonic\"]},\"撤销(&&U)\"",
+          "count": 1
+        },
+        {
+          "from": "N({key:\"glassOsEditRedo\",comment:[\"&& denotes a mnemonic\"]},\"&&Redo\"",
+          "to": "N({key:\"glassOsEditRedo\",comment:[\"&& denotes a mnemonic\"]},\"重做(&&R)\"",
+          "count": 1
+        },
+        {
+          "from": "N({key:\"glassOsEditCut\",comment:[\"&& denotes a mnemonic\"]},\"Cu&&t\"",
+          "to": "N({key:\"glassOsEditCut\",comment:[\"&& denotes a mnemonic\"]},\"剪切(&&T)\"",
+          "count": 1
+        },
+        {
+          "from": "N({key:\"glassOsEditCopy\",comment:[\"&& denotes a mnemonic\"]},\"&&Copy\"",
+          "to": "N({key:\"glassOsEditCopy\",comment:[\"&& denotes a mnemonic\"]},\"复制(&&C)\"",
+          "count": 1
+        },
+        {
+          "from": "N({key:\"glassOsEditPaste\",comment:[\"&& denotes a mnemonic\"]},\"&&Paste\"",
+          "to": "N({key:\"glassOsEditPaste\",comment:[\"&& denotes a mnemonic\"]},\"粘贴(&&P)\"",
+          "count": 1
+        },
+        {
+          "from": "N({key:\"glassOsEditSelectAll\",comment:[\"&& denotes a mnemonic\"]},\"Select &&All\"",
+          "to": "N({key:\"glassOsEditSelectAll\",comment:[\"&& denotes a mnemonic\"]},\"全选(&&A)\"",
+          "count": 1
         }
       ]
     }
@@ -3534,6 +3647,30 @@
       {
         "index": 2670,
         "from": "Check for Updates..."
+      },
+      {
+        "index": 2671,
+        "from": "Checking for Updates..."
+      },
+      {
+        "index": 2672,
+        "from": "Download Update"
+      },
+      {
+        "index": 2673,
+        "from": "Downloading Update..."
+      },
+      {
+        "index": 2674,
+        "from": "Install Update"
+      },
+      {
+        "index": 2675,
+        "from": "Installing Update..."
+      },
+      {
+        "index": 2676,
+        "from": "Restart to Update"
       },
       {
         "index": 2678,
@@ -3666,6 +3803,10 @@
       {
         "index": 4033,
         "from": "Open Agents Window"
+      },
+      {
+        "index": 4034,
+        "from": "Restart to Update"
       },
       {
         "index": 4037,
@@ -4078,6 +4219,10 @@
       {
         "index": 11496,
         "from": "Learn More"
+      },
+      {
+        "index": 11504,
+        "from": "Download Update"
       },
       {
         "index": 11842,
