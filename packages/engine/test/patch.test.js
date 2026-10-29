@@ -6,7 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { loadAnchors, loadDict } from '../src/anchors.js';
-import { applyPatch, vscodeChecksum, filesToBackup } from '../src/patch.js';
+import { applyPatch, vscodeChecksum, filesToBackup, replaceAllLiterals } from '../src/patch.js';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const anchorsDir = path.join(repo, 'packages/engine/test/fixtures/anchors');
@@ -29,6 +29,7 @@ describe('anchors', () => {
   it('lists files to back up incl. product.json', async () => {
     const a = await loadAnchors({ platform: 'linux', version: 'test-fixture', anchorsDir });
     assert.deepEqual(filesToBackup(a).sort(), [REL, 'resources/app/product.json'].sort());
+    assert.deepEqual(filesToBackup({ files: [{ relative: 'a.js' }], productJson: 'p.json', nls: { relative: 'n.json' } }), ['a.js', 'p.json', 'n.json']);
   });
 });
 
@@ -76,5 +77,23 @@ describe('updateChecksums', () => {
     const fresh = vscodeChecksum(await fs.readFile(path.join(root, REL)));
     assert.notEqual(fresh, old);
     assert.equal(await fs.readFile(pp, 'utf8'), raw.replace(old, fresh));
+  });
+});
+
+describe('replaceAllLiterals', () => {
+  it('replaces all whole literals in one pass but keeps original: English for command palette search', () => {
+    const src = `t={value:"Zoom In",original:"Zoom In"};a='Undo';b="Undo now";c=\`Undo\``;
+    const { out, counts } = replaceAllLiterals(src, new Map([['Zoom In', '放大'], ['Undo', '撤销']]));
+    assert.equal(out, `t={value:"放大",original:"Zoom In"};a='撤销';b="Undo now";c=\`撤销\``);
+    assert.equal(counts.get('Zoom In'), 1);
+    assert.equal(counts.get('Undo'), 2);
+  });
+});
+
+describe('shipped dictionary', () => {
+  it('has no value that is also a key (identity/chained entries make the DOM runtime loop)', async () => {
+    const dict = await loadDict(path.join(repo, 'dicts/zh-cn.json'));
+    const bad = Object.entries(dict).filter(([, v]) => Object.hasOwn(dict, v));
+    assert.deepEqual(bad, []);
   });
 });

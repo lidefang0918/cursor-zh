@@ -20,19 +20,10 @@
           "required": true
         },
         {
-          "from": "General"
-        },
-        {
           "from": "VS Code Settings"
         },
         {
-          "from": "Appearance"
-        },
-        {
           "from": "Plan & Usage"
-        },
-        {
-          "from": "Agents"
         },
         {
           "from": "Browser & Network"
@@ -42,22 +33,13 @@
           "required": true
         },
         {
-          "from": "Plugins"
-        },
-        {
           "from": "Code Intelligence"
         },
         {
           "from": "Tools & MCPs"
         },
         {
-          "from": "Beta"
-        },
-        {
-          "from": "Network"
-        },
-        {
-          "from": "Worktrees"
+          "from": "New Chat"
         },
         {
           "from": "Plan, search, build anything"
@@ -66,25 +48,10 @@
           "from": "Add Context"
         },
         {
-          "from": "Accept"
-        },
-        {
-          "from": "Reject"
-        },
-        {
           "from": "Keep All"
         },
         {
           "from": "Undo All"
-        },
-        {
-          "from": "Review"
-        },
-        {
-          "from": "Send"
-        },
-        {
-          "from": "Queue"
         },
         {
           "from": "Upgrade to Pro"
@@ -94,9 +61,6 @@
         },
         {
           "from": "New MCP Server"
-        },
-        {
-          "from": "Search..."
         },
         {
           "from": "Search runs..."
@@ -126,12 +90,6 @@
           "from": "Style request, response language, tone..."
         },
         {
-          "from": "Docs"
-        },
-        {
-          "from": "Contact"
-        },
-        {
           "from": "Log Out"
         },
         {
@@ -147,25 +105,7 @@
           "from": "Project Rules"
         },
         {
-          "from": "Memories"
-        },
-        {
-          "from": "Sync"
-        },
-        {
           "from": "Copy Message"
-        },
-        {
-          "from": "Retry"
-        },
-        {
-          "from": "Skip"
-        },
-        {
-          "from": "Allow"
-        },
-        {
-          "from": "Deny"
         },
         {
           "from": "Always Allow"
@@ -186,15 +126,6 @@
           "from": "Generating..."
         },
         {
-          "from": "Thinking"
-        },
-        {
-          "from": "Thought"
-        },
-        {
-          "from": "Explored"
-        },
-        {
           "from": "Show more"
         },
         {
@@ -204,40 +135,13 @@
           "from": "View Plan"
         },
         {
-          "from": "Build"
-        },
-        {
-          "from": "Archive"
-        },
-        {
-          "from": "Rename"
-        },
-        {
           "from": "Open in Editor"
         },
         {
           "from": "Recent"
         },
         {
-          "from": "Yesterday"
-        },
-        {
           "from": "Account"
-        },
-        {
-          "from": "Editor"
-        },
-        {
-          "from": "Changes"
-        },
-        {
-          "from": "Mentions"
-        },
-        {
-          "from": "Enabled"
-        },
-        {
-          "from": "Disabled"
         },
         {
           "from": "Learn more"
@@ -256,6 +160,756 @@
         },
         {
           "from": "Open Folder"
+        },
+        {
+          "from": "Select All"
+        },
+        {
+          "from": "Keyboard Shortcuts"
+        },
+        {
+          "from": "View License"
+        },
+        {
+          "from": "Reset Zoom"
+        },
+        {
+          "from": "Status Bar"
+        },
+        {
+          "from": "Zoom In"
+        },
+        {
+          "from": "Zoom Out"
+        },
+        {
+          "from": "Zoom in"
+        },
+        {
+          "from": "Zoom out"
+        },
+        {
+          "from": "Reset zoom"
+        },
+        {
+          "from": "Close Window"
+        },
+        {
+          "from": "Close All Tabs"
+        },
+        {
+          "from": "Report Issue"
+        },
+        {
+          "from": "Toggle Developer Tools"
+        },
+        {
+          "from": "Open Process Explorer"
+        },
+        {
+          "from": "Agents Window"
+        },
+        {
+          "from": "Maximize Chat"
+        },
+        {
+          "from": "Start from scratch"
+        },
+        {
+          "from": "This Computer"
+        },
+        {
+          "from": "Plan, Build, / for skills, @ for context"
+        },
+        {
+          "from": "Add or search model"
+        },
+        {
+          "from": "View All Models"
+        },
+        {
+          "from": "Upgrade to unlock more models"
+        },
+        {
+          "from": "More models are only available on paid plans."
+        },
+        {
+          "from": "Choose a model or use the cost- and availability-aware default"
+        },
+        {
+          "from": "Start voice input"
+        },
+        {
+          "from": "Start voice chat"
+        },
+        {
+          "from": "Add agents, context, tools"
+        },
+        {
+          "from": "Open Workspace"
+        },
+        {
+          "from": "Go Back"
+        },
+        {
+          "from": "Go Forward"
+        },
+        {
+          "from": "Minimize"
+        },
+        {
+          "from": "Pull requests"
+        },
+        {
+          "from": "Branches"
+        },
+        {
+          "from": "Conversation"
+        },
+        {
+          "from": "Agent conversations"
+        },
+        {
+          "from": "Meet Grok Bot"
+        },
+        {
+          "from": "AI teammates you can give real work to"
+        },
+        {
+          "from": "Get Grok Bot"
+        },
+        {
+          "from": "Search Plugins, Skills, MCPs..."
+        },
+        {
+          "from": "Browse Marketplace"
+        },
+        {
+          "from": "Plugins, MCPs, Skills, and Rules have moved to Customize"
+        },
+        {
+          "from": "We've introduced a new home for all the ways to customize Cursor."
+        },
+        {
+          "from": "Automate repetitive tasks with always-on agents and configure Cursor's built-in agents for your team."
+        },
+        {
+          "from": "Upgrade for Automations, unlimited completions, MAX Mode, and more"
+        },
+        {
+          "from": "Free Plan"
+        },
+        {
+          "from": "Cloud Agents require a Git repository in an open folder."
+        },
+        {
+          "from": "Background agents only work in folders with a git repository. Please open a folder that contains a git repository to use this feature."
+        },
+        {
+          "from": "Open a Git repository"
+        },
+        {
+          "from": "Toggle Agents"
+        },
+        {
+          "from": "Open Cursor Settings"
+        },
+        {
+          "from": "Filter by Environment"
+        },
+        {
+          "from": "Unified agents sidebar"
+        },
+        {
+          "from": "Replace Agent"
+        },
+        {
+          "from": "Manage your account and billing"
+        },
+        {
+          "from": "Cursor account"
+        },
+        {
+          "from": "Entry-level plan with access to premium models, unlimited Tab completions, and more."
+        },
+        {
+          "from": "Editor Settings"
+        },
+        {
+          "from": "Configure font, formatting, minimap and more"
+        },
+        {
+          "from": "Configure keyboard shortcuts"
+        },
+        {
+          "from": "Import Settings from VS Code"
+        },
+        {
+          "from": "Import settings, extensions, and keybindings from VS Code"
+        },
+        {
+          "from": "Window Layout"
+        },
+        {
+          "from": "Switch between Agent and Editor default layouts"
+        },
+        {
+          "from": "Window Restoration"
+        },
+        {
+          "from": "Controls which windows Cursor restores on startup"
+        },
+        {
+          "from": "Show title bar in agent layout"
+        },
+        {
+          "from": "Show status bar at the bottom of the window"
+        },
+        {
+          "from": "Auto-Hide Editor When Empty"
+        },
+        {
+          "from": "When all editors are closed, hide the editor area and maximize chat"
+        },
+        {
+          "from": "Open Chat as Editor Tabs"
+        },
+        {
+          "from": "Show chats as editor tabs inside the chat area instead of the legacy stacked view"
+        },
+        {
+          "from": "System Notifications"
+        },
+        {
+          "from": "Show system notifications when Agent completes or needs attention"
+        },
+        {
+          "from": "Warning Notifications"
+        },
+        {
+          "from": "Show notifications for less urgent issues"
+        },
+        {
+          "from": "Completion Sound"
+        },
+        {
+          "from": "Play a sound when agents finish or need attention"
+        },
+        {
+          "from": "System Tray Icon"
+        },
+        {
+          "from": "Show Cursor in system tray"
+        },
+        {
+          "from": "Cloud Agent Approval Banners While Focused"
+        },
+        {
+          "from": "Also show the approval banner while Cursor is focused; the request card in the agent conversation always shows"
+        },
+        {
+          "from": "Privacy"
+        },
+        {
+          "from": "Data Sharing Enabled"
+        },
+        {
+          "from": "Follow System High Contrast"
+        },
+        {
+          "from": "Switch to a high contrast theme when your OS is in a high contrast mode"
+        },
+        {
+          "from": "Choose a tint color"
+        },
+        {
+          "from": "Control how strongly the tint is applied"
+        },
+        {
+          "from": "Hue"
+        },
+        {
+          "from": "Intensity"
+        },
+        {
+          "from": "Reduce Motion"
+        },
+        {
+          "from": "Motion"
+        },
+        {
+          "from": "Reduce Transparency"
+        },
+        {
+          "from": "Replace translucent surfaces with opaque backgrounds"
+        },
+        {
+          "from": "Typography"
+        },
+        {
+          "from": "UI Font Size"
+        },
+        {
+          "from": "Font size for the Cursor user interface"
+        },
+        {
+          "from": "UI Font Family"
+        },
+        {
+          "from": "Override the Cursor user interface typeface"
+        },
+        {
+          "from": "Code Font Size"
+        },
+        {
+          "from": "Font size for code editors and diffs"
+        },
+        {
+          "from": "Code Font Family"
+        },
+        {
+          "from": "Override the font for code editors and diffs"
+        },
+        {
+          "from": "Themed Diff Backgrounds"
+        },
+        {
+          "from": "Use themed background colors for inline code diffs"
+        },
+        {
+          "from": "Hide Email Address"
+        },
+        {
+          "from": "Partially mask your email address in the Cursor user interface"
+        },
+        {
+          "from": "Chat Width"
+        },
+        {
+          "from": "Set the maximum width of Agent conversations"
+        },
+        {
+          "from": "Conversation Density"
+        },
+        {
+          "from": "Tool Call Density"
+        },
+        {
+          "from": "Adjust how much detail is shown for tool calls"
+        },
+        {
+          "from": "Choose how much detail Agent tool calls show in the conversation"
+        },
+        {
+          "from": "Compact"
+        },
+        {
+          "from": "Detailed"
+        },
+        {
+          "from": "Code Block Word Wrap"
+        },
+        {
+          "from": "Wrap long lines in Agent conversation code blocks"
+        },
+        {
+          "from": "Tips"
+        },
+        {
+          "from": "Show rotating tips on the empty screen"
+        },
+        {
+          "from": "Give the Agent a Confetti Cannon"
+        },
+        {
+          "from": "Allow the agent to celebrate with a shower of confetti"
+        },
+        {
+          "from": "Startup"
+        },
+        {
+          "from": "Default Model"
+        },
+        {
+          "from": "What model new agents use by default"
+        },
+        {
+          "from": "Default Environment"
+        },
+        {
+          "from": "Where new agents start by default"
+        },
+        {
+          "from": "Last Used"
+        },
+        {
+          "from": "Choose which models appear in the model picker"
+        },
+        {
+          "from": "Auto-Approve Mode Transitions"
+        },
+        {
+          "from": "Allow agent to switch to modes like Plan or Debug without asking. When off, Cursor asks first, but skips if unanswered within 15 seconds."
+        },
+        {
+          "from": "Agent Autocomplete"
+        },
+        {
+          "from": "Contextual suggestions while prompting Agent"
+        },
+        {
+          "from": "New Messages"
+        },
+        {
+          "from": "Choose the default behavior of messages sent while Agent is working"
+        },
+        {
+          "from": "Manually Sent Messages from Queue"
+        },
+        {
+          "from": "Choose the default behavior of messages sent from the queue"
+        },
+        {
+          "from": "Continue Interrupted Agents"
+        },
+        {
+          "from": "Automatically resume working on agents and their subagents after a reload or restart"
+        },
+        {
+          "from": "Context and Tools"
+        },
+        {
+          "from": "Web Search Tool"
+        },
+        {
+          "from": "Allow Agent to search the web for relevant information"
+        },
+        {
+          "from": "Auto-Accept Web Search"
+        },
+        {
+          "from": "Skip approval dialog; Agent may run web searches automatically"
+        },
+        {
+          "from": "Web Fetch Tool"
+        },
+        {
+          "from": "Allow Agent to fetch content from URLs"
+        },
+        {
+          "from": "Hierarchical Cursor Ignore"
+        },
+        {
+          "from": "Ignore Symlinks in Cursor Ignore Search"
+        },
+        {
+          "from": "Wait for MCP Authentication"
+        },
+        {
+          "from": "Wait indefinitely to authenticate when prompted. When off, skip authentication prompts after 30 seconds."
+        },
+        {
+          "from": "Execution and Approvals"
+        },
+        {
+          "from": "Run Mode"
+        },
+        {
+          "from": "Choose how Agents run tools like command execution, MCP, and file writes."
+        },
+        {
+          "from": "Auto-Review (with Sandbox)"
+        },
+        {
+          "from": "Many commands will run automatically inside the sandbox, and a classifier will run for the actions that cannot run in the sandbox. Allowlists are still respected."
+        },
+        {
+          "from": "File-Deletion Protection"
+        },
+        {
+          "from": "External-File Protection"
+        },
+        {
+          "from": "Read Access"
+        },
+        {
+          "from": "Control whether agents can read files outside the workspace without approval."
+        },
+        {
+          "from": "Allowlist Options"
+        },
+        {
+          "from": "You can configure Shell, MCP, Fetch, and Read allowlists for Auto mode. However, Auto works well without these."
+        },
+        {
+          "from": "Approve pending shell tool (run)"
+        },
+        {
+          "from": "Approve pending shell tool and allowlist"
+        },
+        {
+          "from": "Accept pending agent pane action"
+        },
+        {
+          "from": "Terminal and Editing"
+        },
+        {
+          "from": "Legacy Terminal Tool"
+        },
+        {
+          "from": "Use the legacy terminal tool in agent mode, for use on systems with unsupported shell configurations"
+        },
+        {
+          "from": "Auto-Parse Links"
+        },
+        {
+          "from": "Automatically parse links pasted into Quick Edit"
+        },
+        {
+          "from": "Sync Skills for Cloud Agents"
+        },
+        {
+          "from": "Cursor syncs your local skills so they can be used with Cloud Agents. Turn this off to disable syncing."
+        },
+        {
+          "from": "Attribution"
+        },
+        {
+          "from": "Commit Attribution"
+        },
+        {
+          "from": "PR Attribution"
+        },
+        {
+          "from": "Browser Automation"
+        },
+        {
+          "from": "Browser Protection"
+        },
+        {
+          "from": "Prevent Agent from automatically running Browser tools"
+        },
+        {
+          "from": "Context-aware, multi-line suggestions around your cursor based on recent edits"
+        },
+        {
+          "from": "Partial Accepts"
+        },
+        {
+          "from": "Suggestions While Commenting"
+        },
+        {
+          "from": "Allow Tab to trigger while in a comment region"
+        },
+        {
+          "from": "Whitespace-Only Suggestions"
+        },
+        {
+          "from": "Suggest edits like new lines and indentation that modify whitespace only"
+        },
+        {
+          "from": "Ignore Files"
+        },
+        {
+          "from": "Ignored Files"
+        },
+        {
+          "from": "Glob patterns for files where Cursor Tab will not suggest"
+        },
+        {
+          "from": "Index Repositories for Instant Grep"
+        },
+        {
+          "from": "Codebase"
+        },
+        {
+          "from": "Enable LSPs"
+        },
+        {
+          "from": "Enable LSPs for Worktrees"
+        },
+        {
+          "from": "Enable language server by default to provide code intelligence in workspaces"
+        },
+        {
+          "from": "Enable language server by default to provide code intelligence in agent worktree workspaces"
+        },
+        {
+          "from": "Maximum Local LSP Workspaces"
+        },
+        {
+          "from": "Maximum local workspaces that can run language servers at the same time"
+        },
+        {
+          "from": "Maximum Remote LSP Workspaces"
+        },
+        {
+          "from": "Maximum remote workspaces that can run language servers at the same time"
+        },
+        {
+          "from": "Open Web Links in Cursor Browser"
+        },
+        {
+          "from": "Automatically open http and https links in the Browser Tab"
+        },
+        {
+          "from": "Open Local Links in Cursor Browser"
+        },
+        {
+          "from": "Automatically open localhost links in the Browser Tab"
+        },
+        {
+          "from": "Connected to Browser Tab"
+        },
+        {
+          "from": "HTTP Compatibility Mode"
+        },
+        {
+          "from": "HTTP/2 is recommended for low-latency streaming. In some corporate proxy and VPN environments, the compatibility mode may need to be lowered."
+        },
+        {
+          "from": "Network Diagnostics"
+        },
+        {
+          "from": "Check network connectivity to all Cursor services"
+        },
+        {
+          "from": "Run Diagnostic"
+        },
+        {
+          "from": "Required Domains"
+        },
+        {
+          "from": "These domains must be accessible for Cursor to function. Add them to your firewall or proxy allowlist."
+        },
+        {
+          "from": "Copy Domains"
+        },
+        {
+          "from": "API Keys"
+        },
+        {
+          "from": "Language used in voice chats."
+        },
+        {
+          "from": "Microphone"
+        },
+        {
+          "from": "Microphone used in voice chats."
+        },
+        {
+          "from": "Agent Voice"
+        },
+        {
+          "from": "Default voice for voice chats. Changing the voice plays a short sample."
+        },
+        {
+          "from": "Speed"
+        },
+        {
+          "from": "How quickly the voice speaks in voice chats."
+        },
+        {
+          "from": "Submit Keywords"
+        },
+        {
+          "from": "Words that send your prompt while you dictate. Voice chats ignore them."
+        },
+        {
+          "from": "System Default"
+        },
+        {
+          "from": "Branch Prefix"
+        },
+        {
+          "from": "Prefix for new branches created by Agent (e.g., cursor/, username/)"
+        },
+        {
+          "from": "PR Link Destination"
+        },
+        {
+          "from": "Open pull request links inside Cursor or in the default browser"
+        },
+        {
+          "from": "Inside Cursor"
+        },
+        {
+          "from": "Default Browser"
+        },
+        {
+          "from": "Review Provider"
+        },
+        {
+          "from": "Choose Origin (cursor.com/codebase), GitHub, or Graphite for pull request links on web and desktop"
+        },
+        {
+          "from": "Review Control Location"
+        },
+        {
+          "from": "Show inline diff review controls in top level breadcrumbs or floating island"
+        },
+        {
+          "from": "Breadcrumb"
+        },
+        {
+          "from": "Cursor-Managed Worktrees"
+        },
+        {
+          "from": "Worktree Cleanup"
+        },
+        {
+          "from": "Max Worktrees"
+        },
+        {
+          "from": "Max Total Size (GB)"
+        },
+        {
+          "from": "No Cursor-managed worktrees on this machine."
+        },
+        {
+          "from": "Maximum total size in GB across all Cursor-managed worktrees. Set to 0 to disable the size limit."
+        },
+        {
+          "from": "Third-Party Imports"
+        },
+        {
+          "from": "Automatically import agent configs from other tools"
+        },
+        {
+          "from": "Include Third-Party Plugins, Skills, and Other Configs"
+        },
+        {
+          "from": "Import Claude Code Conversations"
+        },
+        {
+          "from": "Sync chats and continue them in Cursor"
+        },
+        {
+          "from": "Attempt Update"
+        },
+        {
+          "from": "By default, get notifications for stable updates. In Early Access, pre-release builds may be unstable for production work."
+        },
+        {
+          "from": "Give Feedback"
+        },
+        {
+          "from": "Get Started"
+        },
+        {
+          "from": "Cancel Chat"
+        },
+        {
+          "from": "Edit Selection"
+        },
+        {
+          "from": "Add Symbol to Current Chat"
+        },
+        {
+          "from": "Add Symbol to New Chat"
+        },
+        {
+          "from": "Cursor Account"
         }
       ]
     },
@@ -266,19 +920,10 @@
           "from": "Cursor Settings"
         },
         {
-          "from": "General"
-        },
-        {
           "from": "VS Code Settings"
         },
         {
-          "from": "Appearance"
-        },
-        {
           "from": "Plan & Usage"
-        },
-        {
-          "from": "Agents"
         },
         {
           "from": "Browser & Network"
@@ -287,22 +932,13 @@
           "from": "Rules, Skills, Subagents"
         },
         {
-          "from": "Plugins"
-        },
-        {
           "from": "Code Intelligence"
         },
         {
           "from": "Tools & MCPs"
         },
         {
-          "from": "Beta"
-        },
-        {
-          "from": "Network"
-        },
-        {
-          "from": "Worktrees"
+          "from": "New Chat"
         },
         {
           "from": "Plan, search, build anything"
@@ -311,25 +947,10 @@
           "from": "Add Context"
         },
         {
-          "from": "Accept"
-        },
-        {
-          "from": "Reject"
-        },
-        {
           "from": "Keep All"
         },
         {
           "from": "Undo All"
-        },
-        {
-          "from": "Review"
-        },
-        {
-          "from": "Send"
-        },
-        {
-          "from": "Queue"
         },
         {
           "from": "Upgrade to Pro"
@@ -339,9 +960,6 @@
         },
         {
           "from": "New MCP Server"
-        },
-        {
-          "from": "Search..."
         },
         {
           "from": "Search branches..."
@@ -380,12 +998,6 @@
           "from": "Style request, response language, tone..."
         },
         {
-          "from": "Docs"
-        },
-        {
-          "from": "Contact"
-        },
-        {
           "from": "Log Out"
         },
         {
@@ -401,22 +1013,7 @@
           "from": "Project Rules"
         },
         {
-          "from": "Memories"
-        },
-        {
-          "from": "Sync"
-        },
-        {
           "from": "Copy Message"
-        },
-        {
-          "from": "Retry"
-        },
-        {
-          "from": "Allow"
-        },
-        {
-          "from": "Deny"
         },
         {
           "from": "Always Allow"
@@ -437,12 +1034,6 @@
           "from": "Generating..."
         },
         {
-          "from": "Thought"
-        },
-        {
-          "from": "Explored"
-        },
-        {
           "from": "Show more"
         },
         {
@@ -452,43 +1043,13 @@
           "from": "View Plan"
         },
         {
-          "from": "Build"
-        },
-        {
-          "from": "Archive"
-        },
-        {
-          "from": "Rename"
-        },
-        {
           "from": "Open in Editor"
         },
         {
           "from": "Recent"
         },
         {
-          "from": "Yesterday"
-        },
-        {
-          "from": "Usage"
-        },
-        {
           "from": "Account"
-        },
-        {
-          "from": "Editor"
-        },
-        {
-          "from": "Changes"
-        },
-        {
-          "from": "Mentions"
-        },
-        {
-          "from": "Enabled"
-        },
-        {
-          "from": "Disabled"
         },
         {
           "from": "Learn more"
@@ -510,8 +1071,1527 @@
         },
         {
           "from": "Connect via SSH"
+        },
+        {
+          "from": "Select All"
+        },
+        {
+          "from": "New Terminal"
+        },
+        {
+          "from": "New Browser"
+        },
+        {
+          "from": "Open IDE"
+        },
+        {
+          "from": "Exit"
+        },
+        {
+          "from": "Command Palette"
+        },
+        {
+          "from": "Keyboard Shortcuts"
+        },
+        {
+          "from": "View License"
+        },
+        {
+          "from": "About Cursor"
+        },
+        {
+          "from": "Minimap"
+        },
+        {
+          "from": "Reset Zoom"
+        },
+        {
+          "from": "Status Bar"
+        },
+        {
+          "from": "Zoom In"
+        },
+        {
+          "from": "Zoom Out"
+        },
+        {
+          "from": "Zoom in"
+        },
+        {
+          "from": "Zoom out"
+        },
+        {
+          "from": "Reset zoom"
+        },
+        {
+          "from": "Close Window"
+        },
+        {
+          "from": "Close All Tabs"
+        },
+        {
+          "from": "Report Issue"
+        },
+        {
+          "from": "Toggle Developer Tools"
+        },
+        {
+          "from": "Open Process Explorer"
+        },
+        {
+          "from": "Agents Window"
+        },
+        {
+          "from": "Show Terminal"
+        },
+        {
+          "from": "Maximize Chat"
+        },
+        {
+          "from": "Add Folder"
+        },
+        {
+          "from": "Outline"
+        },
+        {
+          "from": "Getting Started"
+        },
+        {
+          "from": "Start from scratch"
+        },
+        {
+          "from": "This Computer"
+        },
+        {
+          "from": "Remote Machine"
+        },
+        {
+          "from": "Plan, Build, / for skills, @ for context"
+        },
+        {
+          "from": "Start with a plan"
+        },
+        {
+          "from": "Align on implementation before writing code"
+        },
+        {
+          "from": "Debug an issue"
+        },
+        {
+          "from": "Find root causes and fix tricky bugs"
+        },
+        {
+          "from": "Tip dismissed. You can turn off future tips in Settings"
+        },
+        {
+          "from": "Search repos, cloud environments..."
+        },
+        {
+          "from": "Use Existing..."
+        },
+        {
+          "from": "Run on"
+        },
+        {
+          "from": "Add or search model"
+        },
+        {
+          "from": "View All Models"
+        },
+        {
+          "from": "Upgrade to unlock more models"
+        },
+        {
+          "from": "More models are only available on paid plans."
+        },
+        {
+          "from": "Choose a model or use the cost- and availability-aware default"
+        },
+        {
+          "from": "Start voice input"
+        },
+        {
+          "from": "Start voice chat"
+        },
+        {
+          "from": "Add agents, context, tools"
+        },
+        {
+          "from": "Dismiss recommendation"
+        },
+        {
+          "from": "Hide tips"
+        },
+        {
+          "from": "Hide Sidebar"
+        },
+        {
+          "from": "Customize Sidebar"
+        },
+        {
+          "from": "Open Workspace"
+        },
+        {
+          "from": "Chat actions"
+        },
+        {
+          "from": "Show Apps"
+        },
+        {
+          "from": "Go Back"
+        },
+        {
+          "from": "Go Forward"
+        },
+        {
+          "from": "Minimize"
+        },
+        {
+          "from": "Maximize"
+        },
+        {
+          "from": "Minimize Window"
+        },
+        {
+          "from": "Maximize Window"
+        },
+        {
+          "from": "Pull requests"
+        },
+        {
+          "from": "Conversation"
+        },
+        {
+          "from": "Agent conversations"
+        },
+        {
+          "from": "Meet Grok Bot"
+        },
+        {
+          "from": "AI teammates you can give real work to"
+        },
+        {
+          "from": "Get Grok Bot"
+        },
+        {
+          "from": "Search Plugins, Skills, MCPs..."
+        },
+        {
+          "from": "Browse Marketplace"
+        },
+        {
+          "from": "Plugins, MCPs, Skills, and Rules have moved to Customize"
+        },
+        {
+          "from": "We've introduced a new home for all the ways to customize Cursor."
+        },
+        {
+          "from": "Automate repetitive tasks with always-on agents and configure Cursor's built-in agents for your team."
+        },
+        {
+          "from": "Upgrade for Automations, unlimited completions, MAX Mode, and more"
+        },
+        {
+          "from": "Free Plan"
+        },
+        {
+          "from": "Cloud Agents require a Git repository in an open folder."
+        },
+        {
+          "from": "Background agents only work in folders with a git repository. Please open a folder that contains a git repository to use this feature."
+        },
+        {
+          "from": "Open a Git repository"
+        },
+        {
+          "from": "Close Pane"
+        },
+        {
+          "from": "Toggle Agents"
+        },
+        {
+          "from": "Open Cursor Settings"
+        },
+        {
+          "from": "Filter by Environment"
+        },
+        {
+          "from": "Unified agents sidebar"
+        },
+        {
+          "from": "Replace Agent"
+        },
+        {
+          "from": "Manage your account and billing"
+        },
+        {
+          "from": "Cursor account"
+        },
+        {
+          "from": "Entry-level plan with access to premium models, unlimited Tab completions, and more."
+        },
+        {
+          "from": "Editor Settings"
+        },
+        {
+          "from": "Configure font, formatting, minimap and more"
+        },
+        {
+          "from": "Configure keyboard shortcuts"
+        },
+        {
+          "from": "Import Settings from VS Code"
+        },
+        {
+          "from": "Import settings, extensions, and keybindings from VS Code"
+        },
+        {
+          "from": "Window Layout"
+        },
+        {
+          "from": "Switch between Agent and Editor default layouts"
+        },
+        {
+          "from": "Window Restoration"
+        },
+        {
+          "from": "Controls which windows Cursor restores on startup"
+        },
+        {
+          "from": "Show title bar in agent layout"
+        },
+        {
+          "from": "Show status bar at the bottom of the window"
+        },
+        {
+          "from": "Auto-Hide Editor When Empty"
+        },
+        {
+          "from": "When all editors are closed, hide the editor area and maximize chat"
+        },
+        {
+          "from": "Open Chat as Editor Tabs"
+        },
+        {
+          "from": "Show chats as editor tabs inside the chat area instead of the legacy stacked view"
+        },
+        {
+          "from": "Show system notifications when Agent completes or needs attention"
+        },
+        {
+          "from": "Warning Notifications"
+        },
+        {
+          "from": "Show notifications for less urgent issues"
+        },
+        {
+          "from": "Completion Sound"
+        },
+        {
+          "from": "Play a sound when agents finish or need attention"
+        },
+        {
+          "from": "System Tray Icon"
+        },
+        {
+          "from": "Show Cursor in system tray"
+        },
+        {
+          "from": "Cloud Agent Approval Banners While Focused"
+        },
+        {
+          "from": "Also show the approval banner while Cursor is focused; the request card in the agent conversation always shows"
+        },
+        {
+          "from": "Privacy"
+        },
+        {
+          "from": "Data Sharing Enabled"
+        },
+        {
+          "from": "Choose between light, dark, or high contrast themes"
+        },
+        {
+          "from": "Follow System High Contrast"
+        },
+        {
+          "from": "Switch to a high contrast theme when your OS is in a high contrast mode"
+        },
+        {
+          "from": "Choose a tint color"
+        },
+        {
+          "from": "Control how strongly the tint is applied"
+        },
+        {
+          "from": "Hue"
+        },
+        {
+          "from": "Intensity"
+        },
+        {
+          "from": "Reduce Motion"
+        },
+        {
+          "from": "Minimize interface animations. System follows your OS preference."
+        },
+        {
+          "from": "Motion"
+        },
+        {
+          "from": "Reduce Transparency"
+        },
+        {
+          "from": "Replace translucent surfaces with opaque backgrounds"
+        },
+        {
+          "from": "Typography"
+        },
+        {
+          "from": "UI Font Size"
+        },
+        {
+          "from": "Font size for the Cursor user interface"
+        },
+        {
+          "from": "UI Font Family"
+        },
+        {
+          "from": "Override the Cursor user interface typeface"
+        },
+        {
+          "from": "Code Font Size"
+        },
+        {
+          "from": "Font size for code editors and diffs"
+        },
+        {
+          "from": "Code Font Family"
+        },
+        {
+          "from": "Override the font for code editors and diffs"
+        },
+        {
+          "from": "System font"
+        },
+        {
+          "from": "System monospace"
+        },
+        {
+          "from": "Themed Diff Backgrounds"
+        },
+        {
+          "from": "Use themed background colors for inline code diffs"
+        },
+        {
+          "from": "Hide Email Address"
+        },
+        {
+          "from": "Partially mask your email address in the Cursor user interface"
+        },
+        {
+          "from": "Chat Width"
+        },
+        {
+          "from": "Set the maximum width of Agent conversations"
+        },
+        {
+          "from": "Narrow"
+        },
+        {
+          "from": "Wide"
+        },
+        {
+          "from": "Conversation Density"
+        },
+        {
+          "from": "Tool Call Density"
+        },
+        {
+          "from": "Adjust how much detail is shown for tool calls"
+        },
+        {
+          "from": "Choose how much detail Agent tool calls show in the conversation"
+        },
+        {
+          "from": "Compact"
+        },
+        {
+          "from": "Detailed"
+        },
+        {
+          "from": "Code Block Word Wrap"
+        },
+        {
+          "from": "Wrap long lines in Agent conversation code blocks"
+        },
+        {
+          "from": "Tips"
+        },
+        {
+          "from": "Show rotating tips on the empty screen"
+        },
+        {
+          "from": "Give the Agent a Confetti Cannon"
+        },
+        {
+          "from": "Allow the agent to celebrate with a shower of confetti"
+        },
+        {
+          "from": "Default Model"
+        },
+        {
+          "from": "What model new agents use by default"
+        },
+        {
+          "from": "Default Environment"
+        },
+        {
+          "from": "Where new agents start by default"
+        },
+        {
+          "from": "Last Used"
+        },
+        {
+          "from": "Choose which models appear in the model picker"
+        },
+        {
+          "from": "Submit with Ctrl + Enter"
+        },
+        {
+          "from": "Auto-Approve Mode Transitions"
+        },
+        {
+          "from": "Allow agent to switch to modes like Plan or Debug without asking. When off, Cursor asks first, but skips if unanswered within 15 seconds."
+        },
+        {
+          "from": "Agent Autocomplete"
+        },
+        {
+          "from": "Contextual suggestions while prompting Agent"
+        },
+        {
+          "from": "New Messages"
+        },
+        {
+          "from": "Choose the default behavior of messages sent while Agent is working"
+        },
+        {
+          "from": "Manually Sent Messages from Queue"
+        },
+        {
+          "from": "Choose the default behavior of messages sent from the queue"
+        },
+        {
+          "from": "Continue Interrupted Agents"
+        },
+        {
+          "from": "Automatically resume working on agents and their subagents after a reload or restart"
+        },
+        {
+          "from": "Context and Tools"
+        },
+        {
+          "from": "Web Search Tool"
+        },
+        {
+          "from": "Allow Agent to search the web for relevant information"
+        },
+        {
+          "from": "Auto-Accept Web Search"
+        },
+        {
+          "from": "Skip approval dialog; Agent may run web searches automatically"
+        },
+        {
+          "from": "Web Fetch Tool"
+        },
+        {
+          "from": "Allow Agent to fetch content from URLs"
+        },
+        {
+          "from": "Hierarchical Cursor Ignore"
+        },
+        {
+          "from": "Ignore Symlinks in Cursor Ignore Search"
+        },
+        {
+          "from": "Wait for MCP Authentication"
+        },
+        {
+          "from": "Wait indefinitely to authenticate when prompted. When off, skip authentication prompts after 30 seconds."
+        },
+        {
+          "from": "Execution and Approvals"
+        },
+        {
+          "from": "Run Mode"
+        },
+        {
+          "from": "Choose how Agents run tools like command execution, MCP, and file writes."
+        },
+        {
+          "from": "Auto-Review (with Sandbox)"
+        },
+        {
+          "from": "Many commands will run automatically inside the sandbox, and a classifier will run for the actions that cannot run in the sandbox. Allowlists are still respected."
+        },
+        {
+          "from": "File-Deletion Protection"
+        },
+        {
+          "from": "External-File Protection"
+        },
+        {
+          "from": "Read Access"
+        },
+        {
+          "from": "Control whether agents can read files outside the workspace without approval."
+        },
+        {
+          "from": "Allowlist Options"
+        },
+        {
+          "from": "You can configure Shell, MCP, Fetch, and Read allowlists for Auto mode. However, Auto works well without these."
+        },
+        {
+          "from": "Always-allowed apps: Cursor can use these in any chat without asking. Remove one to be asked again."
+        },
+        {
+          "from": "No always-allowed apps yet. Choose Always Allow when Cursor asks to use an app."
+        },
+        {
+          "from": "Approve pending shell tool (run)"
+        },
+        {
+          "from": "Approve pending shell tool and allowlist"
+        },
+        {
+          "from": "Accept pending agent pane action"
+        },
+        {
+          "from": "Terminal and Editing"
+        },
+        {
+          "from": "Legacy Terminal Tool"
+        },
+        {
+          "from": "Use the legacy terminal tool in agent mode, for use on systems with unsupported shell configurations"
+        },
+        {
+          "from": "Auto-Parse Links"
+        },
+        {
+          "from": "Automatically parse links pasted into Quick Edit"
+        },
+        {
+          "from": "Sync Skills for Cloud Agents"
+        },
+        {
+          "from": "Cursor syncs your local skills so they can be used with Cloud Agents. Turn this off to disable syncing."
+        },
+        {
+          "from": "Attribution"
+        },
+        {
+          "from": "Commit Attribution"
+        },
+        {
+          "from": "PR Attribution"
+        },
+        {
+          "from": "Browser Automation"
+        },
+        {
+          "from": "Browser Protection"
+        },
+        {
+          "from": "Prevent Agent from automatically running Browser tools"
+        },
+        {
+          "from": "Context-aware, multi-line suggestions around your cursor based on recent edits"
+        },
+        {
+          "from": "Partial Accepts"
+        },
+        {
+          "from": "Suggestions While Commenting"
+        },
+        {
+          "from": "Allow Tab to trigger while in a comment region"
+        },
+        {
+          "from": "Whitespace-Only Suggestions"
+        },
+        {
+          "from": "Suggest edits like new lines and indentation that modify whitespace only"
+        },
+        {
+          "from": "Ignore Files"
+        },
+        {
+          "from": "Ignored Files"
+        },
+        {
+          "from": "Glob patterns for files where Cursor Tab will not suggest"
+        },
+        {
+          "from": "Index Repositories for Instant Grep"
+        },
+        {
+          "from": "Codebase"
+        },
+        {
+          "from": "Enable LSPs"
+        },
+        {
+          "from": "Enable LSPs for Worktrees"
+        },
+        {
+          "from": "Enable language server by default to provide code intelligence in workspaces"
+        },
+        {
+          "from": "Enable language server by default to provide code intelligence in agent worktree workspaces"
+        },
+        {
+          "from": "Maximum Local LSP Workspaces"
+        },
+        {
+          "from": "Maximum local workspaces that can run language servers at the same time"
+        },
+        {
+          "from": "Maximum Remote LSP Workspaces"
+        },
+        {
+          "from": "Maximum remote workspaces that can run language servers at the same time"
+        },
+        {
+          "from": "Open Web Links in Cursor Browser"
+        },
+        {
+          "from": "Automatically open http and https links in the Browser Tab"
+        },
+        {
+          "from": "Open Local Links in Cursor Browser"
+        },
+        {
+          "from": "Automatically open localhost links in the Browser Tab"
+        },
+        {
+          "from": "Connected to Browser Tab"
+        },
+        {
+          "from": "HTTP Compatibility Mode"
+        },
+        {
+          "from": "HTTP/2 is recommended for low-latency streaming. In some corporate proxy and VPN environments, the compatibility mode may need to be lowered."
+        },
+        {
+          "from": "Network Diagnostics"
+        },
+        {
+          "from": "Check network connectivity to all Cursor services"
+        },
+        {
+          "from": "Run Diagnostic"
+        },
+        {
+          "from": "Required Domains"
+        },
+        {
+          "from": "These domains must be accessible for Cursor to function. Add them to your firewall or proxy allowlist."
+        },
+        {
+          "from": "Copy Domains"
+        },
+        {
+          "from": "API Keys"
+        },
+        {
+          "from": "Language used in voice chats."
+        },
+        {
+          "from": "Microphone"
+        },
+        {
+          "from": "Microphone used in voice chats."
+        },
+        {
+          "from": "Agent Voice"
+        },
+        {
+          "from": "Default voice for voice chats. Changing the voice plays a short sample."
+        },
+        {
+          "from": "Speed"
+        },
+        {
+          "from": "How quickly the voice speaks in voice chats."
+        },
+        {
+          "from": "Submit Keywords"
+        },
+        {
+          "from": "Words that send your prompt while you dictate. Voice chats ignore them."
+        },
+        {
+          "from": "System Default"
+        },
+        {
+          "from": "Branch Prefix"
+        },
+        {
+          "from": "Prefix for new branches created by Agent (e.g., cursor/, username/)"
+        },
+        {
+          "from": "PR Link Destination"
+        },
+        {
+          "from": "Open pull request links inside Cursor or in the default browser"
+        },
+        {
+          "from": "Inside Cursor"
+        },
+        {
+          "from": "Default Browser"
+        },
+        {
+          "from": "Review Provider"
+        },
+        {
+          "from": "Choose Origin (cursor.com/codebase), GitHub, or Graphite for pull request links on web and desktop"
+        },
+        {
+          "from": "Review Control Location"
+        },
+        {
+          "from": "Show inline diff review controls in top level breadcrumbs or floating island"
+        },
+        {
+          "from": "Breadcrumb"
+        },
+        {
+          "from": "Cursor-Managed Worktrees"
+        },
+        {
+          "from": "Worktree Cleanup"
+        },
+        {
+          "from": "Max Worktrees"
+        },
+        {
+          "from": "Max Total Size (GB)"
+        },
+        {
+          "from": "No Cursor-managed worktrees on this machine."
+        },
+        {
+          "from": "Maximum total size in GB across all Cursor-managed worktrees. Set to 0 to disable the size limit."
+        },
+        {
+          "from": "Third-Party Imports"
+        },
+        {
+          "from": "Automatically import agent configs from other tools"
+        },
+        {
+          "from": "Include Third-Party Plugins, Skills, and Other Configs"
+        },
+        {
+          "from": "Import Claude Code Conversations"
+        },
+        {
+          "from": "Sync chats and continue them in Cursor"
+        },
+        {
+          "from": "Attempt Update"
+        },
+        {
+          "from": "By default, get notifications for stable updates. In Early Access, pre-release builds may be unstable for production work."
+        },
+        {
+          "from": "Give Feedback"
+        },
+        {
+          "from": "Get Started"
+        },
+        {
+          "from": "Cancel Chat"
+        },
+        {
+          "from": "Edit Selection"
+        },
+        {
+          "from": "Add Symbol to Current Chat"
+        },
+        {
+          "from": "Add Symbol to New Chat"
+        },
+        {
+          "from": "Search Settings"
+        },
+        {
+          "from": "Cursor Account"
         }
       ]
     }
-  ]
+  ],
+  "nls": {
+    "relative": "resources/app/out/nls.messages.json",
+    "langpack": "extension",
+    "entries": [
+      {
+        "index": 171,
+        "from": "Copy"
+      },
+      {
+        "index": 174,
+        "from": "Debug"
+      },
+      {
+        "index": 175,
+        "from": "Debug"
+      },
+      {
+        "index": 1355,
+        "from": "Accept"
+      },
+      {
+        "index": 1847,
+        "from": "&&Open"
+      },
+      {
+        "index": 1848,
+        "from": "Cancel"
+      },
+      {
+        "index": 2678,
+        "from": "&&Cancel"
+      },
+      {
+        "index": 2684,
+        "from": "Cancel"
+      },
+      {
+        "index": 2702,
+        "from": "Stop"
+      },
+      {
+        "index": 2703,
+        "from": "Stop"
+      },
+      {
+        "index": 3001,
+        "from": "Browser"
+      },
+      {
+        "index": 3165,
+        "from": "Open Cursor Settings"
+      },
+      {
+        "index": 3213,
+        "from": "Agent"
+      },
+      {
+        "index": 3214,
+        "from": "Editor"
+      },
+      {
+        "index": 3215,
+        "from": "Untitled"
+      },
+      {
+        "index": 3216,
+        "from": "Untitled"
+      },
+      {
+        "index": 3217,
+        "from": "Untitled"
+      },
+      {
+        "index": 3315,
+        "from": "New Agent"
+      },
+      {
+        "index": 3318,
+        "from": "Close"
+      },
+      {
+        "index": 3420,
+        "from": "Close Pane"
+      },
+      {
+        "index": 3427,
+        "from": "Close Pane"
+      },
+      {
+        "index": 3474,
+        "from": "Open Browser"
+      },
+      {
+        "index": 3613,
+        "from": "Close All Tabs"
+      },
+      {
+        "index": 3736,
+        "from": "Open Browser"
+      },
+      {
+        "index": 3738,
+        "from": "Show Terminal"
+      },
+      {
+        "index": 3741,
+        "from": "Add Folder"
+      },
+      {
+        "index": 3743,
+        "from": "Maximize Chat"
+      },
+      {
+        "index": 3996,
+        "from": "&&File"
+      },
+      {
+        "index": 3997,
+        "from": "&&Edit"
+      },
+      {
+        "index": 3998,
+        "from": "&&Selection"
+      },
+      {
+        "index": 3999,
+        "from": "&&View"
+      },
+      {
+        "index": 4000,
+        "from": "&&Go"
+      },
+      {
+        "index": 4001,
+        "from": "&&Terminal"
+      },
+      {
+        "index": 4002,
+        "from": "&&Help"
+      },
+      {
+        "index": 4003,
+        "from": "Preferences"
+      },
+      {
+        "index": 4031,
+        "from": "New Agent"
+      },
+      {
+        "index": 4033,
+        "from": "Open Agents Window"
+      },
+      {
+        "index": 4037,
+        "from": "Toggle Agents"
+      },
+      {
+        "index": 4038,
+        "from": "Open Cursor Settings"
+      },
+      {
+        "index": 4039,
+        "from": "Cursor Settings"
+      },
+      {
+        "index": 4040,
+        "from": "Go Back"
+      },
+      {
+        "index": 4041,
+        "from": "Go Forward"
+      },
+      {
+        "index": 4082,
+        "from": "Close"
+      },
+      {
+        "index": 4092,
+        "from": "Archive"
+      },
+      {
+        "index": 4803,
+        "from": "General"
+      },
+      {
+        "index": 4810,
+        "from": "Index Repositories for Instant Grep"
+      },
+      {
+        "index": 4814,
+        "from": "Default"
+      },
+      {
+        "index": 4817,
+        "from": "Compact"
+      },
+      {
+        "index": 4819,
+        "from": "Detailed"
+      },
+      {
+        "index": 4820,
+        "from": "Compact"
+      },
+      {
+        "index": 4822,
+        "from": "Detailed"
+      },
+      {
+        "index": 4835,
+        "from": "Toggle Agents"
+      },
+      {
+        "index": 4838,
+        "from": "Toggle Agents"
+      },
+      {
+        "index": 4899,
+        "from": "&&Close Window"
+      },
+      {
+        "index": 4975,
+        "from": "Recents"
+      },
+      {
+        "index": 5050,
+        "from": "Skip"
+      },
+      {
+        "index": 5302,
+        "from": "&&Close"
+      },
+      {
+        "index": 5303,
+        "from": "Open Browser"
+      },
+      {
+        "index": 5345,
+        "from": "Back"
+      },
+      {
+        "index": 5348,
+        "from": "Undo"
+      },
+      {
+        "index": 5349,
+        "from": "Redo"
+      },
+      {
+        "index": 5350,
+        "from": "Cut"
+      },
+      {
+        "index": 5351,
+        "from": "Copy"
+      },
+      {
+        "index": 5352,
+        "from": "Paste"
+      },
+      {
+        "index": 5353,
+        "from": "Select All"
+      },
+      {
+        "index": 5357,
+        "from": "Continue"
+      },
+      {
+        "index": 5358,
+        "from": "Cancel"
+      },
+      {
+        "index": 5368,
+        "from": "Report &&Issue"
+      },
+      {
+        "index": 5369,
+        "from": "Give &&Feedback..."
+      },
+      {
+        "index": 5452,
+        "from": "Open Customize"
+      },
+      {
+        "index": 6104,
+        "from": "Debug"
+      },
+      {
+        "index": 6735,
+        "from": "Dismiss"
+      },
+      {
+        "index": 6736,
+        "from": "Dismiss"
+      },
+      {
+        "index": 6946,
+        "from": "Remote"
+      },
+      {
+        "index": 6968,
+        "from": "Report Issue"
+      },
+      {
+        "index": 7333,
+        "from": "Explorer"
+      },
+      {
+        "index": 7336,
+        "from": "&&Explorer"
+      },
+      {
+        "index": 7337,
+        "from": "Open Folder"
+      },
+      {
+        "index": 7346,
+        "from": "Explorer"
+      },
+      {
+        "index": 7347,
+        "from": "Explorer"
+      },
+      {
+        "index": 7410,
+        "from": "File"
+      },
+      {
+        "index": 7494,
+        "from": "Open &&Process Explorer"
+      },
+      {
+        "index": 7505,
+        "from": "Open Process Explorer"
+      },
+      {
+        "index": 7635,
+        "from": "&&Problems"
+      },
+      {
+        "index": 7639,
+        "from": "Problems"
+      },
+      {
+        "index": 7641,
+        "from": "Problems"
+      },
+      {
+        "index": 7643,
+        "from": "Problems"
+      },
+      {
+        "index": 7645,
+        "from": "Problems"
+      },
+      {
+        "index": 7647,
+        "from": "Problems"
+      },
+      {
+        "index": 7650,
+        "from": "Problems"
+      },
+      {
+        "index": 7651,
+        "from": "Problems"
+      },
+      {
+        "index": 7653,
+        "from": "Problems"
+      },
+      {
+        "index": 7662,
+        "from": "Copy"
+      },
+      {
+        "index": 7663,
+        "from": "Copy Message"
+      },
+      {
+        "index": 7664,
+        "from": "Copy Message"
+      },
+      {
+        "index": 8446,
+        "from": "Import"
+      },
+      {
+        "index": 8482,
+        "from": "Outline"
+      },
+      {
+        "index": 8598,
+        "from": "&&VS Code Settings"
+      },
+      {
+        "index": 8609,
+        "from": "VS Code Settings"
+      },
+      {
+        "index": 8912,
+        "from": "&&Open View..."
+      },
+      {
+        "index": 9122,
+        "from": "Remote"
+      },
+      {
+        "index": 9204,
+        "from": "Review"
+      },
+      {
+        "index": 9293,
+        "from": "Source Control"
+      },
+      {
+        "index": 9299,
+        "from": "Source &&Control"
+      },
+      {
+        "index": 9301,
+        "from": "Source Control"
+      },
+      {
+        "index": 9302,
+        "from": "Repositories"
+      },
+      {
+        "index": 9303,
+        "from": "Changes"
+      },
+      {
+        "index": 9393,
+        "from": "Cancel"
+      },
+      {
+        "index": 9396,
+        "from": "Close"
+      },
+      {
+        "index": 9580,
+        "from": "Learn More"
+      },
+      {
+        "index": 9616,
+        "from": "Search"
+      },
+      {
+        "index": 10270,
+        "from": "Terminal"
+      },
+      {
+        "index": 10271,
+        "from": "&&Terminal"
+      },
+      {
+        "index": 10272,
+        "from": "Terminal"
+      },
+      {
+        "index": 10273,
+        "from": "Terminal"
+      },
+      {
+        "index": 11444,
+        "from": "Continue"
+      },
+      {
+        "index": 11445,
+        "from": "Cancel"
+      },
+      {
+        "index": 11451,
+        "from": "Cancel"
+      },
+      {
+        "index": 11479,
+        "from": "Agents Window"
+      },
+      {
+        "index": 11496,
+        "from": "Learn More"
+      },
+      {
+        "index": 11842,
+        "from": "&&Open"
+      },
+      {
+        "index": 11850,
+        "from": "&&Manage"
+      },
+      {
+        "index": 11851,
+        "from": "Cancel"
+      },
+      {
+        "index": 11868,
+        "from": "Manage"
+      },
+      {
+        "index": 11869,
+        "from": "Learn More"
+      },
+      {
+        "index": 11996,
+        "from": "Toggle Developer Tools"
+      },
+      {
+        "index": 12016,
+        "from": "Close"
+      },
+      {
+        "index": 12017,
+        "from": "Cancel"
+      },
+      {
+        "index": 12018,
+        "from": "Clos&&e Window"
+      },
+      {
+        "index": 12019,
+        "from": "&&Zoom In"
+      },
+      {
+        "index": 12021,
+        "from": "&&Zoom Out"
+      },
+      {
+        "index": 12022,
+        "from": "&&Reset Zoom"
+      },
+      {
+        "index": 12023,
+        "from": "Close Window"
+      },
+      {
+        "index": 12024,
+        "from": "Close Window"
+      },
+      {
+        "index": 12030,
+        "from": "Close Window"
+      },
+      {
+        "index": 12031,
+        "from": "Zoom In"
+      },
+      {
+        "index": 12033,
+        "from": "Zoom Out"
+      },
+      {
+        "index": 12034,
+        "from": "Reset Zoom"
+      },
+      {
+        "index": 12037,
+        "from": "E&&xit"
+      },
+      {
+        "index": 12098,
+        "from": "&&Copy"
+      },
+      {
+        "index": 12106,
+        "from": "Configure"
+      },
+      {
+        "index": 12107,
+        "from": "Learn More"
+      },
+      {
+        "index": 12115,
+        "from": "&&Log In"
+      },
+      {
+        "index": 12120,
+        "from": "Cancel"
+      },
+      {
+        "index": 12121,
+        "from": "Cancel"
+      },
+      {
+        "index": 12135,
+        "from": "Learn More"
+      },
+      {
+        "index": 12137,
+        "from": "Learn More"
+      },
+      {
+        "index": 12138,
+        "from": "Zoom Out"
+      },
+      {
+        "index": 12139,
+        "from": "Zoom In"
+      },
+      {
+        "index": 12142,
+        "from": "Settings"
+      },
+      {
+        "index": 12445,
+        "from": "New Rule"
+      },
+      {
+        "index": 12532,
+        "from": "Cancel"
+      },
+      {
+        "index": 12540,
+        "from": "Cancel"
+      },
+      {
+        "index": 12583,
+        "from": "Cancel"
+      },
+      {
+        "index": 12591,
+        "from": "Cancel"
+      },
+      {
+        "index": 12642,
+        "from": "Cancel"
+      },
+      {
+        "index": 12650,
+        "from": "Cancel"
+      },
+      {
+        "index": 12756,
+        "from": "Remote"
+      },
+      {
+        "index": 12883,
+        "from": "Copy"
+      },
+      {
+        "index": 12898,
+        "from": "Learn More"
+      },
+      {
+        "index": 12923,
+        "from": "Stop"
+      },
+      {
+        "index": 13028,
+        "from": "VS Code Settings"
+      },
+      {
+        "index": 13091,
+        "from": "Network"
+      }
+    ]
+  }
 }

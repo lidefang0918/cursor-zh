@@ -17,7 +17,7 @@ async function setup({ js = 'a="Cursor Settings";b="New Agent";', version = 'tes
   const root = await tmp('inst-');
   await fs.mkdir(path.dirname(path.join(root, REL)), { recursive: true });
   await fs.writeFile(path.join(root, REL), js);
-  const product = { version, vscodeVersion: '1.128.0', checksums: { [KEY]: vscodeChecksum(Buffer.from(js)) } };
+  const product = { version, commit: 'c0ffee', vscodeVersion: '1.128.0', checksums: { [KEY]: vscodeChecksum(Buffer.from(js)) } };
   await fs.writeFile(path.join(root, 'resources/app/product.json'), JSON.stringify(product, null, '\t') + '\n');
   const home = await tmp('home-');
   const cliDir = await tmp('cli-');
@@ -66,6 +66,23 @@ describe('localize/revert', () => {
     assert.equal(await readLocale(opts.argvPath), null);
     assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
     assert.equal((await readState(opts.dataDir)).localized, false);
+  });
+
+  it('patches untranslated NLS messages, clears the translation cache, and restores both on revert', async () => {
+    const { root, opts } = await setup({ version: 'test-nls' });
+    const nls = path.join(root, 'resources/app/out/nls.messages.json');
+    const nlsBefore = JSON.stringify(['OK', '&&Edit']);
+    await fs.writeFile(nls, nlsBefore);
+    const cache = path.join(opts.userDataDir, 'clp/abc.zh-cn/c0ffee');
+    await fs.mkdir(cache, { recursive: true });
+    const r = await localize(opts);
+    assert.equal(r.ok, true, r.error);
+    assert.deepEqual(JSON.parse(await read(nls)), ['OK', '编辑(&&E)']);
+    await assert.rejects(fs.access(cache));
+    await fs.mkdir(cache, { recursive: true });
+    assert.equal((await revert(opts)).ok, true);
+    assert.equal(await read(nls), nlsBefore);
+    await assert.rejects(fs.access(cache));
   });
 
   it('refuses unknown versions without touching anything', async () => {

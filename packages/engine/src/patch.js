@@ -10,7 +10,11 @@ export function vscodeChecksum(buf) {
 }
 
 export function filesToBackup(anchors) {
-  return [...anchors.files.map((f) => f.relative), ...(anchors.productJson ? [anchors.productJson] : [])];
+  return [
+    ...anchors.files.map((f) => f.relative),
+    ...(anchors.productJson ? [anchors.productJson] : []),
+    ...(anchors.nls?.relative ? [anchors.nls.relative] : []),
+  ];
 }
 
 const escapeFor = (s, q) => s.replace(/\\/g, '\\\\').replace(new RegExp(q, 'g'), `\\${q}`).replace(/\n/g, '\\n');
@@ -28,33 +32,58 @@ export function replaceLiterals(src, from, to) {
   return { out, count };
 }
 
+
+// 一个文件一次扫描替换多条（每种引号一遍），大 bundle 上比逐条 split/join 快得多
+export function replaceAllLiterals(src, map) {
+  const counts = new Map();
+  let out = src;
+  const keys = [...map.keys()].sort((a, b) => b.length - a.length);
+  for (const q of QUOTES) {
+    const ks = keys.filter((k) => !k.includes(q));
+    if (!ks.length) continue;
+    // original: 后面的英文是命令面板的英文别名（{value, original}），永远不翻
+    const re = new RegExp(`(?<!original:\\s*)${q}(${ks.map(escapeRe).join('|')})${q}`, 'g');
+    out = out.replace(re, (_, k) => {
+      counts.set(k, (counts.get(k) ?? 0) + 1);
+      return q + escapeFor(map.get(k), q) + q;
+    });
+  }
+  return { out, counts };
+}
+
 export async function applyPatch({ installRoot, anchors, dict }) {
   const patched = [];
   const missing = [];
   let replaced = 0;
   const changed = new Map(); // relative -> Buffer
+  const perFile = {};
 
   for (const file of anchors.files) {
     const abs = path.join(installRoot, file.relative);
-    let src = await fs.readFile(abs, 'utf8');
-    let fileCount = 0;
+    const src = await fs.readFile(abs, 'utf8');
+    const map = new Map();
     for (const s of file.strings) {
       const to = dict[s.from];
       if (!to) {
         if (s.required) throw new Error(`词典缺少必需条目：${s.from}`);
         continue;
       }
-      const { out, count } = replaceLiterals(src, s.from, to);
-      if (count === 0) {
+      map.set(s.from, to);
+    }
+    const { out, counts } = replaceAllLiterals(src, map);
+    let fileCount = 0;
+    for (const s of file.strings) {
+      if (!map.has(s.from)) continue;
+      const n = counts.get(s.from) ?? 0;
+      if (n === 0) {
         if (s.required) throw new Error(`必需锚点缺失：${s.from}（${file.relative}）`);
         missing.push(s.from);
-        continue;
       }
-      src = out;
-      fileCount += count;
+      fileCount += n;
     }
+    perFile[file.relative] = fileCount;
     if (fileCount > 0) {
-      changed.set(file.relative, Buffer.from(src, 'utf8'));
+      changed.set(file.relative, Buffer.from(out, 'utf8'));
       replaced += fileCount;
     }
   }
@@ -66,7 +95,7 @@ export async function applyPatch({ installRoot, anchors, dict }) {
   }
 
   const { checksumsUpdated } = await updateChecksums({ installRoot, anchors, relatives: [...changed.keys()] });
-  return { patched, missing, replaced, checksumsUpdated };
+  return { patched, missing, replaced, perFile, checksumsUpdated };
 }
 
 // 按文件当前内容重算 product.json 里对应的 checksum（Cursor/VS Code 启动时校验，不一致会提示"安装已损坏"）

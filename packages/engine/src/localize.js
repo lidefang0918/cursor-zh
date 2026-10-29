@@ -9,6 +9,7 @@ import { createBackup } from './backup.js';
 import { restoreBackup, dropBackup } from './restore.js';
 import { applyPatch, filesToBackup, updateChecksums } from './patch.js';
 import { injectDomRuntime } from './inject.js';
+import { applyNls, clearNlsCache } from './nls.js';
 import {
   ensureLanguagePack, uninstallLanguagePack, setLocale, findConflicts, downloadLangpack, langpackVersionFor,
 } from './langpack.js';
@@ -90,6 +91,12 @@ export async function localize(opts = {}) {
     const p = await applyPatch({ installRoot: o.installRoot, anchors, dict });
     log(`静态补丁：替换 ${p.replaced} 处；未命中 ${p.missing.length} 条`);
 
+    const n = await applyNls({ installRoot: o.installRoot, anchors, dict });
+    if (anchors.nls) {
+      const cleared = await clearNlsCache({ userDataDir: o.userDataDir, commit: info.commit });
+      log(`NLS 文案：替换 ${n.replaced} 条；未命中 ${n.missing.length} 条；已清理译文缓存 ${cleared.length} 处`);
+    }
+
     const domTargets = anchors.dom?.relatives ?? [anchors.files[0].relative];
     for (const relative of domTargets) await injectDomRuntime({ installRoot: o.installRoot, relative, dict });
     const { checksumsUpdated } = await updateChecksums({ installRoot: o.installRoot, anchors, relatives: [...new Set([...p.patched, ...domTargets])] });
@@ -98,9 +105,10 @@ export async function localize(opts = {}) {
     await writeState(o.dataDir, {
       localized: true, version: info.version, installRoot: o.installRoot, backupDir, at: new Date().toISOString(),
       installedLangpack: undo.langpack, prevLocale: undo.prevLocale, replaced: p.replaced, missing: p.missing,
+      perFile: p.perFile, nlsReplaced: n.replaced, nlsMissing: n.missing, commit: info.commit,
     });
     log('完成，请重启 Cursor');
-    return { ok: true, replaced: p.replaced, missing: p.missing, checksumsUpdated };
+    return { ok: true, replaced: p.replaced, perFile: p.perFile, missing: p.missing, nlsReplaced: n.replaced, nlsMissing: n.missing, checksumsUpdated };
   } catch (e) {
     log(`✖ 失败：${e.message}，正在回滚`);
     let restored = true;
@@ -121,6 +129,7 @@ export async function revert(opts = {}) {
   try {
     await restoreBackup({ installRoot: state.installRoot, backupDir: state.backupDir });
     log('已按备份还原安装文件（sha256 校验通过）');
+    if (state.commit) await clearNlsCache({ userDataDir: o.userDataDir, commit: state.commit });
     await setLocale({ argvPath: o.argvPath, locale: state.prevLocale ?? null });
     log(`locale 已恢复为 ${state.prevLocale ?? '(默认)'}`);
     if (state.installedLangpack) { await uninstallLanguagePack(o); log('已卸载语言包'); }

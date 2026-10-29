@@ -11,7 +11,8 @@ const RUNTIME = await fs.readFile(new URL('../../dom-runtime/runtime.js', import
 function el(tag, children = [], attrs = {}, classes = []) {
   const n = { nodeType: 1, tagName: tag, attrs: { ...attrs }, classList: { contains: (c) => classes.includes(c) },
     getAttribute(a) { return this.attrs[a] ?? null; }, setAttribute(a, v) { this.attrs[a] = v; },
-    hasAttribute(a) { return a in this.attrs; } };
+    hasAttribute(a) { return a in this.attrs; },
+    get textContent() { let s = ''; for (let c = this.firstChild; c; c = c.nextSibling) s += c.nodeType === 3 ? c.nodeValue : c.textContent; return s; } };
   children.forEach((c, i) => { c.parentNode = n; c.nextSibling = children[i + 1] || null; });
   n.firstChild = children[0] || null;
   return n;
@@ -49,6 +50,35 @@ describe('DOM runtime injection', () => {
     const late = text('Search');
     fire([{ type: 'childList', addedNodes: [el('DIV', [late])] }]);
     assert.equal(late.nodeValue, '搜索');
+  });
+
+  it('translates a sentence split across nodes as a whole, never single words inside it', () => {
+    const d = { 'Use /goal to set an objective': '使用 /goal 设定目标', 'Hooks': '钩子', 'Close Pane': '关闭窗格' };
+    const a = text('Use '), code = text('/goal'), b = text(' to set   an objective');
+    const tip = el('SPAN', [a, el('CODE', [code]), b]);
+    const w1 = text('Hooks'), w2 = text(' let you control');
+    const tip2 = el('SPAN', [w1, w2]);
+    const btn = el('DIV', [], { 'aria-label': 'Close Pane (Ctrl+W)' });
+    const body = el('BODY', [el('DIV', [tip]), tip2, btn]);
+    runInFakeDom(buildInjection({ dict: d, runtimeSource: RUNTIME }), body);
+    assert.equal(a.nodeValue + code.nodeValue + b.nodeValue, '使用 /goal 设定目标');
+    assert.equal(w1.nodeValue, 'Hooks', 'a word inside a sentence must stay as is');
+    assert.equal(btn.attrs['aria-label'], '关闭窗格 (Ctrl+W)');
+  });
+
+  it('never rewrites its own output (no MutationObserver feedback loop)', () => {
+    let writes = 0;
+    const watched = (v) => { let val = v; return { nodeType: 3, get nodeValue() { return val; }, set nodeValue(x) { writes++; val = x; } }; };
+    const a = watched('IDE'), b = watched('Ping'), attrEl = el('DIV', [], { title: 'IDE' });
+    const origSet = attrEl.setAttribute; attrEl.setAttribute = function (k, v) { writes++; origSet.call(this, k, v); };
+    const body = el('BODY', [el('SPAN', [a]), el('SPAN', [b]), attrEl]);
+    const fire = runInFakeDom(buildInjection({ dict: { IDE: 'IDE', Ping: 'Pong', Pong: '乒' }, runtimeSource: RUNTIME }), body);
+    assert.equal(b.nodeValue, 'Pong');
+    const before = writes;
+    for (let i = 0; i < 5; i++) fire([{ type: 'characterData', target: a }, { type: 'characterData', target: b }, { type: 'attributes', target: attrEl }]);
+    assert.equal(b.nodeValue, 'Pong');
+    assert.equal(writes, before, 'mutations caused by our own writes must be no-ops');
+    assert.equal(before, 1);
   });
 
   it('appends once between markers (idempotent)', async () => {
