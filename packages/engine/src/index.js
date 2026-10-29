@@ -4,3 +4,4 @@ export { restoreBackup, dropBackup } from './restore.js';
 export { loadAnchors, loadDict } from './anchors.js';
 export { applyPatch, filesToBackup, vscodeChecksum } from './patch.js';
 export * from './langpack.js';
+export { injectDomRuntime, buildInjection, stripInjection } from './inject.js';
