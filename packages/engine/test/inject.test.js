@@ -34,7 +34,9 @@ describe('DOM runtime injection', () => {
     const btn = el('DIV', [t1], { title: 'Search', 'aria-label': 'Nope' });
     const editor = el('DIV', [t3], {}, ['view-lines']);
     const input = el('DIV', [t4], { contenteditable: 'true' });
-    const body = el('BODY', [btn, el('SPAN', [t2]), editor, input]);
+    const t5 = text('Search');
+    const fileName = el('SPAN', [t5], {}, ['label-name']);
+    const body = el('BODY', [btn, el('SPAN', [t2]), editor, input, fileName]);
     const fire = runInFakeDom(buildInjection({ dict, runtimeSource: RUNTIME }), body);
     assert.equal(t1.nodeValue, '  新建 Agent ');
     assert.equal(t2.nodeValue, 'New Agent now');
@@ -42,6 +44,7 @@ describe('DOM runtime injection', () => {
     assert.equal(btn.attrs['aria-label'], 'Nope');
     assert.equal(t3.nodeValue, 'New Agent');
     assert.equal(t4.nodeValue, 'New Agent');
+    assert.equal(t5.nodeValue, 'Search', 'file/explorer names must not be translated');
 
     const late = text('Search');
     fire([{ type: 'childList', addedNodes: [el('DIV', [late])] }]);

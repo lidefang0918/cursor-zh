@@ -64,7 +64,7 @@ export async function localize(opts = {}) {
 
   const anchors = await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir });
   if (!anchors) return { ok: false, error: `Cursor ${info.version} 暂未适配（没有锚点清单），已拒绝修改`, restored: false };
-  const files = filesToBackup(anchors);
+  const files = [...new Set([...filesToBackup(anchors), ...(anchors.dom?.relatives ?? [])])];
   for (const f of files) {
     try { await fs.access(path.join(o.installRoot, f), fs.constants.W_OK); }
     catch { return { ok: false, error: `没有写权限：${f}（Linux 下需要管理员权限）`, restored: false }; }
@@ -90,9 +90,9 @@ export async function localize(opts = {}) {
     const p = await applyPatch({ installRoot: o.installRoot, anchors, dict });
     log(`静态补丁：替换 ${p.replaced} 处；未命中 ${p.missing.length} 条`);
 
-    const domTarget = anchors.dom?.relative ?? anchors.files[0].relative;
-    await injectDomRuntime({ installRoot: o.installRoot, relative: domTarget, dict });
-    const { checksumsUpdated } = await updateChecksums({ installRoot: o.installRoot, anchors, relatives: [...new Set([...p.patched, domTarget])] });
+    const domTargets = anchors.dom?.relatives ?? [anchors.files[0].relative];
+    for (const relative of domTargets) await injectDomRuntime({ installRoot: o.installRoot, relative, dict });
+    const { checksumsUpdated } = await updateChecksums({ installRoot: o.installRoot, anchors, relatives: [...new Set([...p.patched, ...domTargets])] });
     log(`DOM 补漏已注入；已更新校验：${checksumsUpdated.join(', ') || '无'}`);
 
     await writeState(o.dataDir, {

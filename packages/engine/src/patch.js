@@ -78,16 +78,19 @@ export async function updateChecksums({ installRoot, anchors, relatives }) {
   const product = JSON.parse(raw);
   if (!product.checksums) return { checksumsUpdated };
   const base = path.join(installRoot, anchors.checksumBase || path.join(path.dirname(anchors.productJson), 'out'));
+  let text = raw;
   for (const relative of relatives) {
     const key = path.relative(base, path.join(installRoot, relative)).split(path.sep).join('/');
-    if (key in product.checksums) {
-      product.checksums[key] = vscodeChecksum(await fs.readFile(path.join(installRoot, relative)));
-      checksumsUpdated.push(key);
-    }
+    if (!(key in product.checksums)) continue;
+    // 只替换值本身，保持 product.json 其余字节不变
+    const fresh = vscodeChecksum(await fs.readFile(path.join(installRoot, relative)));
+    const re = new RegExp(`(${escapeRe(JSON.stringify(key))}\\s*:\\s*)${escapeRe(JSON.stringify(product.checksums[key]))}`);
+    if (!re.test(text)) throw new Error(`product.json 中找不到 ${key} 的校验值`);
+    text = text.replace(re, (_, k) => k + JSON.stringify(fresh));
+    checksumsUpdated.push(key);
   }
-  if (checksumsUpdated.length) {
-    const indent = raw.match(/^\{\r?\n(\s+)/)?.[1] ?? '\t';
-    await fs.writeFile(productPath, JSON.stringify(product, null, indent) + (raw.endsWith('\n') ? '\n' : ''));
-  }
+  if (checksumsUpdated.length) await fs.writeFile(productPath, text);
   return { checksumsUpdated };
 }
+
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

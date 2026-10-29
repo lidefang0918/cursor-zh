@@ -43,6 +43,17 @@ describe('langpack', () => {
     assert.equal(await findInstalledLangpack(extensionsDir), null);
   });
 
+  it('ignores a leftover langpack folder not registered in extensions.json', async () => {
+    const extensionsDir = await tmp('ext-');
+    const dir = path.join(extensionsDir, 'ms-ceintl.vscode-language-pack-zh-hans-1.128.0');
+    await fs.mkdir(dir);
+    await fs.writeFile(path.join(extensionsDir, 'extensions.json'), '[]');
+    assert.equal(await findInstalledLangpack(extensionsDir), null);
+    await fs.writeFile(path.join(extensionsDir, 'extensions.json'),
+      JSON.stringify([{ identifier: { id: 'MS-CEINTL.vscode-language-pack-zh-hans' }, relativeLocation: 'ms-ceintl.vscode-language-pack-zh-hans-1.128.0' }]));
+    assert.equal(await findInstalledLangpack(extensionsDir), dir);
+  });
+
   it('detects conflicting community language packs', async () => {
     const extensionsDir = await tmp('ext-');
     await fs.mkdir(path.join(extensionsDir, 'polang233.cursor-language-pack-0.1.0'));

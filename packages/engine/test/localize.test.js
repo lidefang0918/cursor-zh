@@ -32,7 +32,7 @@ exit 0
     installRoot: root, platform: 'linux', cliPath, vsixPath: '/fake.vsix',
     userDataDir: path.join(home, '.config/Cursor'), extensionsDir: path.join(home, '.cursor/extensions'),
     argvPath: path.join(home, '.cursor/argv.json'), dataDir: path.join(home, '.config/cursor-zh-localizer'),
-    anchorsDir: path.join(repo, 'anchors'), dictPath: path.join(repo, 'dicts/zh-cn.json'),
+    anchorsDir: path.join(repo, 'packages/engine/test/fixtures/anchors'), dictPath: path.join(repo, 'packages/engine/test/fixtures/dict.json'),
     isCursorRunning: async () => false,
   };
   return { root, js, opts };

@@ -9,7 +9,7 @@ import { loadAnchors, loadDict } from '../src/anchors.js';
 import { applyPatch, vscodeChecksum, filesToBackup } from '../src/patch.js';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const anchorsDir = path.join(repo, 'anchors');
+const anchorsDir = path.join(repo, 'packages/engine/test/fixtures/anchors');
 const REL = 'resources/app/out/vs/workbench/workbench.desktop.main.js';
 
 async function fakeInstall(js) {
@@ -37,7 +37,7 @@ describe('applyPatch', () => {
     const js = 'a="Cursor Settings";b=\'New Agent\';c=`Cursor Settings`;d="Open Cursor Settings";';
     const root = await fakeInstall(js);
     const anchors = await loadAnchors({ platform: 'linux', version: 'test-fixture', anchorsDir });
-    const dict = await loadDict(path.join(repo, 'dicts/zh-cn.json'));
+    const dict = await loadDict(path.join(repo, 'packages/engine/test/fixtures/dict.json'));
     const r = await applyPatch({ installRoot: root, anchors, dict });
 
     const out = await fs.readFile(path.join(root, REL), 'utf8');
@@ -60,5 +60,21 @@ describe('applyPatch', () => {
     const anchors = await loadAnchors({ platform: 'linux', version: 'test-fixture', anchorsDir });
     await applyPatch({ installRoot: root, anchors, dict: { 'Cursor Settings': 'Cursor 设置', 'New Agent': '新建 "代理"' } });
     assert.equal(await fs.readFile(path.join(root, REL), 'utf8'), 'x="新建 \\"代理\\"";y="Cursor 设置"');
+  });
+});
+
+describe('updateChecksums', () => {
+  it('only rewrites the checksum value, keeping product.json formatting byte-identical otherwise', async () => {
+    const js = 'var a="Cursor Settings";';
+    const root = await fakeInstall(js);
+    const pp = path.join(root, 'resources/app/product.json');
+    const old = vscodeChecksum(Buffer.from(js));
+    const raw = `{\n  "nameShort": "Cursor",\n  "arr": ["a", "b"],\n  "checksums": {\n    "vs/workbench/workbench.desktop.main.js": "${old}"\n  }\n}`;
+    await fs.writeFile(pp, raw);
+    const a = await loadAnchors({ platform: 'linux', version: 'test-fixture', anchorsDir });
+    await applyPatch({ installRoot: root, anchors: a, dict: { 'Cursor Settings': 'Cursor 设置' } });
+    const fresh = vscodeChecksum(await fs.readFile(path.join(root, REL)));
+    assert.notEqual(fresh, old);
+    assert.equal(await fs.readFile(pp, 'utf8'), raw.replace(old, fresh));
   });
 });

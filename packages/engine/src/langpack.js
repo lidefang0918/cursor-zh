@@ -34,7 +34,12 @@ async function listDirs(dir) {
 
 export async function findInstalledLangpack(extensionsDir) {
   const hit = (await listDirs(extensionsDir)).find((n) => n.toLowerCase().startsWith(`${LANGPACK_ID}-`));
-  return hit ? path.join(extensionsDir, hit) : null;
+  if (!hit) return null;
+  // 卸载后目录可能残留（Cursor 下次启动才清理），以 extensions.json 的登记为准
+  let registry;
+  try { registry = JSON.parse(await fs.readFile(path.join(extensionsDir, 'extensions.json'), 'utf8')); } catch { return path.join(extensionsDir, hit); }
+  const entry = registry.find((e) => e.identifier?.id?.toLowerCase() === LANGPACK_ID);
+  return entry ? path.join(extensionsDir, entry.relativeLocation ?? hit) : null;
 }
 
 // 社区汉化包与官方包同时启用会冲突；只报告，由上层决定

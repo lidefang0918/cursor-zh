@@ -4,7 +4,8 @@
 function cursorZhDom(DICT, doc, MO) {
   var ATTRS = ['title', 'placeholder', 'aria-label'];
   var has = Object.prototype.hasOwnProperty;
-  var SKIP_CLASSES = ['view-lines', 'monaco-editor-background', 'xterm'];
+  // label-name / monaco-icon-name-container：资源管理器、标签页里的文件名，不能翻
+  var SKIP_CLASSES = ['view-lines', 'monaco-editor-background', 'xterm', 'label-name', 'monaco-icon-name-container'];
 
   function tr(s) {
     if (!s) return null;
