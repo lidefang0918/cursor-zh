@@ -18,7 +18,10 @@ export function stripInjection(src) {
   const i = src.indexOf(BEGIN);
   if (i < 0) return src;
   const j = src.indexOf(END, i);
-  return src.slice(0, i).replace(/\n$/, '') + src.slice(j + END.length).replace(/^\n/, '');
+  // 不在 50MB 字符串上跑 /\n$/ 正则（V8 会从头扫）
+  const a = src[i - 1] === '\n' ? i - 1 : i;
+  const b = src[j + END.length] === '\n' ? j + END.length + 1 : j + END.length;
+  return src.slice(0, a) + src.slice(b);
 }
 
 // 追加到工作台主 bundle 末尾（扩展宿主没有 DOM，所以不用扩展形式）。还原靠备份覆盖。

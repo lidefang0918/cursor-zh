@@ -115,5 +115,12 @@ describe('applyFragments', () => {
     assert.equal(r.replaced, 0);
     assert.equal(r.missing.length, 2);
   });
+  it('falls back to in-order replacement when fragments overlap', () => {
+    const r = applyFragments('`Foo Bar ${x}`', [{ from: '`Foo Bar ${', to: '`甲 ${' }, { from: 'Bar ${', to: '乙 ${' }]);
+    // 第一条先替换掉了 "Bar ${"，第二条随之未命中（与逐条 split/join 一致）
+    assert.equal(r.out, '`甲 ${x}`');
+    assert.equal(r.replaced, 1);
+    assert.equal(r.missing.length, 1);
+  });
 });
 

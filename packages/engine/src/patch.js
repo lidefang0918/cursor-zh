@@ -54,6 +54,26 @@ export function replaceAllLiterals(src, map) {
 // 模板字面量里的固定片段（如 "`$(tab) Tab Stats: ${"）：带足上下文，出现次数必须和锚点里的 count 完全一致才替换，
 // 否则整条跳过并记为未命中（版本变了、上下文对不上就不冒险）
 export function applyFragments(src, fragments = []) {
+  // 先在原文上用 indexOf 找齐所有片段的位置，最后一次性拼出结果（每条都 split/join 整个 50MB bundle 要好几秒）
+  const hits = [];
+  const missing = [];
+  for (const { from, to, count } of fragments) {
+    const at = [];
+    for (let i = src.indexOf(from); i >= 0; i = src.indexOf(from, i + from.length)) at.push(i);
+    if (at.length === 0 || (count !== undefined && at.length !== count)) { missing.push(`fragment:${from}（${at.length}/${count ?? '≥1'}）`); continue; }
+    for (const i of at) hits.push([i, i + from.length, to]);
+  }
+  hits.sort((a, b) => a[0] - b[0]);
+  // 片段互相重叠时结果依赖顺序，退回逐条替换（目前锚点里没有这种情况）
+  if (hits.some((h, k) => k > 0 && h[0] < hits[k - 1][1])) return applyFragmentsSequential(src, fragments);
+  const out = [];
+  let last = 0;
+  for (const [a, b, to] of hits) { out.push(src.slice(last, a), to); last = b; }
+  out.push(src.slice(last));
+  return { out: out.join(''), replaced: hits.length, missing };
+}
+
+function applyFragmentsSequential(src, fragments) {
   let out = src;
   let replaced = 0;
   const missing = [];
