@@ -5,7 +5,7 @@ import { detectCursor, detectAllCursors, installKind } from './detect.js';
 import { applyFiles, checkWritable, filesMatch, elevationInfo } from './elevate.js';
 import { listCursorProcesses, closeCursor, relaunchCursor } from './process.js';
 import { findAppImages, listExtracted } from './appimage.js';
-import { loadAnchors, loadDict, loadPatterns } from './anchors.js';
+import { loadAnchors, loadDict, loadPatterns, supportedVersions as listVersions } from './anchors.js';
 import { createBackup, sha256File, exists } from './backup.js';
 import { dropBackup } from './restore.js';
 import { applyPatch, filesToBackup, updateChecksums } from './patch.js';
@@ -92,10 +92,7 @@ async function retireStale(o, state, log) {
 
 const fail = (code, error, extra = {}) => ({ ok: false, code, error, ...extra });
 
-async function supportedVersions(o) {
-  try { return (await fs.readdir(path.join(o.anchorsDir, o.platform))).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5)).sort(); }
-  catch { return []; }
-}
+const supportedVersions = (o) => listVersions({ platform: o.platform, anchorsDir: o.anchorsDir });
 
 // 另一个安装（比如系统 deb）还处于汉化状态时，不能对当前选中的安装动手（state.json 只记录一份）
 async function otherInstall(state, info) {
@@ -202,6 +199,14 @@ export async function localize(opts = {}) {
     return fail('PATCHED_NO_STATE', '安装文件已带汉化补丁但没有汉化记录，请重装 Cursor 后再汉化');
   }
 
+  if (!pending && anchors.pristine) {
+    const changed = [];
+    for (const [rel, sha] of Object.entries(anchors.pristine)) {
+      if ((await sha256File(path.join(o.installRoot, rel)).catch(() => null)) !== sha) changed.push(rel.split('/').pop());
+    }
+    if (changed.length) return fail('MODIFIED_INSTALL', `安装文件与 Cursor ${info.version} 官方原版不一致（${changed.join('、')}），可能被其他汉化/美化工具改过。为避免把改过的文件当原版备份，已拒绝修改；请重装 Cursor 后再试`, { changed });
+  }
+
   return withCursorClosed(o, async () => {
     if (pending && (await filesMatch(o.installRoot, pending.staged))) {
       log('检测到补丁文件已写入安装目录（管理员命令已执行），继续完成剩余步骤');
@@ -233,15 +238,7 @@ export async function localize(opts = {}) {
     }
     let result;
     try {
-      const p = await applyPatch({ installRoot: staging, anchors, dict });
-      log(`静态补丁：替换 ${p.replaced} 处，模板片段 ${p.fragmentsReplaced} 处；未命中 ${p.missing.length} 条`);
-      const n = await applyNls({ installRoot: staging, anchors, dict });
-      if (anchors.nls) log(`NLS 文案：替换 ${n.replaced} 条；未命中 ${n.missing.length} 条`);
-      const domTargets = anchors.dom?.relatives ?? [anchors.files[0].relative];
-      for (const relative of domTargets) await injectDomRuntime({ installRoot: staging, relative, dict, patterns });
-      const { checksumsUpdated } = await updateChecksums({ installRoot: staging, anchors, relatives: [...new Set([...p.patched, ...domTargets])] });
-      log(`DOM 补漏已注入；已更新校验：${checksumsUpdated.join(', ') || '无'}`);
-      result = { replaced: p.replaced, perFile: p.perFile, fragmentsReplaced: p.fragmentsReplaced, perFileFragments: p.perFileFragments, missing: p.missing, nlsReplaced: n.replaced, nlsMissing: n.missing, checksumsUpdated };
+      result = await patchTree({ root: staging, anchors, dict, patterns, log });
     } catch (e) {
       log(`✖ 失败：${e.message}（安装目录未改动）`);
       await fs.rm(staging, { recursive: true, force: true });
@@ -268,6 +265,19 @@ export async function localize(opts = {}) {
     log(`已写入安装目录（${METHOD[a.method] ?? a.method}）`);
     return finishLocalize(o, info, state, backupDir, result, state.carry, a.method);
   });
+}
+
+// 在一棵目录树（暂存区或测试用假安装根）上完成全部补丁：静态替换 + NLS + DOM 补漏注入 + product.json 校验值
+export async function patchTree({ root, anchors, dict, patterns = [], log = () => {} }) {
+  const p = await applyPatch({ installRoot: root, anchors, dict });
+  log(`静态补丁：替换 ${p.replaced} 处，模板片段 ${p.fragmentsReplaced} 处；未命中 ${p.missing.length} 条`);
+  const n = await applyNls({ installRoot: root, anchors, dict });
+  if (anchors.nls) log(`NLS 文案：替换 ${n.replaced} 条；未命中 ${n.missing.length} 条`);
+  const domTargets = anchors.dom?.relatives ?? [anchors.files[0].relative];
+  for (const relative of domTargets) await injectDomRuntime({ installRoot: root, relative, dict, patterns });
+  const { checksumsUpdated } = await updateChecksums({ installRoot: root, anchors, relatives: [...new Set([...p.patched, ...domTargets])] });
+  log(`DOM 补漏已注入；已更新校验：${checksumsUpdated.join(', ') || '无'}`);
+  return { replaced: p.replaced, perFile: p.perFile, fragmentsReplaced: p.fragmentsReplaced, perFileFragments: p.perFileFragments, missing: p.missing, nlsReplaced: n.replaced, nlsMissing: n.missing, checksumsUpdated };
 }
 
 // 安装文件已就位：装语言包、设 locale、清译文缓存、写记录；失败则把安装文件也换回原版

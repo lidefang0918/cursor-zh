@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """按真实 Cursor 安装生成静态锚点清单（开发工具，不随 GUI 运行）。
 
-用法：python3 scripts/build-anchors.py /usr/share/cursor [--platform linux]
-读取 resources/app/product.json 的版本，扫描两个工作台 bundle，
+用法：python3 scripts/build-anchors.py <安装根> [--platform linux|win32|darwin]
+安装根：Linux /usr/share/cursor、Windows 解包出的 Cursor 目录、macOS 的 Cursor.app/Contents。
+读取 resources/app（macOS 为 Resources/app）/product.json 的版本，扫描两个工作台 bundle，
 只把"所有出现位置都像展示文案"的词条收入静态锚点；其余只走 DOM 补漏。
-输出 anchors/<platform>/<version>.json，并打印 SAFE / UNSAFE / MISSING 报告。
+默认输出三平台共用的 anchors/<version>.json（路径统一写 resources/app/…，macOS 由引擎映射成 Resources/app/…）；
+给了 --platform 则输出该平台专用覆盖 anchors/<platform>/<version>.json（只在某平台 bundle 不同时才需要）。
+同时记录三个 bundle 文件的原版 sha256（pristine），引擎据此拒绝修改被别的工具改过的安装。打印 SAFE / UNSAFE / MISSING 报告。
 """
-import glob, json, os, re, sys
+import glob, hashlib, json, os, re, sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLES = ['workbench.desktop.main.js', 'workbench.glass.main.js']
@@ -104,13 +107,16 @@ def nls_entries(app, words, langpack):
 
 def main():
     root = sys.argv[1]
-    platform = sys.argv[sys.argv.index('--platform') + 1] if '--platform' in sys.argv else 'linux'
-    app = os.path.join(root, 'resources/app')
+    platform = sys.argv[sys.argv.index('--platform') + 1] if '--platform' in sys.argv else None
+    app = next((os.path.join(root, d) for d in ('resources/app', 'Resources/app') if os.path.exists(os.path.join(root, d, 'product.json'))), None)
+    if not app:
+        sys.exit(f'找不到 resources/app/product.json：{root}')
     product = json.load(open(os.path.join(app, 'product.json')))
     words = json.load(open(os.path.join(REPO, 'dicts/zh-cn.json')))
     srcs = {b: open(os.path.join(app, 'out/vs/workbench', b), encoding='utf-8').read() for b in BUNDLES}
-    out = os.path.join(REPO, 'anchors', platform, f"{product['version']}.json")
-    old = {f['relative']: f.get('fragments', []) for f in json.load(open(out))['files']} if os.path.exists(out) else {}
+    out = os.path.join(REPO, 'anchors', *([platform] if platform else []), f"{product['version']}.json")
+    prev = json.load(open(out)) if os.path.exists(out) else {}
+    old = {f['relative']: f.get('fragments', []) for f in prev.get('files', [])}
     files, report = [], []
     for b in BUNDLES:
         strings = []
@@ -132,6 +138,10 @@ def main():
         'productJson': 'resources/app/product.json', 'checksumBase': 'resources/app/out',
         'dom': {'relatives': [f['relative'] for f in files]}, 'files': files,
     }
+    if not platform:
+        anchors['platforms'] = prev.get('platforms', ['linux', 'win32', 'darwin'])
+    rels = [f['relative'] for f in files] + ['resources/app/out/nls.messages.json']
+    anchors['pristine'] = {r: hashlib.sha256(open(os.path.join(app, r[len('resources/app/'):]), 'rb').read()).hexdigest() for r in rels}
     lp = sys.argv[sys.argv.index('--langpack') + 1] if '--langpack' in sys.argv else (sorted(glob.glob(os.path.expanduser(
         f"~/.cursor/extensions/ms-ceintl.vscode-language-pack-zh-hans-{product.get('vscodeVersion')}*/translations/main.i18n.json"))) or [None])[-1]
     if lp:

@@ -2750,6 +2750,16 @@
       ]
     }
   ],
+  "platforms": [
+    "linux",
+    "win32",
+    "darwin"
+  ],
+  "pristine": {
+    "resources/app/out/vs/workbench/workbench.desktop.main.js": "fd9ac3ed70ddcfa975f357187152488abcc8a4d183d776442593d5967b9821b6",
+    "resources/app/out/vs/workbench/workbench.glass.main.js": "6c433934efe7d6652500c492a3bd0ac03efe59404d9b438e45420dde3dd81ade",
+    "resources/app/out/nls.messages.json": "1caf42fe8bf7a53f34cf04abc88e1e5fd20963b503d71d13778cab76940943a4"
+  },
   "nls": {
     "relative": "resources/app/out/nls.messages.json",
     "langpack": "ms-ceintl.vscode-language-pack-zh-hans-1.128.0",
