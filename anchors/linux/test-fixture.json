@@ -1,0 +1,15 @@
+{
+  "version": "test-fixture",
+  "productJson": "resources/app/product.json",
+  "checksumBase": "resources/app/out",
+  "files": [
+    {
+      "relative": "resources/app/out/vs/workbench/workbench.desktop.main.js",
+      "strings": [
+        { "from": "Cursor Settings", "required": true },
+        { "from": "New Agent" },
+        { "from": "Not In Bundle" }
+      ]
+    }
+  ]
+}
