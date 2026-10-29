@@ -1591,6 +1591,69 @@
         },
         {
           "from": "Debug: Check Terminal Execution Service Version"
+        },
+        {
+          "from": "Extend Cursor with Plugins"
+        },
+        {
+          "from": "Plugins bundle rules, skills, subagents, commands, MCP servers, and hooks into one installable package."
+        },
+        {
+          "from": "Connect External Tools with MCP"
+        },
+        {
+          "from": "Model Context Protocol servers connect Cursor to external tools and data sources like Linear, Figma, and Notion."
+        },
+        {
+          "from": "Teach Cursor New Skills"
+        },
+        {
+          "from": "Skills package domain-specific knowledge and workflows that Agent applies automatically when relevant."
+        },
+        {
+          "from": "Delegate Work to Subagents"
+        },
+        {
+          "from": "Subagents are specialized assistants that run in their own context window so Agent can parallelize and stay focused."
+        },
+        {
+          "from": "Guide Agent with Rules"
+        },
+        {
+          "from": "Rules give Agent persistent, system-level instructions for your coding standards and workflows."
+        },
+        {
+          "from": "Create Reusable Commands"
+        },
+        {
+          "from": "Commands are reusable prompts you invoke with /name to standardize common workflows across your team."
+        },
+        {
+          "from": "Automate with Hooks"
+        },
+        {
+          "from": "Hooks run custom scripts at lifecycle events to observe, control, and extend the agent loop."
+        },
+        {
+          "from": "Needs Attention"
+        },
+        {
+          "from": "Add a Custom MCP Server"
+        },
+        {
+          "from": "Execution Log"
+        },
+        {
+          "from": "Clear log"
+        },
+        {
+          "from": "No hook executions yet"
+        },
+        {
+          "from": "Hooks that run during the agent's loop will show up here."
+        },
+        {
+          "from": "No tools, prompts, or resources"
         }
       ],
       "fragments": [
@@ -3549,6 +3612,69 @@
         },
         {
           "from": "Debug: Check Terminal Execution Service Version"
+        },
+        {
+          "from": "Extend Cursor with Plugins"
+        },
+        {
+          "from": "Plugins bundle rules, skills, subagents, commands, MCP servers, and hooks into one installable package."
+        },
+        {
+          "from": "Connect External Tools with MCP"
+        },
+        {
+          "from": "Model Context Protocol servers connect Cursor to external tools and data sources like Linear, Figma, and Notion."
+        },
+        {
+          "from": "Teach Cursor New Skills"
+        },
+        {
+          "from": "Skills package domain-specific knowledge and workflows that Agent applies automatically when relevant."
+        },
+        {
+          "from": "Delegate Work to Subagents"
+        },
+        {
+          "from": "Subagents are specialized assistants that run in their own context window so Agent can parallelize and stay focused."
+        },
+        {
+          "from": "Guide Agent with Rules"
+        },
+        {
+          "from": "Rules give Agent persistent, system-level instructions for your coding standards and workflows."
+        },
+        {
+          "from": "Create Reusable Commands"
+        },
+        {
+          "from": "Commands are reusable prompts you invoke with /name to standardize common workflows across your team."
+        },
+        {
+          "from": "Automate with Hooks"
+        },
+        {
+          "from": "Hooks run custom scripts at lifecycle events to observe, control, and extend the agent loop."
+        },
+        {
+          "from": "Needs Attention"
+        },
+        {
+          "from": "Add a Custom MCP Server"
+        },
+        {
+          "from": "Execution Log"
+        },
+        {
+          "from": "Clear log"
+        },
+        {
+          "from": "No hook executions yet"
+        },
+        {
+          "from": "Hooks that run during the agent's loop will show up here."
+        },
+        {
+          "from": "No tools, prompts, or resources"
         }
       ],
       "fragments": [
