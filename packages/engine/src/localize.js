@@ -10,7 +10,8 @@ import { loadAnchors, loadDict, loadPatterns, supportedVersions as listVersions 
 import { createBackup, sha256File, exists } from './backup.js';
 import { dropBackup } from './restore.js';
 import { applyPatch, filesToBackup, updateChecksums } from './patch.js';
-import { injectDomRuntime, BEGIN as DOM_BEGIN } from './inject.js';
+import { injectDomRuntime, readRuntime, BEGIN as DOM_BEGIN } from './inject.js';
+import crypto from 'node:crypto';
 import { applyNls, clearNlsCache } from './nls.js';
 import {
   ensureLanguagePack, uninstallLanguagePack, registerLanguagePack, unregisterLanguagePack, setLocale, findConflicts, downloadLangpack, langpackVersionFor,
@@ -199,7 +200,10 @@ export async function status(opts = {}) {
   const anchors = info ? await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir }) : null;
   const patched = info ? await installPatched(info.root, domRelatives(anchors, state)) : false;
   const stale = await isStale(o, info, anchors, state);
-  const base = { cursor: info, supported: !!anchors, supportedVersions: await supportedVersions(o), state, patched, stale, localized: !!state.localized && !stale };
+  const localized = !!state.localized && !stale;
+  // upToDate=false：已汉化，但本工具的汉化内容（词典/运行时/锚点）比安装里的新 → 界面提示“更新汉化”
+  const upToDate = localized && anchors && state.version === info?.version ? state.fingerprint === (await fingerprint(o, anchors)) : null;
+  const base = { cursor: info, supported: !!anchors, supportedVersions: await supportedVersions(o), state, patched, stale, localized, upToDate };
   if (opts.light) return base;
   const files = anchors ? [...targetFiles(anchors), ...signFiles(o)] : [];
   const w = info && files.length ? await checkWritable(info.root, files, { platform: o.platform, probe: o.probeWritable }) : null;
@@ -234,7 +238,12 @@ export async function localize(opts = {}) {
   const other = await otherInstall(state, info);
   if (other) return fail('OTHER_INSTALL', `另一个 Cursor 安装（${other}）处于汉化状态，请先还原它`);
   if (state.localized) {
-    if (!(await isStale(o, info, anchors, state))) return fail('ALREADY', '已汉化，如需重做请先还原');
+    if (!(await isStale(o, info, anchors, state))) {
+      if (!anchors || state.version !== info.version || state.installRoot !== o.installRoot) return fail('ALREADY', '已汉化，如需重做请先还原');
+      const fp = await fingerprint(o, anchors);
+      if (state.fingerprint === fp && !o.force) { log('已是最新汉化，无需重复操作'); return { ok: true, already: true }; }
+      return refreshLocalize(o, info, anchors, state, fp);
+    }
     await retireStale(o, state, log);
     state = await readState(o.dataDir);
   }
@@ -263,6 +272,7 @@ export async function localize(opts = {}) {
     if (changed.length) return fail('MODIFIED_INSTALL', `安装文件与 Cursor ${info.version} 官方原版不一致（${changed.join('、')}），可能被其他汉化/美化工具改过。为避免把改过的文件当原版备份，已拒绝修改；请重装 Cursor 后再试`, { changed });
   }
 
+  o.fingerprint = await fingerprint(o, anchors);
   return withCursorClosed(o, async () => {
     if (pending && (await filesMatch(o.installRoot, pending.staged))) {
       log('检测到补丁文件已写入安装目录（管理员命令已执行），继续完成剩余步骤');
@@ -331,6 +341,62 @@ export async function localize(opts = {}) {
     }
     log(`已写入安装目录（${METHOD[a.method] ?? a.method}）`);
     return finishLocalize(o, info, state, backupDir, result, state.carry, a.method);
+  });
+}
+
+// 汉化内容的指纹：词典 + 模板 + DOM 运行时 + 锚点。工具升级（词典变多、运行时修复）后指纹变化，
+// 再点“一键汉化”就按原版备份重新打补丁（不用先还原），指纹相同则什么都不做
+async function fingerprint(o, anchors) {
+  const h = crypto.createHash('sha256');
+  for (const f of [o.dictPath, o.patternsPath]) h.update(await fs.readFile(f).catch(() => '')).update('\0');
+  h.update(await readRuntime()).update('\0').update(JSON.stringify(anchors));
+  return h.digest('hex').slice(0, 16);
+}
+
+// 已汉化、安装文件带的是旧版补丁：从原版备份重新算补丁并整体替换（原子写入），语言包/locale 不动
+async function refreshLocalize(o, info, anchors, state, fp) {
+  const log = o.onLog;
+  const vb = await verifyBackup(state.backupDir);
+  if (!vb.ok) return fail('BACKUP_INVALID', `${vb.error}（${state.backupDir}）。无法更新汉化，安装未改动；可先“还原”再重新汉化`);
+  for (const [rel, sha] of Object.entries(anchors.pristine ?? {})) {
+    const b = vb.items.find((i) => i.relative === rel);
+    if (b && b.sha256 !== sha) return fail('BACKUP_MISMATCH', `备份里的 ${rel.split('/').pop()} 不是 Cursor ${info.version} 原版，无法更新汉化，安装未改动`);
+  }
+  const files = targetFiles(anchors);
+  if (files.some((f) => !vb.items.find((i) => i.relative === f))) return fail('ALREADY', '已汉化（旧版本工具的备份不完整，如需更新汉化请先还原再汉化）');
+  log('检测到汉化内容有更新（词典/运行时），按原版备份重新打补丁');
+  return withCursorClosed(o, async () => {
+    const dict = await loadDict(o.dictPath);
+    const patterns = await loadPatterns(o.patternsPath);
+    const staging = path.join(o.dataDir, 'staging', info.version);
+    await fs.rm(staging, { recursive: true, force: true });
+    for (const f of files) {
+      await fs.mkdir(path.dirname(path.join(staging, f)), { recursive: true });
+      await fs.copyFile(path.join(state.backupDir, 'files', f), path.join(staging, f));
+    }
+    let result;
+    try { result = await patchTree({ root: staging, anchors, dict, patterns, log }); }
+    catch (e) { await fs.rm(staging, { recursive: true, force: true }); return fail('PATCH_FAILED', `${e.message}（安装未改动，仍是之前的汉化）`); }
+    const items = [];
+    for (const f of files) items.push({ relative: f, src: path.join(staging, f), sha256: await sha256File(path.join(staging, f)) });
+    let method = 'direct';
+    if (await filesMatch(o.installRoot, shaMap(items))) log('安装文件已是新补丁');
+    else {
+      const a = await applyFiles({ installRoot: o.installRoot, items, ...elevationOpts(o, o.platform === 'darwin' ? mac.postWriteActions(o.macSign) : []) });
+      if (!a.ok) {
+        if (a.code === 'NEED_ELEVATION') log(`需要管理员权限：${a.tried.map((t) => `${t.via}：${t.reason}`).join('；') || '已跳过自动提权'}。执行管理员命令后再点一次“汉化”即可完成`);
+        else log(`✖ ${a.error}`);
+        return a;
+      }
+      method = a.method;
+      log(`已写入安装目录（${METHOD[a.method] ?? a.method}）`);
+      if (o.platform === 'darwin') await macAfterWrite(o, method);
+    }
+    if (info.commit) await clearNlsCache({ userDataDir: o.userDataDir, commit: info.commit });
+    await writeState(o.dataDir, { ...state, ...result, fingerprint: fp, refreshedAt: new Date().toISOString() });
+    await fs.rm(staging, { recursive: true, force: true });
+    log('汉化已更新，重启 Cursor 后生效');
+    return { ok: true, refreshed: true, method, ...result };
   });
 }
 
@@ -420,7 +486,7 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
       installedLangpack: undo.langpack || !!carry?.installedLangpack,
       ...(o.platform === 'darwin' ? { macSign: o.macSign } : {}),
       prevLocale: carry && undo.prevLocale === 'zh-cn' ? carry.prevLocale : undo.prevLocale,
-      ...result, commit: info.commit,
+      ...result, commit: info.commit, fingerprint: o.fingerprint,
     });
     await fs.rm(path.join(o.dataDir, 'staging', info.version), { recursive: true, force: true });
     log('完成，重启 Cursor 后生效');

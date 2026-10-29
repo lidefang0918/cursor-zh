@@ -61,8 +61,9 @@ describe('localize/revert', () => {
     assert.match(packs['zh-cn'].translations.vscode, /ms-ceintl\.vscode-language-pack-zh-hans-1\.128\.0\/translations\/main\.i18n\.json$/);
 
     const again = await localize(opts);
-    assert.equal(again.ok, false);
-    assert.match(again.error, /已汉化/);
+    assert.equal(again.ok, true, 'localizing twice is a no-op success');
+    assert.equal(again.already, true);
+    assert.equal(await read(path.join(root, REL)), out, 'second localize changes nothing');
 
     const rv = await revert(opts);
     assert.equal(rv.ok, true, rv.error);
@@ -72,6 +73,38 @@ describe('localize/revert', () => {
     assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
     assert.deepEqual(JSON.parse(await read(path.join(opts.userDataDir, 'languagepacks.json'))), {});
     assert.equal((await readState(opts.dataDir)).localized, false);
+  });
+
+  it('re-patches from the pristine backup when the dictionary changes (tool upgrade), without reverting first', async () => {
+    const { root, js, opts } = await setup();
+    const dir = await tmp('dict-');
+    const dictPath = path.join(dir, 'dict.json');
+    const base = JSON.parse(await read(opts.dictPath));
+    await fs.writeFile(dictPath, JSON.stringify(base));
+    const o = { ...opts, dictPath };
+    assert.equal((await localize(o)).ok, true);
+    const first = await read(path.join(root, REL));
+    const prevLocaleState = (await readState(opts.dataDir)).prevLocale;
+    assert.equal((await status({ ...o, light: true })).upToDate, true);
+    await fs.writeFile(dictPath, JSON.stringify({ ...base, 'New Agent': '新建智能体X' }));
+    assert.equal((await status({ ...o, light: true })).upToDate, false, 'status tells the GUI an update is available');
+    const logs = [];
+    const r = await localize({ ...o, onLog: (m) => logs.push(m) });
+    assert.equal(r.ok, true, r.error);
+    assert.equal(r.refreshed, true);
+    const second = await read(path.join(root, REL));
+    assert.notEqual(second, first);
+    assert.match(second, /新建智能体X/);
+    assert.equal(second.split('CURSOR_ZH_DOM_BEGIN').length - 1, 1, 'patched once, from the pristine copy');
+    const product = JSON.parse(await read(path.join(root, 'resources/app/product.json')));
+    assert.equal(product.checksums[KEY], vscodeChecksum(Buffer.from(second)));
+    const st = await readState(opts.dataDir);
+    assert.equal(st.localized, true);
+    assert.equal(st.prevLocale, prevLocaleState, 'original locale still remembered for revert');
+    assert.equal((await localize(o)).already, true, 'then idempotent again');
+    assert.equal((await revert(o)).ok, true);
+    assert.equal(await read(path.join(root, REL)), js, 'revert still restores the original bytes');
+    assert.equal(await readLocale(opts.argvPath), null);
   });
 
   it('patches untranslated NLS messages, clears the translation cache, and restores both on revert', async () => {
