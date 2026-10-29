@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'" />
+  <title>Cursor 一键汉化</title>
+  <style>
+    body { font-family: system-ui, "Noto Sans CJK SC", sans-serif; margin: 20px; }
+    dt { font-weight: bold; margin-top: 6px; } dd { margin: 0 0 0 1em; font-family: monospace; }
+    button { font-size: 16px; padding: 8px 20px; margin-right: 12px; }
+    pre { background: #111; color: #ddd; height: 220px; overflow: auto; padding: 8px; }
+    .err { color: #f55; } .note { color: #888; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h2>Cursor 一键汉化</h2>
+  <dl>
+    <dt>安装路径</dt><dd id="root">检测中…</dd>
+    <dt>版本</dt><dd id="version">-</dd>
+    <dt>状态</dt><dd id="state">-</dd>
+  </dl>
+  <p>
+    <button id="localize">一键汉化</button>
+    <button id="revert">一键还原</button>
+  </p>
+  <pre id="log"></pre>
+  <p class="note">本工具会修改 Cursor 安装文件，修改前自动备份，可一键还原；与 Cursor 官方无关。操作前请先退出 Cursor。</p>
+  <script src="renderer.js"></script>
+</body>
+</html>
