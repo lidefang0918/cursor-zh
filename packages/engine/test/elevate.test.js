@@ -5,7 +5,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { applyFiles, HELPER_PATH, manifestText, mountOf, checkWritable, shq } from '../src/elevate.js';
+import crypto from 'node:crypto';
+import { applyFiles, applyDirect, HELPER_PATH, manifestText, mountOf, checkWritable, shq } from '../src/elevate.js';
 import { sha256File } from '../src/backup.js';
 import { listCursorProcesses, closeCursor, relaunchCursor } from '../src/process.js';
 import { findAppImages, extractAppImage, listExtracted } from '../src/appimage.js';
@@ -292,5 +293,45 @@ describe('localize/revert with elevation', () => {
     assert.equal(r.ok, true, r.error);
     assert.equal(r.relaunched, true);
     assert.deepEqual(events, ['close', 'relaunch /x/cursor --a']);
+  });
+});
+
+describe('applyDirect (crash safety)', () => {
+  const setup = async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'ad-'));
+    const stage = await fs.mkdtemp(path.join(os.tmpdir(), 'ads-'));
+    const items = [];
+    for (const [rel, orig, next] of [['a/x.js', 'X0', 'X1'], ['b/y.json', 'Y0', 'Y1'], ['z.txt', 'Z0', 'Z1']]) {
+      await fs.mkdir(path.dirname(path.join(root, rel)), { recursive: true });
+      await fs.writeFile(path.join(root, rel), orig);
+      await fs.writeFile(path.join(stage, rel.replace(/\//g, '_')), next);
+      items.push({ relative: rel, src: path.join(stage, rel.replace(/\//g, '_')), sha256: crypto.createHash('sha256').update(next).digest('hex') });
+    }
+    return { root, items };
+  };
+  const read = (root) => Promise.all(['a/x.js', 'b/y.json', 'z.txt'].map((r) => fs.readFile(path.join(root, r), 'utf8')));
+  const leftovers = async (root) => (await fs.readdir(root, { recursive: true })).filter((f) => /\.czl-(new|old)$/.test(f));
+
+  it('replaces all files and leaves no temp files', async () => {
+    const { root, items } = await setup();
+    await applyDirect(root, items);
+    assert.deepEqual(await read(root), ['X1', 'Y1', 'Z1']);
+    assert.deepEqual(await leftovers(root), []);
+  });
+
+  it('rolls back every file when a swap fails midway', async () => {
+    const { root, items } = await setup();
+    let n = 0;
+    await assert.rejects(applyDirect(root, items, { hooks: { beforeSwap: () => { if (++n === 3) throw new Error('disk full'); } } }), /已回滚/);
+    assert.deepEqual(await read(root), ['X0', 'Y0', 'Z0']);
+    assert.deepEqual(await leftovers(root), []);
+  });
+
+  it('never touches the install when a staged file is corrupt', async () => {
+    const { root, items } = await setup();
+    items[1].sha256 = 'bad';
+    await assert.rejects(applyDirect(root, items), /校验失败/);
+    assert.deepEqual(await read(root), ['X0', 'Y0', 'Z0']);
+    assert.deepEqual(await leftovers(root), []);
   });
 });

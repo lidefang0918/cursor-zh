@@ -92,20 +92,53 @@ async function systemHelperUsable() {
   } catch { return false; }
 }
 
-// 主程序有写权限时，在进程内完成同样的事：原地覆盖 + 校验（Windows 上刚退出的进程可能还短暂占用文件，重试几次）
-async function copyRetry(src, dst, tries = 6) {
+// 主程序有写权限时，在进程内完成同样的事。崩溃/断电安全：
+//  1) 每个文件先写到同目录的 <文件>.czl-new 并校验 sha256（安装文件此时一个字节都没动）；
+//  2) 再逐个 rename 覆盖（同一文件系统内原子），原文件先改名为 .czl-old；
+//  3) 中途任何一步失败，已替换的按 .czl-old 换回，安装目录回到写入前的样子。
+// Windows 上刚退出的进程可能还短暂占用文件，EBUSY/EPERM/EACCES 重试几次。
+async function retry(fn, tries = 6) {
   for (let i = 0; ; i++) {
-    try { return await fs.copyFile(src, dst); }
+    try { return await fn(); }
     catch (e) {
       if (i >= tries - 1 || !['EBUSY', 'EPERM', 'EACCES'].includes(e.code) || process.platform !== 'win32') throw e;
       await new Promise((r) => setTimeout(r, 500));
     }
   }
 }
-async function applyDirect(installRoot, items) {
-  for (const it of items) await copyRetry(it.src, path.join(installRoot, it.relative));
-  for (const it of items) {
-    if ((await sha256File(path.join(installRoot, it.relative))) !== it.sha256) throw new Error(`写入后校验失败：${it.relative}`);
+export async function applyDirect(installRoot, items, { hooks = {} } = {}) {
+  const jobs = items.map((it) => ({ it, dst: path.join(installRoot, it.relative) }));
+  const cleanup = async (suffix) => { for (const j of jobs) await fs.rm(j.dst + suffix, { force: true }).catch(() => {}); };
+  try {
+    for (const j of jobs) {
+      await retry(() => fs.copyFile(j.it.src, j.dst + '.czl-new'));
+      if ((await sha256File(j.dst + '.czl-new')) !== j.it.sha256) throw new Error(`写入后校验失败：${j.it.relative}`);
+    }
+  } catch (e) { await cleanup('.czl-new'); throw e; }
+  const done = [];
+  try {
+    for (const j of jobs) {
+      const had = await fs.access(j.dst).then(() => true, () => false);
+      if (had) await retry(() => fs.rename(j.dst, j.dst + '.czl-old'));
+      done.push({ ...j, had });
+      if (hooks.beforeSwap) await hooks.beforeSwap(j.it.relative);
+      await retry(() => fs.rename(j.dst + '.czl-new', j.dst));
+      j.swapped = true;
+    }
+  } catch (e) {
+    for (const j of done.reverse()) {
+      try {
+        if (j.had) await retry(() => fs.rename(j.dst + '.czl-old', j.dst));
+        else if (j.swapped) await fs.rm(j.dst, { force: true });
+      } catch {}
+    }
+    await cleanup('.czl-new');
+    e.message = `${e.message}（已回滚，安装目录未改动）`;
+    throw e;
+  }
+  await cleanup('.czl-old');
+  for (const j of jobs) {
+    if ((await sha256File(j.dst)) !== j.it.sha256) throw new Error(`写入后校验失败：${j.it.relative}`);
   }
 }
 
