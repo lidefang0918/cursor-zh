@@ -6,3 +6,7 @@ export { applyPatch, applyFragments, filesToBackup, vscodeChecksum, updateChecks
 export * from './langpack.js';
 export { injectDomRuntime, buildInjection, stripInjection } from './inject.js';
 export { localize, revert, status, defaultPaths, readState } from './localize.js';
+export { applyFiles, checkWritable, filesMatch, mountOf, elevationInfo, HELPER_PATH } from './elevate.js';
+export { listCursorProcesses, closeCursor, relaunchCursor } from './process.js';
+export { findAppImages, extractAppImage, listExtracted, removeExtracted, extractBase } from './appimage.js';
+export { detectAllCursors, installKind } from './detect.js';

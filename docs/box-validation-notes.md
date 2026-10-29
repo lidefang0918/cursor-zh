@@ -215,3 +215,34 @@ box 重启会清掉 `/usr/share/cursor`（以及 apt 源 `cursor.list`），`~/.
 - 命令面板里的开发者/调试命令。
 - Agents 侧边栏当前没有智能体和仓库条目，所以右键菜单这次没有扫到内容；以后有条目时重跑脚本即可。
 - 经典窗口的“自定义”页使用另一套布局，扫描结果是 0/0，需要单独处理。
+
+## 第 5 轮（2026-10-29 17:30–18:00，Asia/Shanghai）：Linux 上真正可用的一键工具
+
+- **提权**：新增 `helper/czl-apply.sh`（POSIX sh）和 `src/elevate.js`。
+  - 提权顺序：pkexec → `sudo -n` → 给出手动 sudo 命令。
+  - pkexec 和 sudo 都执行 `/bin/sh -c <脚本正文>`，授权后脚本无法被替换。
+  - 如果存在 root 所有的 `/usr/lib/cursor-zh-localizer/czl-apply`（本工具 deb 安装），pkexec 改走它，配合 polkit 策略。
+  - 等待授权的状态会记下来（pending），之后可以接着完成或取消。
+- **box 的限制**：没有 polkitd，也没有 system dbus。pkexec 以 127 退出（"Error getting authority"），被正确识别为“无法完成授权”并回退，所以真正的 polkit 弹窗没能实测。实测了手动 sudo 命令和 `sudo -n` 两条路径。4 个文件始终保持 root:root。
+- **关闭与重启 Cursor**：
+  - 通过 /proc 识别主进程：没有 `--type=`，并且父进程不是 Cursor。Chromium 会把 cmdline 改写成一整串，需要拆回参数。
+  - 用 SIGTERM 关闭，写完后按原 argv、cwd、环境重新打开。等待授权期间 Cursor 保持关闭，重启信息存在 relaunch.json。
+- **AppImage**：识别只读挂载（squashfs、fuse、`/tmp/.mount_*`）。在独立 HOME 下实测了“解包 → 汉化（direct）→ 启动器”。rpm 的安装路径同 deb（`/usr/share/cursor`）。
+- **GUI 端到端**：在 DISPLAY=:5 上用 xdotool 操作，截图在 `/workspace/shots/run5-*.png`。
+  1. 状态显示“需要管理员权限”。
+  2. 一键汉化 → 确认关闭 Cursor → 显示 sudo 命令。
+  3. 执行命令后点“我已执行，继续”，Cursor 中文重启。
+  4. 还原（`sudo -n`），Cursor 英文重启。
+  5. 再次一键汉化（`sudo -n`），中文。
+  6. 另外截了“汉化已失效”“暂未适配 9.9.9”“发现 AppImage”三种状态（用 `CZL_ROOT` 指向 /tmp 下的假安装，并使用独立 HOME）。
+- **打包**：`scripts/build-desktop.mjs` 按仓库结构装配 `.build/app`，用 electron-builder 产出 `dist/*.AppImage` 和 `dist/*.deb`。
+  - 打包后的 AppImage（`APPIMAGE_EXTRACT_AND_RUN=1`）实测：还原，然后汉化，都成功。
+  - deb：`dpkg -i` 后从 `/usr/bin/cursor-zh-localizer` 启动正常；`czl-apply` 是 root 0755，拒绝 `../` 路径；`dpkg -r` 清理干净。
+
+遗留：
+- pkexec 加真实 polkit agent 的弹窗没有实测。
+- 应用图标还是默认的 Electron 图标。
+- deb 的 homepage 是占位地址。
+- 路径里有空格时，Chromium cmdline 拆分可能出错。
+- `dpkg --verify` 会报告 Cursor 的 4 个文件被改过。
+- Windows 和 macOS 仍未支持。

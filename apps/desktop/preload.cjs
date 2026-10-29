@@ -1,8 +1,10 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('engine', {
-  getStatus: () => ipcRenderer.invoke('getStatus'),
-  localize: () => ipcRenderer.invoke('localize'),
-  revert: () => ipcRenderer.invoke('revert'),
+  getStatus: (o) => ipcRenderer.invoke('getStatus', o),
+  localize: (o) => ipcRenderer.invoke('localize', o),
+  revert: (o) => ipcRenderer.invoke('revert', o),
+  extractAppImage: (p) => ipcRenderer.invoke('extractAppImage', p),
+  copy: (t) => ipcRenderer.invoke('copy', t),
   onLog: (cb) => ipcRenderer.on('log', (_e, msg) => cb(msg)),
 });

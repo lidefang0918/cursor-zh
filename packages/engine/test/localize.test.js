@@ -102,14 +102,16 @@ describe('localize/revert', () => {
     assert.match(r.error, /必需锚点缺失/);
     assert.equal(await read(path.join(root, REL)), js);
     assert.equal(await readLocale(opts.argvPath), null);
-    assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
+    // 补丁在暂存区算失败，语言包根本没装
+    assert.deepEqual(await fs.readdir(opts.extensionsDir).catch(() => []), []);
   });
 
   it('refuses while Cursor is running', async () => {
     const { opts } = await setup();
     const r = await localize({ ...opts, isCursorRunning: async () => true });
     assert.equal(r.ok, false);
-    assert.match(r.error, /退出 Cursor/);
+    assert.equal(r.code, 'CURSOR_RUNNING');
+    assert.match(r.error, /Cursor 正在运行/);
   });
 
   it('treats a "localized" state whose install was wiped/reinstalled as stale and re-localizes', async () => {
@@ -137,7 +139,8 @@ describe('localize/revert', () => {
     assert.equal(await read(path.join(root, REL)), js);
     assert.equal(await read(path.join(root, 'resources/app/product.json')), productBefore);
     assert.equal(await readLocale(opts.argvPath), null);
-    assert.deepEqual(await fs.readdir(opts.extensionsDir), []);
+    // 补丁在暂存区算失败，语言包根本没装
+    assert.deepEqual(await fs.readdir(opts.extensionsDir).catch(() => []), []);
   });
 
   it('revert with stale state never overwrites the new install with old backups', async () => {

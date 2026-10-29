@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>cursor-zh-localizer</vendor>
+  <action id="local.cursor-zh-localizer.apply">
+    <description>Write localized files into the Cursor install directory</description>
+    <description xml:lang="zh_CN">把汉化好的文件写入 Cursor 安装目录</description>
+    <message>Cursor 一键汉化 needs administrator rights to modify the Cursor install directory</message>
+    <message xml:lang="zh_CN">“Cursor 一键汉化”需要管理员权限来修改 Cursor 安装目录（只写入 4 个文件，均已校验 sha256，并已自动备份）</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/lib/cursor-zh-localizer/czl-apply</annotate>
+  </action>
+</policyconfig>
