@@ -65,25 +65,29 @@ export async function applyPatch({ installRoot, anchors, dict }) {
     patched.push(relative);
   }
 
+  const { checksumsUpdated } = await updateChecksums({ installRoot, anchors, relatives: [...changed.keys()] });
+  return { patched, missing, replaced, checksumsUpdated };
+}
+
+// 按文件当前内容重算 product.json 里对应的 checksum（Cursor/VS Code 启动时校验，不一致会提示"安装已损坏"）
+export async function updateChecksums({ installRoot, anchors, relatives }) {
   const checksumsUpdated = [];
-  if (anchors.productJson && changed.size) {
-    const productPath = path.join(installRoot, anchors.productJson);
-    const raw = await fs.readFile(productPath, 'utf8');
-    const product = JSON.parse(raw);
-    if (product.checksums) {
-      const base = path.join(installRoot, anchors.checksumBase || path.dirname(anchors.productJson) + '/out');
-      for (const [relative, buf] of changed) {
-        const key = path.relative(base, path.join(installRoot, relative)).split(path.sep).join('/');
-        if (key in product.checksums) {
-          product.checksums[key] = vscodeChecksum(buf);
-          checksumsUpdated.push(key);
-        }
-      }
-      if (checksumsUpdated.length) {
-        const indent = raw.match(/^\{\r?\n(\s+)/)?.[1] ?? '\t';
-        await fs.writeFile(productPath, JSON.stringify(product, null, indent) + (raw.endsWith('\n') ? '\n' : ''));
-      }
+  if (!anchors.productJson || !relatives.length) return { checksumsUpdated };
+  const productPath = path.join(installRoot, anchors.productJson);
+  const raw = await fs.readFile(productPath, 'utf8');
+  const product = JSON.parse(raw);
+  if (!product.checksums) return { checksumsUpdated };
+  const base = path.join(installRoot, anchors.checksumBase || path.join(path.dirname(anchors.productJson), 'out'));
+  for (const relative of relatives) {
+    const key = path.relative(base, path.join(installRoot, relative)).split(path.sep).join('/');
+    if (key in product.checksums) {
+      product.checksums[key] = vscodeChecksum(await fs.readFile(path.join(installRoot, relative)));
+      checksumsUpdated.push(key);
     }
   }
-  return { patched, missing, replaced, checksumsUpdated };
+  if (checksumsUpdated.length) {
+    const indent = raw.match(/^\{\r?\n(\s+)/)?.[1] ?? '\t';
+    await fs.writeFile(productPath, JSON.stringify(product, null, indent) + (raw.endsWith('\n') ? '\n' : ''));
+  }
+  return { checksumsUpdated };
 }

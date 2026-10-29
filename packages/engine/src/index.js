@@ -2,6 +2,7 @@ export { detectCursor } from './detect.js';
 export { createBackup, sha256File } from './backup.js';
 export { restoreBackup, dropBackup } from './restore.js';
 export { loadAnchors, loadDict } from './anchors.js';
-export { applyPatch, filesToBackup, vscodeChecksum } from './patch.js';
+export { applyPatch, filesToBackup, vscodeChecksum, updateChecksums } from './patch.js';
 export * from './langpack.js';
 export { injectDomRuntime, buildInjection, stripInjection } from './inject.js';
+export { localize, revert, status, defaultPaths, readState } from './localize.js';
