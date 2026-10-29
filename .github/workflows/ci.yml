@@ -1,0 +1,51 @@
+# 草稿（未推送、未在 GitHub 上跑过）。
+# - 每次 push / PR：单元测试 + 术语一致性检查（几秒钟）。
+# - 每周一次（或手动）：检查 Cursor 是否出了新版本；出了就跑 scripts/new-version.sh 生成锚点并全流程校验，
+#   把 anchors/<版本>.json 和报告作为产物上传，由人审核后提交（不会自动提交、不会发布）。
+name: ci
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * 1'   # 每周一 01:00 UTC（北京时间 09:00）
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm test
+      - run: node scripts/check-glossary.mjs
+
+  new-version:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: 最新版本是否已适配
+        id: v
+        run: |
+          v=$(curl -fsL 'https://cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).version))')
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          if [ -f "anchors/$v.json" ]; then echo "known=1" >> "$GITHUB_OUTPUT"; echo "Cursor $v 已适配"; else echo "known=0" >> "$GITHUB_OUTPUT"; echo "Cursor $v 尚未适配"; fi
+      - name: 安装解包工具
+        if: steps.v.outputs.known == '0'
+        run: sudo apt-get update && sudo apt-get install -y innoextract 7zip
+      - name: 生成锚点并校验
+        if: steps.v.outputs.known == '0'
+        env: { CZL_CACHE: '${{ runner.temp }}/cursor' }
+        run: sh scripts/new-version.sh "${{ steps.v.outputs.version }}" --all-platforms
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.v.outputs.known == '0'
+        with:
+          name: anchors-${{ steps.v.outputs.version }}
+          path: |
+            anchors/${{ steps.v.outputs.version }}.json
+            ${{ runner.temp }}/cursor/${{ steps.v.outputs.version }}/*.txt
+            ${{ runner.temp }}/cursor/${{ steps.v.outputs.version }}/*.log
