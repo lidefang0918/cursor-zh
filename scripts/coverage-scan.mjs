@@ -75,7 +75,7 @@ const keepRe = KEEP.regex.map((r) => new RegExp(r));
 const keepWords = new RegExp(`\\b(?:${[...KEEP.exact, ...(KEEP.words || [])].sort((a, b) => b.length - a.length).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'g');
 const STRICT = !args.includes('--loose');
 function isPartial(t) {
-  const rest = t.replace(keepWords, ' ').replace(/\{[^}]*\}|https?:\S+|[\w.-]+\.(?:json|md|py|ts|js|mdc)\b/g, ' ');
+  const rest = t.replace(keepWords, ' ').replace(/\{[^}]*\}|https?:\S+|\b[\w-]+\.(?:com|dev|io|org|ai)(?:\/\S*)?|[\w.-]+\.(?:json|md|py|ts|js|mdc)\b/g, ' ');
   return (rest.match(/[A-Za-z]{3,}/g) || []).length >= 2;
 }
 function classify(texts) {
