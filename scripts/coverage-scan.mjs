@@ -100,8 +100,16 @@ async function settingsPages(win, section, { open, navSel, labelOf, contentSel }
     if (!ok) continue;
     await sleep(1500);
     add(section, n.label, await win.evaluate(`(${COLLECT})(${JSON.stringify(contentSel)})`));
+    // “自定义”页里还有一排标签（插件/MCP/技能…），每个标签单独扫
+    for (const tab of CUSTOMIZE_TABS) {
+      const hit = await win.evaluate(`(() => { const v = document.querySelector('.ui-customize-view'); if (!v) return false; const e = [...v.querySelectorAll('*')].find(e => e.children.length === 0 && e.textContent.trim() === ${JSON.stringify(tab)} && e.getClientRects().length); if (!e) return false; e.click(); return true; })()`);
+      if (!hit) continue;
+      await sleep(1200);
+      add(section, `${n.label} / ${tab}`, await win.evaluate(`(${COLLECT})('.ui-customize-view')`));
+    }
   }
 }
+const CUSTOMIZE_TABS = ['插件', 'MCP', '技能', '子智能体', '规则', '命令', '钩子', 'Plugins', 'Skills', 'Subagents', 'Rules', 'Commands', 'Hooks'];
 
 const agents = await connect(/^Cursor Agents$/) || await connect('Cursor Agents');
 const classic = await connect(/ - Cursor$/);
@@ -157,7 +165,7 @@ if (classic && ONLY.includes('classic-settings')) {
     open: () => classic.key('j', 10),
     navSel: '.cursor-settings-sidebar-nav-cell',
     labelOf: 'e => e.textContent.trim()',
-    contentSel: '.cursor-settings-pane-content',
+    contentSel: '.cursor-settings-pane-content, .ui-customize-view',
   });
 }
 
