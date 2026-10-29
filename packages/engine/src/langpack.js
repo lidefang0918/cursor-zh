@@ -53,18 +53,24 @@ const cliArgs = ({ extensionsDir, userDataDir }) => [
   '--extensions-dir', extensionsDir, ...(userDataDir ? ['--user-data-dir', userDataDir] : []),
 ];
 
+// cliPath：Linux 是 <root>/bin/cursor；Windows/macOS 是 {cmd: Cursor 主程序, args: [out/cli.js], env: {ELECTRON_RUN_AS_NODE: '1'}}
+function runCli(cliPath, args, opts) {
+  if (typeof cliPath === 'string') return run(cliPath, args, opts);
+  return run(cliPath.cmd, [...(cliPath.args ?? []), ...args], { ...opts, env: { ...process.env, ...(cliPath.env ?? {}) } });
+}
+
 // 用 Cursor 自带 CLI 安装 VSIX：会正确写 extensions.json，比手工解压稳
 export async function ensureLanguagePack({ cliPath, extensionsDir, userDataDir, vsixPath }) {
   const existing = await findInstalledLangpack(extensionsDir);
   if (existing) return { installed: false, extensionPath: existing };
-  await run(cliPath, ['--install-extension', vsixPath, ...cliArgs({ extensionsDir, userDataDir })], { timeout: 120000 });
+  await runCli(cliPath, ['--install-extension', vsixPath, ...cliArgs({ extensionsDir, userDataDir })], { timeout: 120000 });
   const extensionPath = await findInstalledLangpack(extensionsDir);
   if (!extensionPath) throw new Error('语言包安装后未在 extensions 目录找到');
   return { installed: true, extensionPath };
 }
 
 export async function uninstallLanguagePack({ cliPath, extensionsDir, userDataDir }) {
-  await run(cliPath, ['--uninstall-extension', LANGPACK_ID, ...cliArgs({ extensionsDir, userDataDir })], { timeout: 120000 });
+  await runCli(cliPath, ['--uninstall-extension', LANGPACK_ID, ...cliArgs({ extensionsDir, userDataDir })], { timeout: 120000 });
 }
 
 // argv.json 是 JSONC（带注释），用行级正则改 "locale"，不破坏注释

@@ -149,6 +149,16 @@ async function run(action, opt = {}) {
       commandNotice('需要管理员权限', r, action);
       log('✖ 需要管理员权限，请按提示在终端执行命令', 'err');
       return;
+    } else if (r.code === 'MAC_APP_MANAGEMENT' || r.code === 'MAC_TRANSLOCATED') {
+      busy = false;
+      await refresh();
+      clearNotices();
+      notice('warn', r.code === 'MAC_APP_MANAGEMENT' ? 'macOS 阻止了修改 Cursor.app' : 'Cursor.app 处于“App 转移”隔离路径', [
+        r.error,
+        ...(r.settingsUrl ? [`系统设置 → 隐私与安全性 → App 管理（${r.settingsUrl}）`] : []),
+      ], [['我已处理，重试', () => run(action, opt), true], ['取消', () => refresh()]]);
+      log(`✖ ${r.error}`, 'err');
+      return;
     } else {
       log(`✖ ${r.error}${r.restored === false ? '（未能完整回滚！）' : r.restored ? '（安装文件未改动）' : ''}`, 'err');
     }

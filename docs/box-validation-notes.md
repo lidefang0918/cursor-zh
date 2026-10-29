@@ -246,3 +246,127 @@ box 重启会清掉 `/usr/share/cursor`（以及 apt 源 `cursor.list`），`~/.
 - 路径里有空格时，Chromium cmdline 拆分可能出错。
 - `dpkg --verify` 会报告 Cursor 的 4 个文件被改过。
 - Windows 和 macOS 仍未支持。
+
+## 第 6 轮（2026-10-29 18:00–18:40，Asia/Shanghai）：Windows + macOS 支持（box 上离线完成）
+
+> 上面的“Windows / macOS TODO”一节已由本轮实现。真机验证计划见 `docs/real-machine-test-plan.md`。
+
+### 官方安装包（Cursor 3.27.22，commit b1aa50cb6db84fd3e8c808259cb172ea73425c1f）
+
+下载根地址：`https://downloads.cursor.com/production/b1aa50cb6db84fd3e8c808259cb172ea73425c1f/`。缓存在 `/workspace/cache/`。
+
+| 文件（相对根地址） | sha256 |
+|---|---|
+| `win32/x64/user-setup/CursorUserSetup-x64-3.27.22.exe` | 54e5562afb2d0a37f84cc77728294dedc2215022b33ae6901d6c360d1ee5eeea |
+| `win32/x64/system-setup/CursorSetup-x64-3.27.22.exe` | 7e47c9627ecef45db94e2a8298801d9d1ffe7e4c5af6f0c5005b0400ff31c527 |
+| `darwin/arm64/Cursor-darwin-arm64.dmg` | fd9288d67f17d8510d19b9aa3daf8204c636377f3748273bc0fbdd38d6919580 |
+| `darwin/x64/Cursor-darwin-x64.dmg` | 03ccd2a6caaec695871a48e9ef8cefa023951f6e344672d92e86d6a2f27825b4 |
+| `darwin/arm64/Cursor-darwin-arm64.zip` | fed256d59c331944f75dedfbaffa43a7b50e9eda5f2c30156b6a8c2195dbb8c7 |
+| `darwin/x64/Cursor-darwin-x64.zip` | 80aae63467bef2e9de1b73d349215cd9cc0866290eb04ad3c2a7c9fc033b75af |
+
+- Windows 没有官方 zip。两个 Inno Setup 安装包用 innoextract 解出。
+- mac 的 zip/dmg 用 7zz 解出。解出的目录在 `/workspace/cache/ex/{win-user,win-system,mac-arm64,mac-x64,linux-deb}`。
+
+### 各平台包内文件对比
+
+- 要改的 3 个文件在 5 个官方目录里**逐字节相同**（win-user、win-system、mac-arm64、mac-x64、linux-deb）：
+
+  | 文件 | sha256 |
+  |---|---|
+  | workbench.desktop.main.js | fd9ac3ed… |
+  | workbench.glass.main.js | 6c433934… |
+  | nls.messages.json | 1caf42fe… |
+
+- 所以锚点合并为一份 `anchors/3.27.22.json`，其中 `platforms: [linux, win32, darwin]`，并带上 `pristine` sha。
+  - darwin 下把 `resources/app/` 映射成 `Resources/app/`（安装根是 `Cursor.app/Contents`）。
+  - 仍支持 `anchors/<platform>/<ver>.json` 按平台单独覆盖。
+- product.json：
+  - mac 和 linux 完全相同（c3bb3bbc…）。
+  - Windows 只多一个 `target` 字段：user 是 aaca9268…，system 是 c16364e0…。
+  - checksums 共 6 项。glass 不在其中，所以只会更新 workbench.desktop.main.js 这一项。补丁只改这一个值，`target` 等其余字节保持原样。
+- macOS 签名（用 rcodesign 读取）：
+  - Developer ID，Team VDXQ22DGB9，开启了 hardened runtime。
+  - 主程序的 entitlements 里**没有** disable-library-validation，所以 ad-hoc 重签名**不能**带 `--options runtime`，否则 ad-hoc 签名的主程序加载不了 Team 签名的 Electron Framework。
+  - `ElectronAsarIntegrity` 只覆盖 default_app.asar，与我们改的文件无关。
+  - 只对外层做 ad-hoc 签名时，改动的只有 `MacOS/Cursor` 和 `_CodeSignature/CodeResources` 两个文件。这两个文件也一起备份，还原后签名回到原样。
+- `scripts/verify-platform-trees.mjs` 在 5 个官方目录的副本上跑完整补丁，80 项检查全部通过（日志 `/workspace/logs/verify-trees.log`）：
+  - 未命中为 0；
+  - `node --check` 通过；
+  - nls 是合法 JSON；
+  - checksum 与 VS Code 的算法一致；
+  - product.json 其余字节不变。
+- `scripts/smoke-check.mjs` 也对官方 win/mac 目录检查过：pristine 和 checksums 都通过。
+
+### 实现
+
+- `src/platform/win.js`：
+  - 检测：默认路径加注册表 Uninstall 的 InstallLocation。
+  - `kind`：win-user / win-system / win-other。
+  - 进程：Get-CimInstance 按 ExecutablePath 匹配，不区分大小写、不区分斜杠方向。
+  - 关闭：taskkill，必要时 /T /F。
+  - CLI：`Cursor.exe` 加 `ELECTRON_RUN_AS_NODE=1` 运行 `resources/app/out/cli.js`。
+  - UAC：用普通 powershell 启动 `Start-Process -Verb RunAs`，把 `helper/czl-apply.ps1` 的正文通过 `-EncodedCommand` 内嵌（约 10.4K 字符），同意授权后无法被替换。退出码 1223 表示取消，回退到手动命令。
+- `helper/czl-apply.ps1`（兼容 PS 5.1）：
+  - 白名单只允许 `resources/app/*.js|json`，拒绝 `..` 和反斜杠，检查重解析点。
+  - 先读进内存再算 sha，避免 TOCTOU。写 `.czl-new`，然后 Move-Item，带重试和复检。
+  - 结果写到结果文件。
+- `src/platform/mac.js`：
+  - 检测 /Applications 和 ~/Applications；识别 App Translocation。
+  - 进程：`ps` 找 `<root>/MacOS/Cursor` 和它的 Helper；SIGTERM 关闭，用 `open` 重新打开。
+  - 签名方式 macSign：
+    - `adhoc`（默认）：对外层 ad-hoc 签名，加 `--preserve-metadata=entitlements`，不带 runtime。
+    - `adhoc-deep`：先用 APFS clone 备份整个 .app，还原时整包换回。
+    - `none`：不重签名。
+  - 写完后执行 `xattr -dr com.apple.quarantine`。
+  - 没有写权限时用 osascript 的 `do shell script … with administrator privileges`，脚本和清单都走 argv 传入。
+  - 权限问题：“App 管理”拦截（EPERM）报 `MAC_APP_MANAGEMENT` 并附设置链接；被转移的 .app 报 `MAC_TRANSLOCATED`。
+- `helper/czl-apply.sh` 现在可以在 macOS 上运行：
+  - 兼容 BSD stat 和 shasum。
+  - darwin 下白名单额外允许 `MacOS/Cursor` 和 `_CodeSignature/CodeResources`。
+  - 支持 `!codesign-adhoc` 和 `!unquarantine` 两个动作行，只在 macOS 上生效。签名失败时退出码为 6。
+- 通用改动：
+  - 引擎各处都接收 `platform` 和 `env` 参数。
+  - 新增 pristine 检查：文件和官方原版不一致时报 `MODIFIED_INSTALL`。
+  - REPO 路径改用 fileURLToPath。原来的 `URL.pathname` 在 Windows 上会得到 `/C:/…`，路径里有空格或中文时还会是 %20 编码。
+  - run.mjs 新增 `--mac-sign`。
+  - GUI 能显示 MAC_APP_MANAGEMENT 和 MAC_TRANSLOCATED 的提示。
+
+### 测试
+
+`npm test` 共 83 项全部通过（原 54 项 + 新增 29 项），Linux 的原有测试仍然全绿。
+- `anchors-shared` 4 项。
+- `platform-win` 12 项：
+  - 用假的 `C:\…` 树和模拟的 reg、PowerShell、taskkill。
+  - **用真实 pwsh 7.6.9 端到端运行 czl-apply.ps1**：取出 UAC 启动器里的 -EncodedCommand 直接执行，同时测了篡改返回 3、越界路径返回 2。
+  - 测了 UAC 取消后转手动命令（带 BOM 的脚本副本）。
+- `platform-mac` 13 项：
+  - 用假的 Cursor.app 和模拟的 codesign、xattr、ps、cp、osascript。
+  - 覆盖：签名参数正确、还原后 Mach-O 和 CodeResources 逐字节恢复、deep 模式整包换回、EPERM、Translocation、osascript 取消和退出码解析、helper 拒绝 macOS 专用动作。
+
+在 box 上用临时 user-data-dir 另开一个 Cursor（带 --remote-debugging-port），`smoke-check ui` 读到的界面是“用 AI 写代码的最佳方式 登录 注册”。检查完关闭了这个实例，用户原来的 Cursor 实例没有动。
+
+### 打包（在 Linux 上交叉打包，均未签名或只做了 ad-hoc 签名）
+
+- `node scripts/build-desktop.mjs --win`：生成 `dist/cursor-zh-localizer-0.1.0-win-x64.zip` 和 `…-win-x64-portable.exe`。
+  - 没有 wine，所以设了 `signAndEditExecutable: false`：exe 是默认图标，也没有版本资源。
+  - `requestedExecutionLevel: asInvoker`。
+- `node scripts/build-desktop.mjs --mac`：生成 `dist/cursor-zh-localizer-0.1.0-mac-{x64,arm64}.zip`。
+  - electron-builder 在 Linux 上不签名，所以之后用 rcodesign 对整包做 ad-hoc 签名，再用 7zz 重新打 zip（`-snl` 保留符号链接）。
+  - 未公证。
+- 两个平台的 helper 都在 `app.asar.unpacked/packages/engine/helper/`。anchors 和 dicts 在 asar 里。
+- sha256 见 `/workspace/logs/dist-sha256.txt`。
+
+### 只能在真机上确认的
+
+- UAC 弹窗本身，以及 Program Files 下的真实 ACL。
+- Defender / SmartScreen 的反应。
+- Cursor 运行时的文件占用。
+- macOS 的“App 管理”(TCC) 实际在哪一步拦截：open 探测时还是写入时。
+- osascript 授权框。
+- ad-hoc 签名后的 Cursor 能不能启动，Gatekeeper / spctl 的表现。
+- 钥匙串 “Cursor Safe Storage” 提示。
+- 自动更新在 ad-hoc 签名后是否失效。
+- Intel 与 Apple Silicon 的差异。
+- 打包产物能否在真机上启动。
+
+详见 `docs/real-machine-test-plan.md`。

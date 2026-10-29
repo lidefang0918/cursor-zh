@@ -1,8 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sha256File } from './backup.js';
+import { run } from './platform/exec.js';
+import * as win from './platform/win.js';
+import * as mac from './platform/mac.js';
 
 // 提权写入：主程序（含 Electron 界面）始终以普通用户运行，只把“放文件”这一步交给 helper/czl-apply.sh。
 // 顺序：能直接写 → 直接写；否则 pkexec（图形授权弹窗）→ 免密 sudo（sudo -n，不会弹出/卡住）→ 给出要在终端执行的 sudo 命令。
@@ -10,18 +12,12 @@ export const HELPER_PATH = fileURLToPath(new URL('../helper/czl-apply.sh', impor
 // 用本工具的 .deb 安装时，helper 以 root 所有的副本装在这里（配合 polkit 策略，授权弹窗显示中文说明）
 export const SYSTEM_HELPER = '/usr/lib/cursor-zh-localizer/czl-apply';
 export const DEFAULT_STRATEGIES = ['pkexec', 'sudo-n', 'manual'];
+// 各平台的提权顺序：Windows 弹 UAC；macOS 弹系统管理员密码框（osascript with administrator privileges）
+export const PLATFORM_STRATEGIES = { linux: DEFAULT_STRATEGIES, win32: ['uac', 'manual'], darwin: ['osascript', 'manual'] };
 
 export const shq = (s) => `'${String(s).replace(/'/g, `'\\''`)}'`;
 
-const readHelper = () => fs.readFile(HELPER_PATH, 'utf8');
-
-function run(cmd, args, opts = {}) {
-  return new Promise((resolve) => {
-    execFile(cmd, args, { maxBuffer: 1 << 20, ...opts }, (err, stdout, stderr) => {
-      resolve({ code: err ? (typeof err.code === 'number' ? err.code : 127) : 0, stdout: String(stdout), stderr: String(stderr), spawnError: err && typeof err.code === 'string' ? err.code : null });
-    });
-  });
-}
+const readHelper = (platform = 'linux') => fs.readFile(platform === 'win32' ? win.WIN_HELPER_PATH : HELPER_PATH, 'utf8');
 
 export async function which(bin, env = process.env) {
   for (const dir of (env.PATH || '/usr/bin:/bin').split(':')) {
@@ -50,16 +46,28 @@ export async function mountOf(p, { mountsFile = '/proc/mounts' } = {}) {
   return best;
 }
 
-// 安装目录能否被当前用户直接改写（逐个文件 W_OK）
-export async function checkWritable(installRoot, relatives) {
-  const mount = await mountOf(installRoot);
+// 安装目录能否被当前用户直接改写。
+// Linux 逐个文件 W_OK；Windows 的 W_OK 只看只读属性、macOS 的 App 管理（TCC）拦截只在真正写时才出现，所以这两个平台以写方式打开一次。
+// macOS：EPERM = App 管理拦截（sudo 也没用），EACCES = 普通文件权限（管理员授权可解决）
+export async function checkWritable(installRoot, relatives, { platform = process.platform, probe = win.probeWritable } = {}) {
+  if (platform === 'darwin' && mac.isTranslocated(installRoot)) {
+    return { writable: false, readOnlyFs: false, translocated: true, mount: null, unwritable: relatives.map((r) => ({ relative: r, reason: 'TRANSLOCATED' })) };
+  }
+  const mount = platform === 'linux' ? await mountOf(installRoot) : null;
   const unwritable = [];
   for (const r of relatives) {
-    try { await fs.access(path.join(installRoot, r), fs.constants.W_OK); }
-    catch (e) { unwritable.push({ relative: r, reason: e.code }); }
+    const file = path.join(installRoot, r);
+    if (platform === 'linux') {
+      try { await fs.access(file, fs.constants.W_OK); }
+      catch (e) { unwritable.push({ relative: r, reason: e.code }); }
+    } else {
+      const code = await probe(file);
+      if (code) unwritable.push({ relative: r, reason: code });
+    }
   }
   const readOnlyFs = !!mount?.readOnly || unwritable.some((u) => u.reason === 'EROFS');
-  return { writable: unwritable.length === 0 && !readOnlyFs, readOnlyFs, mount, unwritable };
+  const appManagement = platform === 'darwin' && unwritable.some((u) => u.reason === 'EPERM');
+  return { writable: unwritable.length === 0 && !readOnlyFs, readOnlyFs, appManagement, mount, unwritable };
 }
 
 export async function filesMatch(installRoot, shaByRelative) {
@@ -69,11 +77,12 @@ export async function filesMatch(installRoot, shaByRelative) {
   return Object.keys(shaByRelative ?? {}).length > 0;
 }
 
-export function manifestText(installRoot, items) {
+export function manifestText(installRoot, items, actions = []) {
   for (const it of items) {
-    if (/[\t\n]/.test(it.src + it.relative)) throw new Error(`路径含制表符/换行，无法写入清单：${it.relative}`);
+    if (/[\t\r\n]/.test(it.src + it.relative)) throw new Error(`路径含制表符/换行，无法写入清单：${it.relative}`);
   }
-  return [`CZL1\t${installRoot}`, ...items.map((it) => `${it.sha256}\t${it.src}\t${it.relative}`)].join('\n') + '\n';
+  if (/[\t\r\n]/.test(installRoot)) throw new Error(`安装路径含制表符/换行：${installRoot}`);
+  return [`CZL1\t${installRoot}`, ...items.map((it) => `${it.sha256}\t${it.src}\t${it.relative}`), ...actions].join('\n') + '\n';
 }
 
 async function systemHelperUsable() {
@@ -83,25 +92,37 @@ async function systemHelperUsable() {
   } catch { return false; }
 }
 
-// 主程序有写权限时，在进程内完成同样的事：原地覆盖 + 校验
+// 主程序有写权限时，在进程内完成同样的事：原地覆盖 + 校验（Windows 上刚退出的进程可能还短暂占用文件，重试几次）
+async function copyRetry(src, dst, tries = 6) {
+  for (let i = 0; ; i++) {
+    try { return await fs.copyFile(src, dst); }
+    catch (e) {
+      if (i >= tries - 1 || !['EBUSY', 'EPERM', 'EACCES'].includes(e.code) || process.platform !== 'win32') throw e;
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+}
 async function applyDirect(installRoot, items) {
-  for (const it of items) await fs.copyFile(it.src, path.join(installRoot, it.relative));
+  for (const it of items) await copyRetry(it.src, path.join(installRoot, it.relative));
   for (const it of items) {
     if ((await sha256File(path.join(installRoot, it.relative))) !== it.sha256) throw new Error(`写入后校验失败：${it.relative}`);
   }
 }
 
-const HELPER_ERRORS = { 2: '清单不合法', 3: '准备好的文件被改动过', 4: '写入失败（安装目录未改动）', 5: '写入后校验失败' };
+const HELPER_ERRORS = { 2: '清单不合法', 3: '准备好的文件被改动过', 4: '写入失败（安装目录未改动）', 5: '写入后校验失败', 6: '重签名失败' };
 
 /**
  * 把 items（{relative, src, sha256}）放进 installRoot。
  * 返回 {ok:true, method} | {ok:false, code:'NEED_ELEVATION', command, tried} | {ok:false, code:'READ_ONLY_FS'|'HELPER_FAILED', error}
  */
 export async function applyFiles({
-  installRoot, items, workDir, strategies = (process.env.CZL_ELEVATE?.split(',') ?? DEFAULT_STRATEGIES),
-  log = () => {}, assumeUnwritable = false, runner = run, env = process.env,
+  installRoot, items, workDir, platform = process.platform, strategies,
+  log = () => {}, assumeUnwritable = false, runner = run, env = process.env, actions = [], probe,
 }) {
-  const w = await checkWritable(installRoot, items.map((i) => i.relative));
+  strategies ??= process.env.CZL_ELEVATE?.split(',') ?? PLATFORM_STRATEGIES[platform] ?? DEFAULT_STRATEGIES;
+  const w = await checkWritable(installRoot, items.map((i) => i.relative), { platform, ...(probe ? { probe } : {}) });
+  if (w.translocated) return { ok: false, code: 'MAC_TRANSLOCATED', error: mac.TRANSLOCATED_HINT };
+  if (w.appManagement) return { ok: false, code: 'MAC_APP_MANAGEMENT', error: mac.APP_MANAGEMENT_HINT, settingsUrl: mac.APP_MANAGEMENT_SETTINGS_URL };
   if (w.readOnlyFs) {
     return { ok: false, code: 'READ_ONLY_FS', mount: w.mount, error: `安装目录在只读文件系统上（${w.mount?.fstype ?? 'ro'}，${w.mount?.mountpoint ?? installRoot}），任何权限都无法修改` };
   }
@@ -113,11 +134,12 @@ export async function applyFiles({
 
   await fs.mkdir(workDir, { recursive: true });
   const manifest = path.join(workDir, 'apply.tsv');
-  const helperCopy = path.join(workDir, 'czl-apply.sh');
-  const script = await readHelper();
-  await fs.writeFile(manifest, manifestText(installRoot, items));
-  await fs.writeFile(helperCopy, script, { mode: 0o755 });
-  const command = `sudo sh ${shq(helperCopy)} ${shq(manifest)}`;
+  const helperCopy = path.join(workDir, platform === 'win32' ? 'czl-apply.ps1' : 'czl-apply.sh');
+  const script = await readHelper(platform);
+  await fs.writeFile(manifest, manifestText(installRoot, items, platform === 'darwin' ? actions : []));
+  // .ps1 带 BOM：Windows PowerShell 5.1 没有 BOM 时按系统代码页读，中文会乱
+  await fs.writeFile(helperCopy, platform === 'win32' ? '\ufeff' + script : script, { mode: 0o755 });
+  const command = platform === 'win32' ? win.manualCommand(helperCopy, manifest) : `sudo sh ${shq(helperCopy)} ${shq(manifest)}`;
   // pkexec / sudo 都直接执行 /bin/sh -c <脚本正文>：脚本内容随参数固定下来，不会在授权后被替换
   const shArgs = ['-c', script, 'czl-apply', manifest];
   const tried = [];
@@ -127,7 +149,28 @@ export async function applyFiles({
   });
 
   for (const s of strategies) {
+    if (s === 'uac') {
+      if (platform !== 'win32') continue;
+      log('正在请求管理员授权（UAC）…');
+      const r = await win.runUac({ script, manifest, resultFile: path.join(workDir, 'apply.result.txt'), runner });
+      if (r.code === 0) return verifyAfter(installRoot, items, 'uac');
+      if (r.cancelled) { tried.push({ via: 'UAC', reason: '授权被取消' }); continue; }
+      if (r.code === 127 || r.spawnError) { tried.push({ via: 'UAC', reason: `无法弹出授权：${(r.stderr.trim() || r.spawnError || '').split('\n')[0]}` }); continue; }
+      return helperFailed(r, 'uac');
+    }
+    if (s === 'osascript') {
+      if (platform !== 'darwin') continue;
+      log('正在请求管理员授权（macOS 密码框）…');
+      const r = await runner('/usr/bin/osascript', mac.osascriptArgs(script, manifest));
+      if (r.code === 0) return verifyAfter(installRoot, items, 'osascript');
+      const e = mac.parseOsascriptError(r.stderr);
+      if (e.cancelled) { tried.push({ via: 'osascript', reason: '授权被取消' }); continue; }
+      if (r.spawnError || e.code === null) { tried.push({ via: 'osascript', reason: `无法完成授权：${(r.stderr.trim() || r.spawnError || '').split('\n')[0]}` }); continue; }
+      if (/Operation not permitted/.test(r.stderr)) return { ok: false, code: 'MAC_APP_MANAGEMENT', error: mac.APP_MANAGEMENT_HINT, settingsUrl: mac.APP_MANAGEMENT_SETTINGS_URL };
+      return helperFailed({ ...r, code: e.code }, 'osascript');
+    }
     if (s === 'pkexec') {
+      if (platform !== 'linux') continue;
       const bin = await runnerWhich('pkexec', env, runner);
       if (!bin) { tried.push({ via: 'pkexec', reason: '系统没有安装 pkexec（polkit）' }); continue; }
       if (!env.DISPLAY && !env.WAYLAND_DISPLAY) { tried.push({ via: 'pkexec', reason: '没有图形会话，无法弹出授权窗口' }); continue; }
@@ -140,6 +183,7 @@ export async function applyFiles({
       return helperFailed(r, 'pkexec');
     }
     if (s === 'sudo-n') {
+      if (platform !== 'linux') continue;
       const bin = await runnerWhich('sudo', env, runner);
       if (!bin) { tried.push({ via: 'sudo -n', reason: '系统没有 sudo' }); continue; }
       const r = await runner(bin, ['-n', '/bin/sh', ...shArgs]);
@@ -151,7 +195,9 @@ export async function applyFiles({
   }
   return {
     ok: false, code: 'NEED_ELEVATION', command, manifest, helper: helperCopy, tried,
-    error: `需要管理员权限才能修改 ${installRoot}。请在终端执行：${command}`,
+    error: platform === 'win32'
+      ? `需要管理员权限才能修改 ${installRoot}。请以管理员身份打开 PowerShell 执行：${command}`
+      : `需要管理员权限才能修改 ${installRoot}。请在终端执行：${command}`,
   };
 }
 
@@ -168,7 +214,9 @@ async function verifyAfter(installRoot, items, method) {
   return { ok: true, method };
 }
 
-export async function elevationInfo(env = process.env) {
+export async function elevationInfo(env = process.env, platform = process.platform) {
+  if (platform === 'win32') return { uac: true, graphical: true };
+  if (platform === 'darwin') return { osascript: true, graphical: true };
   return {
     pkexec: !!(await which('pkexec', env)),
     sudo: !!(await which('sudo', env)),

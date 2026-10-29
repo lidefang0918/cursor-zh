@@ -1,0 +1,117 @@
+# 草稿（未推送、未在 GitHub 上跑过）：在 GitHub 托管的 Windows / macOS 机器上用官方 Cursor 3.27.22 做冒烟测试。
+# 流程：下载并校验官方安装包 → 安装 → 确认是原版 → 汉化 → 校验 checksum/签名 → 用临时 user-data-dir 启动并检查界面是中文
+#       → 还原 → 确认逐字节回到原版。
+# 只在 CI 机器上操作，用临时 user-data-dir，不登录任何账号。
+# 注意：托管机器的账户本身就是管理员 / 没有 TCC 弹窗，所以 UAC 弹窗、osascript 授权弹窗、
+#       “App 管理”拦截、钥匙串提示这些只能在真机上验证，见 docs/real-machine-test-plan.md。
+name: platform-smoke
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['packages/engine/**', 'anchors/**', 'dicts/**', 'scripts/run.mjs', 'scripts/smoke-check.mjs', '.github/workflows/platform-smoke.yml']
+
+env:
+  CURSOR_VERSION: 3.27.22
+  CURSOR_BASE: https://downloads.cursor.com/production/b1aa50cb6db84fd3e8c808259cb172ea73425c1f
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm test
+
+  windows:
+    needs: unit
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kind: user
+            file: win32/x64/user-setup/CursorUserSetup-x64-3.27.22.exe
+            sha256: 54e5562afb2d0a37f84cc77728294dedc2215022b33ae6901d6c360d1ee5eeea
+          - kind: system
+            file: win32/x64/system-setup/CursorSetup-x64-3.27.22.exe
+            sha256: 7e47c9627ecef45db94e2a8298801d9d1ffe7e4c5af6f0c5005b0400ff31c527
+    defaults: { run: { shell: pwsh } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: 下载并安装官方 Cursor
+        run: |
+          Invoke-WebRequest "$env:CURSOR_BASE/${{ matrix.file }}" -OutFile setup.exe
+          if ((Get-FileHash setup.exe -Algorithm SHA256).Hash.ToLower() -ne '${{ matrix.sha256 }}') { throw 'sha256 不符' }
+          Start-Process .\setup.exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/MERGETASKS=!runcode' -Wait
+          Start-Sleep 5
+          Get-Process Cursor -ErrorAction SilentlyContinue | Stop-Process -Force
+          $root = if ('${{ matrix.kind }}' -eq 'user') { "$env:LOCALAPPDATA\Programs\cursor" } else { "$env:ProgramFiles\cursor" }
+          if (-not (Test-Path "$root\Cursor.exe")) { throw "没装到 $root" }
+          "CZL_ROOT=$root" | Out-File -Append $env:GITHUB_ENV
+      - run: node scripts/smoke-check.mjs pristine "$env:CZL_ROOT" win32
+      - run: node scripts/run.mjs status
+      - name: 汉化
+        run: node scripts/run.mjs localize --close
+      - run: node scripts/smoke-check.mjs patched "$env:CZL_ROOT" win32
+      - run: node scripts/smoke-check.mjs checksums "$env:CZL_ROOT" win32
+      - name: 启动并检查界面
+        run: |
+          $p = Start-Process "$env:CZL_ROOT\Cursor.exe" -ArgumentList "--user-data-dir=$env:RUNNER_TEMP\czl-ud","--remote-debugging-port=9444","--disable-gpu" -PassThru
+          try { node scripts/smoke-check.mjs ui 9444 150; if ($LASTEXITCODE) { throw '界面检查失败' } }
+          finally { Get-Process Cursor -ErrorAction SilentlyContinue | Stop-Process -Force }
+      - name: 还原
+        run: |
+          Start-Sleep 3
+          node scripts/run.mjs revert --close
+      - run: node scripts/smoke-check.mjs pristine "$env:CZL_ROOT" win32
+      - run: node scripts/smoke-check.mjs checksums "$env:CZL_ROOT" win32
+
+  macos:
+    needs: unit
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: macos-latest, arch: arm64, sha256: fed256d59c331944f75dedfbaffa43a7b50e9eda5f2c30156b6a8c2195dbb8c7, sign: adhoc }
+          - { runner: macos-latest, arch: arm64, sha256: fed256d59c331944f75dedfbaffa43a7b50e9eda5f2c30156b6a8c2195dbb8c7, sign: adhoc-deep }
+          - { runner: macos-13, arch: x64, sha256: 80aae63467bef2e9de1b73d349215cd9cc0866290eb04ad3c2a7c9fc033b75af, sign: adhoc }
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: 下载官方 Cursor 并解到 ~/Applications（避开 App Translocation）
+        run: |
+          curl -fL -o cursor.zip "$CURSOR_BASE/darwin/${{ matrix.arch }}/Cursor-darwin-${{ matrix.arch }}.zip"
+          echo "${{ matrix.sha256 }}  cursor.zip" | shasum -a 256 -c -
+          mkdir -p ~/Applications && ditto -x -k cursor.zip ~/Applications
+          echo "CZL_ROOT=$HOME/Applications/Cursor.app/Contents" >> "$GITHUB_ENV"
+          codesign --verify --deep --strict --verbose=2 ~/Applications/Cursor.app
+      - run: node scripts/smoke-check.mjs pristine "$CZL_ROOT" darwin
+      - run: node scripts/run.mjs status --root="$CZL_ROOT"
+      - name: 汉化（macSign=${{ matrix.sign }}）
+        run: node scripts/run.mjs localize --root="$CZL_ROOT" --mac-sign=${{ matrix.sign }}
+      - run: node scripts/smoke-check.mjs patched "$CZL_ROOT" darwin
+      - run: node scripts/smoke-check.mjs checksums "$CZL_ROOT" darwin
+      - name: 签名检查
+        run: |
+          codesign --verify --deep --strict --verbose=2 ~/Applications/Cursor.app
+          codesign -dv ~/Applications/Cursor.app 2>&1 | tee sig.txt
+          grep -q 'Signature=adhoc' sig.txt
+          spctl -a -vv ~/Applications/Cursor.app || echo "spctl 拒绝 ad-hoc 签名是预期的（本地解压、未隔离的副本仍可启动）"
+      - name: 启动并检查界面
+        run: |
+          "$CZL_ROOT/MacOS/Cursor" --user-data-dir="$RUNNER_TEMP/czl-ud" --remote-debugging-port=9444 --disable-gpu &
+          pid=$!
+          node scripts/smoke-check.mjs ui 9444 150; rc=$?
+          kill $pid || true; sleep 5; pkill -f "$CZL_ROOT/MacOS/Cursor" || true
+          exit $rc
+      - run: node scripts/run.mjs revert --root="$CZL_ROOT"
+      - run: node scripts/smoke-check.mjs pristine "$CZL_ROOT" darwin
+      - name: 还原后官方签名完好
+        run: |
+          codesign --verify --deep --strict --verbose=2 ~/Applications/Cursor.app
+          codesign -dv ~/Applications/Cursor.app 2>&1 | grep 'TeamIdentifier=VDXQ22DGB9'

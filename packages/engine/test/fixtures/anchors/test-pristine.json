@@ -1,0 +1,30 @@
+{
+  "version": "test-pristine",
+  "productJson": "resources/app/product.json",
+  "checksumBase": "resources/app/out",
+  "files": [
+    {
+      "relative": "resources/app/out/vs/workbench/workbench.desktop.main.js",
+      "strings": [
+        {
+          "from": "Cursor Settings",
+          "required": true
+        },
+        {
+          "from": "New Agent"
+        },
+        {
+          "from": "Not In Bundle"
+        }
+      ]
+    }
+  ],
+  "platforms": [
+    "linux",
+    "win32",
+    "darwin"
+  ],
+  "pristine": {
+    "resources/app/out/vs/workbench/workbench.desktop.main.js": "c334c8bfa3ebba8effe610c39572ce6bf6287bcc304e19890e17d8e6fa70fc33"
+  }
+}

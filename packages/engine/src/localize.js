@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -15,37 +16,54 @@ import {
   ensureLanguagePack, uninstallLanguagePack, setLocale, findConflicts, downloadLangpack, langpackVersionFor,
 } from './langpack.js';
 import { readState, writeState } from './state.js';
+import * as win from './platform/win.js';
+import * as mac from './platform/mac.js';
 
 export { readState };
-const REPO = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../..');
+// fileURLToPath：Windows 上 URL.pathname 是 /C:/...，路径里有空格/中文时还是 %20 编码，都不能直接当路径用
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
-// Linux 实测路径（Cursor 3.x：product.dataFolderName = .cursor）
-export function defaultPaths(home = os.homedir()) {
-  return {
+// 用户目录（Cursor 3.x：product.dataFolderName = .cursor，三平台扩展目录都在 ~/.cursor）
+// Linux：~/.config/Cursor；Windows：%APPDATA%\Cursor；macOS：~/Library/Application Support/Cursor
+export function defaultPaths(home = os.homedir(), platform = process.platform, env = process.env) {
+  const plat = platform === 'win32' ? win.winDefaultPaths(env, home) : platform === 'darwin' ? mac.macDefaultPaths(home) : {
     userDataDir: path.join(home, '.config/Cursor'),
     extensionsDir: path.join(home, '.cursor/extensions'),
     argvPath: path.join(home, '.cursor/argv.json'),
     dataDir: path.join(home, '.config/cursor-zh-localizer'),
+  };
+  return {
+    ...plat,
     anchorsDir: path.join(REPO, 'anchors'),
     dictPath: path.join(REPO, 'dicts/zh-cn.json'),
     patternsPath: path.join(REPO, 'dicts/zh-cn.patterns.json'),
   };
 }
 
+export function cliFor(platform, root) {
+  if (platform === 'win32') return win.winCli(root);
+  if (platform === 'darwin') return mac.macCli(root);
+  return path.join(root, 'bin', 'cursor');
+}
+
 async function resolve(opts) {
-  const o = { platform: process.platform, ...defaultPaths(), onLog: () => {}, ...opts };
-  const info = await detectCursor({ platform: o.platform, extraRoots: o.installRoot ? [o.installRoot] : [], defaults: !o.installRoot });
+  const platform = opts.platform ?? process.platform;
+  const env = opts.env ?? process.env;
+  const o = { platform, env, ...defaultPaths(os.homedir(), platform, env), onLog: () => {}, macSign: 'adhoc', ...opts };
+  if (!mac.SIGN_MODES.includes(o.macSign)) throw new Error(`macSign 只能是 ${mac.SIGN_MODES.join(' / ')}`);
+  const runner = o.platformRunner;
+  const info = await detectCursor({ platform: o.platform, env: o.env, extraRoots: o.installRoot ? [o.installRoot] : [], defaults: !o.installRoot, runner });
   if (info) {
     o.installRoot ??= info.root;
-    o.cliPath ??= path.join(info.root, 'bin', 'cursor');
+    o.cliPath ??= cliFor(o.platform, info.root);
   }
   // 兼容旧选项 isCursorRunning（测试用）；默认读 /proc
   if (!o.listRunning) {
     o.listRunning = o.isCursorRunning
       ? async () => ((await o.isCursorRunning()) ? [{ pid: -1, main: true, argv: [] }] : [])
-      : async () => (o.installRoot ? listCursorProcesses(o.installRoot) : []);
+      : async () => (o.installRoot ? listCursorProcesses(o.installRoot, { platform: o.platform, runner }) : []);
   }
-  o.closeCursor ??= (log) => closeCursor(o.installRoot, { log });
+  o.closeCursor ??= (log) => closeCursor(o.installRoot, { log, platform: o.platform, runner });
   o.relaunchCursor ??= (r) => relaunchCursor(r, { logFile: path.join(o.dataDir, 'cursor-relaunch.log') });
   return { o, info };
 }
@@ -141,8 +159,12 @@ async function withCursorClosed(o, fn) {
   return r;
 }
 
-const elevationOpts = (o) => ({ workDir: path.join(o.dataDir, 'elevate'), log: o.onLog, strategies: o.elevateStrategies, assumeUnwritable: o.assumeUnwritable, runner: o.elevateRunner });
-const METHOD = { direct: '直接写入', pkexec: 'pkexec 管理员授权', 'sudo-n': '免密 sudo', manual: '终端 sudo 命令' };
+const elevationOpts = (o, actions = []) => ({ workDir: path.join(o.dataDir, 'elevate'), log: o.onLog, strategies: o.elevateStrategies, assumeUnwritable: o.assumeUnwritable, runner: o.elevateRunner, platform: o.platform, actions, probe: o.probeWritable });
+const METHOD = { direct: '直接写入', pkexec: 'pkexec 管理员授权', 'sudo-n': '免密 sudo', manual: '管理员命令', uac: 'UAC 管理员授权', osascript: 'macOS 管理员授权' };
+
+// macOS 重签名要备份的签名文件（还原时写回 → 原 Developer ID 签名恢复有效）
+const signFiles = (o) => (o.platform === 'darwin' && o.macSign !== 'none' ? mac.MAC_SIGN_FILES : []);
+const runnerOf = (o) => o.platformRunner ?? undefined;
 
 export async function status(opts = {}) {
   const { o, info } = await resolve(opts);
@@ -151,21 +173,24 @@ export async function status(opts = {}) {
   const patched = info ? await installPatched(info.root, domRelatives(anchors, state)) : false;
   const stale = await isStale(o, info, anchors, state);
   const base = { cursor: info, supported: !!anchors, supportedVersions: await supportedVersions(o), state, patched, stale, localized: !!state.localized && !stale };
-  if (o.platform !== 'linux' || opts.light) return base;
-  const files = anchors ? targetFiles(anchors) : [];
-  const w = info && files.length ? await checkWritable(info.root, files) : null;
+  if (opts.light) return base;
+  const files = anchors ? [...targetFiles(anchors), ...signFiles(o)] : [];
+  const w = info && files.length ? await checkWritable(info.root, files, { platform: o.platform, probe: o.probeWritable }) : null;
   const pending = state.pending && info && state.pending.installRoot === info.root ? state.pending : null;
+  const linux = o.platform === 'linux';
   return {
     ...base,
-    kind: info ? await installKind(info.root) : null,
+    platform: o.platform,
+    kind: info ? await installKind(info.root, { platform: o.platform, env: o.env }) : null,
     writable: w ? w.writable : null,
     readOnlyFs: w ? w.readOnlyFs : null,
-    needsElevation: !!w && !w.writable && !w.readOnlyFs,
-    elevation: await elevationInfo(),
+    needsElevation: !!w && !w.writable && !w.readOnlyFs && !w.appManagement && !w.translocated,
+    ...(o.platform === 'darwin' ? { mac: { translocated: !!w?.translocated, appManagement: !!w?.appManagement, signMode: o.macSign } } : {}),
+    elevation: await elevationInfo(process.env, o.platform),
     running: info ? (await o.listRunning()).length : 0,
-    installs: await detectAllCursors({ platform: o.platform }),
-    appImages: await findAppImages(),
-    extracted: await listExtracted(),
+    installs: await detectAllCursors({ platform: o.platform, env: o.env, runner: runnerOf(o) }),
+    appImages: linux ? await findAppImages() : [],
+    extracted: linux ? await listExtracted() : [],
     otherInstall: await otherInstall(state, info),
     pending: pending ? { kind: pending.kind, command: pending.command, at: pending.at, applied: await filesMatch(info.root, pending.staged) } : null,
   };
@@ -191,7 +216,11 @@ export async function localize(opts = {}) {
     return fail('UNSUPPORTED', `Cursor ${info.version} 暂未适配（目前支持：${sv.join('、') || '无'}），为避免损坏安装，已拒绝修改`, { supportedVersions: sv });
   }
   const files = targetFiles(anchors);
-  const w = await checkWritable(o.installRoot, files);
+  const backupFiles = [...files, ...signFiles(o)];
+  const w = await checkWritable(o.installRoot, backupFiles, { platform: o.platform, probe: o.probeWritable });
+  if (w.translocated) return fail('MAC_TRANSLOCATED', mac.TRANSLOCATED_HINT);
+  if (w.appManagement) return fail('MAC_APP_MANAGEMENT', mac.APP_MANAGEMENT_HINT, { settingsUrl: mac.APP_MANAGEMENT_SETTINGS_URL });
+  if (o.platform === 'darwin' && o.macSign === 'adhoc-deep' && !w.writable) return fail('NEED_DIRECT_WRITE', 'adhoc-deep 重签名需要当前用户能直接修改 Cursor.app；请改用默认的 adhoc 模式，或先把 Cursor.app 改为当前用户所有');
   if (w.readOnlyFs) return fail('READ_ONLY_FS', `Cursor 安装在只读文件系统上（${w.mount?.fstype}：${w.mount?.mountpoint}），无法直接修改。AppImage 版请使用“解包后汉化”`);
 
   const pending = state.pending?.kind === 'localize' && state.pending.installRoot === o.installRoot && state.pending.version === info.version ? state.pending : null;
@@ -225,8 +254,12 @@ export async function localize(opts = {}) {
       log(`沿用上次的备份：${backupDir}`);
     } else {
       if (pending) await dropBackup({ backupDir });
-      await createBackup({ installRoot: o.installRoot, files, backupDir });
-      log(`已备份 ${files.length} 个文件 → ${backupDir}`);
+      await createBackup({ installRoot: o.installRoot, files: backupFiles, backupDir });
+      log(`已备份 ${backupFiles.length} 个文件 → ${backupDir}`);
+      if (o.platform === 'darwin' && o.macSign === 'adhoc-deep') {
+        await mac.cloneBundle(mac.appPathOf(o.installRoot), path.join(backupDir, 'bundle', 'Cursor.app'), { runner: runnerOf(o) });
+        log('已克隆整个 Cursor.app（adhoc-deep 还原用）');
+      }
     }
 
     // 在用户目录的暂存区里算好补丁（普通权限），安装目录此时还没动
@@ -248,7 +281,7 @@ export async function localize(opts = {}) {
 
     const items = [];
     for (const f of files) items.push({ relative: f, src: path.join(staging, f), sha256: await sha256File(path.join(staging, f)) });
-    const a = await applyFiles({ installRoot: o.installRoot, items, ...elevationOpts(o) });
+    const a = await applyFiles({ installRoot: o.installRoot, items, ...elevationOpts(o, o.platform === 'darwin' ? mac.postWriteActions(o.macSign) : []) });
     if (!a.ok) {
       if (a.code === 'NEED_ELEVATION') {
         await writeState(o.dataDir, {
@@ -265,6 +298,41 @@ export async function localize(opts = {}) {
     log(`已写入安装目录（${METHOD[a.method] ?? a.method}）`);
     return finishLocalize(o, info, state, backupDir, result, state.carry, a.method);
   });
+}
+
+// macOS 写入后：直接写入时由引擎重签名、去隔离属性；经管理员授权时 helper 已做过，这里只校验
+async function macAfterWrite(o, method) {
+  const app = mac.appPathOf(o.installRoot);
+  if (!app) return;
+  const runner = runnerOf(o);
+  if (method === 'direct') {
+    if (o.macSign === 'adhoc' || o.macSign === 'adhoc-deep') {
+      await mac.signAdhoc(app, { deep: o.macSign === 'adhoc-deep', runner });
+      o.onLog(`已对 Cursor.app 做 ad-hoc 重签名（${o.macSign === 'adhoc-deep' ? '含内嵌代码 --deep' : '外层'}）`);
+    }
+    await mac.removeQuarantine(app, { runner });
+  } else if (o.macSign !== 'none') {
+    const v = await mac.verifySignature(app, { runner });
+    if (!v.ok) throw new Error(`签名校验失败：${v.detail}`);
+  }
+  if (o.macSign !== 'none') o.onLog('提示：重签名后首次启动 Cursor 时，macOS 可能询问是否允许访问钥匙串“Cursor Safe Storage”，请选“始终允许”；Cursor 自动更新可能失败，更新前请先还原');
+}
+
+// 把安装恢复成备份里的原版。macOS adhoc：备份里含原始签名文件，一并写回；adhoc-deep：用整包克隆换回
+async function restoreInstall(o, installRoot, backupDir, macSign) {
+  if (o.platform === 'darwin' && macSign === 'adhoc-deep') {
+    const clone = path.join(backupDir, 'bundle', 'Cursor.app');
+    if (await exists(clone)) {
+      await mac.restoreBundle(mac.appPathOf(installRoot), clone, { runner: runnerOf(o) });
+      return { ok: true, method: 'direct' };
+    }
+  }
+  const a = await applyFiles({ installRoot, items: await backupItems(backupDir), ...elevationOpts(o) });
+  if (a.ok && o.platform === 'darwin' && mac.appPathOf(installRoot)) {
+    const v = await mac.verifySignature(mac.appPathOf(installRoot), { runner: runnerOf(o) });
+    o.onLog(v.ok ? '已恢复 Cursor 原始签名（codesign 校验通过）' : `⚠ 恢复后签名校验未通过：${v.detail}`);
+  }
+  return a;
 }
 
 // 在一棵目录树（暂存区或测试用假安装根）上完成全部补丁：静态替换 + NLS + DOM 补漏注入 + product.json 校验值
@@ -285,6 +353,7 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
   const log = o.onLog;
   const undo = { langpack: false, prevLocale: undefined };
   try {
+    if (o.platform === 'darwin') await macAfterWrite(o, method);
     if (!o.vsixPath) o.vsixPath = await downloadLangpack({ version: langpackVersionFor(info.vscodeVersion), cacheDir: path.join(o.dataDir, 'cache') });
     const lp = await ensureLanguagePack({ cliPath: o.cliPath, extensionsDir: o.extensionsDir, userDataDir: o.userDataDir, vsixPath: o.vsixPath });
     undo.langpack = lp.installed;
@@ -298,6 +367,7 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
     await writeState(o.dataDir, {
       localized: true, version: info.version, installRoot: o.installRoot, backupDir, at: new Date().toISOString(), method,
       installedLangpack: undo.langpack || !!carry?.installedLangpack,
+      ...(o.platform === 'darwin' ? { macSign: o.macSign } : {}),
       prevLocale: carry && undo.prevLocale === 'zh-cn' ? carry.prevLocale : undo.prevLocale,
       ...result, commit: info.commit,
     });
@@ -307,7 +377,7 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
   } catch (e) {
     log(`✖ 失败：${e.message}，正在回滚`);
     let restored = true;
-    const back = await applyFiles({ installRoot: o.installRoot, items: await backupItems(backupDir), ...elevationOpts(o) }).catch((x) => ({ ok: false, error: x.message }));
+    const back = await restoreInstall(o, o.installRoot, backupDir, o.macSign).catch((x) => ({ ok: false, error: x.message }));
     if (back.ok) await dropBackup({ backupDir }); else restored = false;
     try { if (undo.prevLocale !== undefined) await setLocale({ argvPath: o.argvPath, locale: undo.prevLocale }); } catch { restored = false; }
     try { if (undo.langpack) await uninstallLanguagePack(o); } catch { restored = false; }
@@ -347,7 +417,7 @@ export async function revert(opts = {}) {
     if (await filesMatch(installRoot, shaMap(items))) {
       log('安装文件已是原版（管理员命令已执行），继续清理');
     } else {
-      const a = await applyFiles({ installRoot, items, ...elevationOpts(o) });
+      const a = await restoreInstall(o, installRoot, backupDir, state.macSign ?? (o.platform === 'darwin' ? 'adhoc' : undefined));
       if (!a.ok) {
         if (a.code === 'NEED_ELEVATION') log(`需要管理员权限：${a.tried.map((t) => `${t.via}：${t.reason}`).join('；') || '已跳过自动提权'}`);
         else log(`✖ 还原失败：${a.error}`);

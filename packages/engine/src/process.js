@@ -2,9 +2,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import fsSync from 'node:fs';
 import { spawn } from 'node:child_process';
+import * as win from './platform/win.js';
+import * as mac from './platform/mac.js';
 
 // 找出某个 Cursor 安装（<root>/cursor）正在运行的进程。主进程 = 不带 --type= 的那个；cli.js 是一次性命令行进程，跳过
-export async function listCursorProcesses(root, { procDir = '/proc', selfPid = process.pid } = {}) {
+export async function listCursorProcesses(root, { procDir = '/proc', selfPid = process.pid, platform = process.platform, runner } = {}) {
+  if (platform === 'win32') return win.listWinProcesses(root, { runner, selfPid });
+  if (platform === 'darwin') return mac.listMacProcesses(root, { runner, selfPid });
   if (process.platform !== 'linux' && procDir === '/proc') return [];
   const exe = path.join(root, 'cursor');
   let realExe = exe;
@@ -51,7 +55,10 @@ async function procInfo(procDir, pid) {
 }
 
 // Cursor/VS Code 收到 SIGTERM 会正常退出（未保存内容由热退出机制保存，下次启动恢复）
-export async function closeCursor(root, { procDir = '/proc', timeoutMs = 20000, kill = process.kill.bind(process), log = () => {} } = {}) {
+// Windows：taskkill 优雅关闭，超时再强制；macOS：SIGTERM
+export async function closeCursor(root, { procDir = '/proc', timeoutMs = 20000, kill = process.kill.bind(process), log = () => {}, platform = process.platform, runner } = {}) {
+  if (platform === 'win32') return win.closeWin(root, { runner, timeoutMs, log });
+  if (platform === 'darwin') return mac.closeMac(root, { runner, kill, timeoutMs, log });
   const procs = await listCursorProcesses(root, { procDir });
   const mains = procs.filter((p) => p.main);
   if (!procs.length) return { ok: true, closed: false };
@@ -69,12 +76,18 @@ export async function closeCursor(root, { procDir = '/proc', timeoutMs = 20000, 
 
 const DROP_ENV = /^(VSCODE_|ELECTRON_RUN_AS_NODE$)/;
 
-export function relaunchCursor({ argv, cwd, env }, { spawnFn = spawn, logFile } = {}) {
+export function relaunchCursor({ argv, cwd, env, platform, app }, { spawnFn = spawn, logFile } = {}) {
+  // macOS：交给 LaunchServices 打开 .app（和用户双击一样）；不带原参数，Cursor 自己恢复窗口
+  if (platform === 'darwin') {
+    const child = spawnFn('/usr/bin/open', [app], { detached: true, stdio: 'ignore' });
+    child.unref?.();
+    return { pid: child.pid };
+  }
   const e = { ...(env && Object.keys(env).length ? env : process.env) };
   for (const k of Object.keys(e)) if (DROP_ENV.test(k)) delete e[k];
   let stdio = 'ignore';
   if (logFile) { try { const fd = fsSync.openSync(logFile, 'a'); stdio = ['ignore', fd, fd]; } catch {} }
-  const child = spawnFn(argv[0], argv.slice(1), { cwd: cwd || process.env.HOME, env: e, detached: true, stdio });
+  const child = spawnFn(argv[0], argv.slice(1), { cwd: cwd || process.env.HOME || process.env.USERPROFILE, env: e, detached: true, stdio, windowsHide: false });
   child.unref?.();
   return { pid: child.pid };
 }

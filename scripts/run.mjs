@@ -1,4 +1,5 @@
 // 用法：node scripts/run.mjs status|localize|revert [--close] [--no-relaunch] [--elevate=pkexec,sudo-n,manual] [--root=<安装根>]
+//       macOS：[--mac-sign=adhoc|adhoc-deep|none]（默认 adhoc：改完对 Cursor.app 外层做 ad-hoc 重签名）
 //       node scripts/run.mjs extract-appimage <Cursor-*.AppImage>   （解包 AppImage 到用户目录，之后对解包副本汉化）
 // 只作用于本机探测到的 Cursor。--close：Cursor 在运行时先优雅关闭，完成后按原命令行重新打开。
 import { localize, revert, status } from '../packages/engine/src/index.js';
@@ -15,6 +16,7 @@ const opts = {
   relaunch: !flag('no-relaunch'),
   ...(val('elevate') ? { elevateStrategies: val('elevate').split(',') } : {}),
   ...(val('root') ? { installRoot: val('root') } : {}),
+  ...(val('mac-sign') ? { macSign: val('mac-sign') } : {}),
 };
 let r;
 if (cmd === 'localize') r = await localize(opts);
@@ -25,5 +27,6 @@ else if (cmd === 'extract-appimage') {
   catch (e) { r = { ok: false, error: e.message }; }
 } else r = await status(opts);
 if (r.code === 'NEED_ELEVATION') console.log(`\n需要管理员权限，请在终端执行：\n  ${r.command}\n然后重新运行：node scripts/run.mjs ${cmd}\n`);
+if (r.code === 'MAC_APP_MANAGEMENT') console.log(`\n${r.error}\n系统设置：${r.settingsUrl}\n`);
 console.log(JSON.stringify(r, null, 2));
 process.exitCode = r.ok === false ? 1 : 0;
