@@ -8,7 +8,7 @@
 // Windows 命令行包可以用 Cursor.exe 自带的 Node（ELECTRON_RUN_AS_NODE=1）跑本脚本；子进程（重新打开 Cursor 等）不能继承这个变量
 import fs from 'node:fs';
 import path from 'node:path';
-import { localize, revert, status } from '../packages/engine/src/index.js';
+import { localize, revert, status, nextStep } from '../packages/engine/src/index.js';
 import { extractAppImage } from '../packages/engine/src/appimage.js';
 import { relaunchCursor } from '../packages/engine/src/process.js';
 
@@ -54,5 +54,7 @@ if (cmd === 'localize' && r.ok && flag('start') && !r.relaunched) {
     console.log('已打开 Cursor');
   }
 }
-if (cmd !== 'status') console.log(r.ok === false ? `\n✖ 失败：${r.error ?? r.code}` : `\n✔ ${cmd === 'localize' ? '汉化完成' : '已还原'}${r.relaunched ? '，Cursor 已重新打开' : ''}`);
+const doneText = cmd === 'localize' ? (r.already ? '已是最新汉化，无需重复操作' : r.refreshed ? '汉化已更新' : '汉化完成') : '已还原';
+if (cmd !== 'status') console.log(r.ok === false ? `\n✖ 失败：${r.error ?? r.code}${nextStep(r.code) ? `\n  下一步：${nextStep(r.code)}` : ''}${logFile ? `\n  日志：${logFile}` : ''}` : `\n✔ ${doneText}${r.relaunched ? '，Cursor 已重新打开' : r.already ? '' : '，重启 Cursor 后生效'}`);
+if (cmd === 'status') console.log(`\n${!r.cursor ? '✖ 未找到 Cursor' : r.stale ? `⚠ Cursor 已更新/重装，汉化已失效${r.supported ? '：运行“一键汉化”即可重新汉化' : `，且 Cursor ${r.cursor.version} 暂未适配（支持：${r.supportedVersions.join('、')}）`}` : r.localized ? (r.upToDate === false ? '✔ 已汉化（本工具有更新的汉化内容：再运行一次“一键汉化”即可更新）' : '✔ 已汉化') : r.supported ? '· 未汉化' : `✖ Cursor ${r.cursor.version} 暂未适配（支持：${r.supportedVersions.join('、')}）`}`);
 process.exitCode = r.ok === false ? 1 : 0;

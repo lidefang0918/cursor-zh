@@ -11,3 +11,4 @@ export { applyFiles, checkWritable, filesMatch, mountOf, elevationInfo, HELPER_P
 export { listCursorProcesses, closeCursor, relaunchCursor } from './process.js';
 export { findAppImages, extractAppImage, listExtracted, removeExtracted, extractBase } from './appimage.js';
 export { detectAllCursors, installKind } from './detect.js';
+export { NEXT_STEP, nextStep } from './hints.js';
