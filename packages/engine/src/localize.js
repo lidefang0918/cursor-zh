@@ -247,7 +247,7 @@ export async function localize(opts = {}) {
     const dict = await loadDict(o.dictPath);
     const patterns = await loadPatterns(o.patternsPath);
     // 先把需要联网的语言包下好：失败的话什么都还没改
-    o.vsixPath ??= await downloadLangpack({ version: langpackVersionFor(info.vscodeVersion), cacheDir: path.join(o.dataDir, 'cache') });
+    o.vsixPath ??= await downloadLangpack({ version: langpackVersionFor(info.vscodeVersion), cacheDir: path.join(o.dataDir, 'cache'), vendorDir: path.join(REPO, 'vendor') });
 
     const backupDir = path.join(o.dataDir, 'backups', info.version);
     if (pending && (await exists(path.join(backupDir, 'manifest.json'))) && (await filesMatch(o.installRoot, shaMap(await backupItems(backupDir))))) {
@@ -354,7 +354,7 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
   const undo = { langpack: false, prevLocale: undefined };
   try {
     if (o.platform === 'darwin') await macAfterWrite(o, method);
-    if (!o.vsixPath) o.vsixPath = await downloadLangpack({ version: langpackVersionFor(info.vscodeVersion), cacheDir: path.join(o.dataDir, 'cache') });
+    if (!o.vsixPath) o.vsixPath = await downloadLangpack({ version: langpackVersionFor(info.vscodeVersion), cacheDir: path.join(o.dataDir, 'cache'), vendorDir: path.join(REPO, 'vendor') });
     const lp = await ensureLanguagePack({ cliPath: o.cliPath, extensionsDir: o.extensionsDir, userDataDir: o.userDataDir, vsixPath: o.vsixPath });
     undo.langpack = lp.installed;
     log(lp.installed ? `已安装语言包：${lp.extensionPath}` : `语言包已存在：${lp.extensionPath}`);

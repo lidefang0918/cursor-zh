@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """按真实 Cursor 安装生成静态锚点清单（开发工具，不随 GUI 运行）。
 
-用法：python3 scripts/build-anchors.py <安装根> [--platform linux|win32|darwin]
+用法：python3 scripts/build-anchors.py <安装根> [--platform linux|win32|darwin] [--platforms darwin,...] [--seed anchors/<旧版本>.json] [--langpack <main.i18n.json>]
 安装根：Linux /usr/share/cursor、Windows 解包出的 Cursor 目录、macOS 的 Cursor.app/Contents。
 读取 resources/app（macOS 为 Resources/app）/product.json 的版本，扫描两个工作台 bundle，
 只把"所有出现位置都像展示文案"的词条收入静态锚点；其余只走 DOM 补漏。
@@ -116,7 +116,9 @@ def main():
     srcs = {b: open(os.path.join(app, 'out/vs/workbench', b), encoding='utf-8').read() for b in BUNDLES}
     out = os.path.join(REPO, 'anchors', *([platform] if platform else []), f"{product['version']}.json")
     prev = json.load(open(out)) if os.path.exists(out) else {}
-    old = {f['relative']: f.get('fragments', []) for f in prev.get('files', [])}
+    # --seed <旧版本锚点>：新版本没有旧文件时，从相邻版本继承手写片段（仍能按原次数精确匹配的才保留）
+    seed = json.load(open(sys.argv[sys.argv.index('--seed') + 1])) if '--seed' in sys.argv else {}
+    old = {f['relative']: f.get('fragments', []) for f in (prev or seed).get('files', [])}
     files, report = [], []
     for b in BUNDLES:
         strings = []
@@ -139,7 +141,8 @@ def main():
         'dom': {'relatives': [f['relative'] for f in files]}, 'files': files,
     }
     if not platform:
-        anchors['platforms'] = prev.get('platforms', ['linux', 'win32', 'darwin'])
+        anchors['platforms'] = (sys.argv[sys.argv.index('--platforms') + 1].split(',') if '--platforms' in sys.argv
+                                else prev.get('platforms', ['linux', 'win32', 'darwin']))
     rels = [f['relative'] for f in files] + ['resources/app/out/nls.messages.json']
     anchors['pristine'] = {r: hashlib.sha256(open(os.path.join(app, r[len('resources/app/'):]), 'rb').read()).hexdigest() for r in rels}
     lp = sys.argv[sys.argv.index('--langpack') + 1] if '--langpack' in sys.argv else (sorted(glob.glob(os.path.expanduser(

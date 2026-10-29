@@ -17,8 +17,11 @@ export function langpackUrl(version) {
   return `https://open-vsx.org/api/MS-CEINTL/vscode-language-pack-zh-hans/${version}/file/MS-CEINTL.vscode-language-pack-zh-hans-${version}.vsix`;
 }
 
-export async function downloadLangpack({ version, cacheDir }) {
-  const dest = path.join(cacheDir, `${LANGPACK_ID}-${version}.vsix`);
+// vendorDir：离线分发包里随附的 vsix（<vendorDir>/<id>-<version>.vsix），有就直接用，不联网
+export async function downloadLangpack({ version, cacheDir, vendorDir }) {
+  const name = `${LANGPACK_ID}-${version}.vsix`;
+  if (vendorDir) { try { await fs.access(path.join(vendorDir, name)); return path.join(vendorDir, name); } catch {} }
+  const dest = path.join(cacheDir, name);
   try { await fs.access(dest); return dest; } catch {}
   const res = await fetch(langpackUrl(version));
   if (!res.ok) throw new Error(`下载语言包失败 ${version}: HTTP ${res.status}`);

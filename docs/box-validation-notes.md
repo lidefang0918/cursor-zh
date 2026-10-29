@@ -370,3 +370,38 @@ box 重启会清掉 `/usr/share/cursor`（以及 apt 源 `cursor.list`），`~/.
 - 打包产物能否在真机上启动。
 
 详见 `docs/real-machine-test-plan.md`。
+
+## 第 7 轮（2026-10-29 18:45–19:00，Asia/Shanghai）：准备在用户 Mac 上验证（Cursor 3.27.14 arm64）
+
+- **下载地址**：`https://downloads.cursor.com/production/69b724ebc67ec522c1b5d287a5025f7a7e81be97/darwin/arm64/Cursor-darwin-arm64.zip`。zip 的 sha256 是 d0cab7ea553c5fa225ca5bc65e8608f693cdb9c040673fdcfec993eabe15dd60。
+  - 注意：下载路径里的 hash（末位是 `7`）和 product.json 里的 commit `69b724eb…be90` **不一样**。用 commit 拼出的地址返回 403。
+  - 3.27.22 也是这样：下载路径是 `…c1f`，product.json 是 `…c10`。
+  - 解出的包：version 3.27.14，commit 69b724ebc67ec522c1b5d287a5025f7a7e81be90，vscodeVersion 1.128.0，和用户机器上的一致。
+- **原版 sha256**：`docs/pristine-3.27.14-darwin-arm64.sha256`，路径相对 `Cursor.app/Contents/Resources/app`，可以直接用 `shasum -a 256 -c` 校验。
+  - 和 3.27.22 相比，两个 workbench JS 和 product.json 不同；nls.messages.json 相同（1caf42fe…）。
+  - 签名：Team VDXQ22DGB9，hardened runtime。
+  - Electron fuses：RunAsNode=1，所以 CLI 可以用 `ELECTRON_RUN_AS_NODE`；EmbeddedAsarIntegrityValidation=0。
+- **锚点 `anchors/3.27.14.json`**：
+  - 生成命令：`build-anchors.py <tree> --platforms darwin --seed anchors/3.27.22.json`。这两个参数是本轮新加的：`--platforms` 只声明已验证的平台；`--seed` 从相邻版本继承手写片段。
+  - 耗时约 51 秒，全自动，没有手工修改。
+  - 覆盖率和 3.27.22 **完全相同**（3.27.22 重新生成后逐字节不变，可作对照）：
+
+    | 文件 | SAFE | UNSAFE（只走 DOM） | MISSING | 片段 |
+    |---|---|---|---|---|
+    | desktop | 388 | 119 | 154 | 27 |
+    | glass | 429 | 124 | 108 | 27 |
+
+    - 两个版本的词条集合没有差异，2 条 required 都在。
+    - 词典共 661 条，其中 108 条在两个 bundle 里都没有出现（两个版本一样）。
+    - NLS 176 条，语言包同为 1.128.0。
+- **副本验证**：`verify-platform-trees` 全部通过，日志 `/workspace/logs/verify-3.27.14.log`。
+  - pristine 一致。
+  - 静态替换 1549 处，片段 74 处，未命中 0。
+  - NLS 176 条，未命中 0。
+  - `node --check` 通过。
+  - 更新了 1 个 checksum，product.json 其余字节不变。
+- **CLI 离线包**：`sh scripts/pack-cli.sh` 生成 `/workspace/dist-mac-cli/czl-cli.tar.gz`。
+  - 引擎没有任何依赖。
+  - 随包带了 vsix（sha256 d43d9f7b…，和 Open VSX 上的一致）。引擎会优先使用 `vendor/` 里的 vsix。
+  - 用法说明在 `docs/mac-cli/RUN.md`。
+  - 在 box 上演练过：解开 tar，从包里导入引擎，用 platform=darwin 对 3.27.14 的真实文件做 localize → revert，codesign/xattr/ps 用假的。结果：替换 1549 + 74，未命中 0；没有联网下载；还原后 4 个文件的 sha、MacOS/Cursor 和 CodeResources 都逐字节恢复。
