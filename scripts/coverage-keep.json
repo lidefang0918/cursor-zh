@@ -87,5 +87,30 @@
     "^[A-Z]{2,5}$",
     "^\\$\\d[\\d.,]*(/mo|/month|/yr)?$",
     "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \\d{1,2}, \\d{4}$"
+  ],
+  "words": [
+    "Claude Code",
+    "Origin",
+    "Graphite",
+    "Made with Cursor",
+    "cursorignore",
+    "http",
+    "https",
+    "cursor.com",
+    "username",
+    "changelog",
+    "docs",
+    "NDJSON Ingest",
+    "Vim",
+    "npm",
+    "Node",
+    "Output",
+    "Shell",
+    "PATH",
+    "code",
+    "Quick Open",
+    "Debug",
+    "Create",
+    "Jupyter Notebook"
   ]
 }

@@ -6,9 +6,10 @@
 // 只做只读操作：点击设置导航项、打开/关闭菜单（Escape）。会跳过外链导航项
 // （带 ↗ 图标、云端智能体、文档）、账户入口与“返回”，不点击页面内任何按钮。
 //
-// 用法（--palette-pages 默认 2，即命令面板最上面约两屏条目）：
+// 默认严格口径（中英混排算半翻译、计入英文），--loose 用旧口径（含中文即算已译）。
+// 用法（--palette-pages 为翻页上限，默认 400，翻到底自动停）：
 //   cursor --remote-debugging-port=9333 &   # 临时调试端口，扫描后请正常重启
-//   node scripts/coverage-scan.mjs [--port 9333] [--json out.json] [--md out.md] [--only agents-settings,classic-settings,palette,menus,context]
+//   node scripts/coverage-scan.mjs [--port 9333] [--json out.json] [--md out.md] [--only agents-settings,classic-settings,palette,menus,context,chrome] [--loose]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,8 +17,8 @@ import { fileURLToPath } from 'node:url';
 const args = process.argv.slice(2);
 const opt = (name, dflt) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : dflt; };
 const PORT = +opt('port', '9333');
-const PAGES = +opt('palette-pages', '2');
-const ONLY = opt('only', 'agents-settings,classic-settings,palette,menus,context').split(',');
+const PAGES = +opt('palette-pages', '400');
+const ONLY = opt('only', 'agents-settings,classic-settings,palette,menus,context,chrome').split(',');
 const here = dirname(fileURLToPath(import.meta.url));
 const KEEP = JSON.parse(readFileSync(join(here, 'coverage-keep.json'), 'utf8'));
 const SKIP_NAV = ['返回', 'Back', '云端智能体', 'Cloud Agents', '文档', 'Docs', 'VS Code 设置', 'VS Code Settings'];
@@ -70,10 +71,17 @@ const COLLECT = `(sel, minX) => {
 
 const CJK = /[\u3400-\u9fff\u3000-\u303f\uff00-\uffef]/;
 const keepRe = KEEP.regex.map((r) => new RegExp(r));
+// 严格口径：中英混排（如“开发人员: Show GPU Info”）去掉保留词后仍剩 ≥2 个英文单词的，算“半翻译”，计入英文。
+const keepWords = new RegExp(`\\b(?:${[...KEEP.exact, ...(KEEP.words || [])].sort((a, b) => b.length - a.length).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'g');
+const STRICT = !args.includes('--loose');
+function isPartial(t) {
+  const rest = t.replace(keepWords, ' ').replace(/\{[^}]*\}|https?:\S+|[\w.-]+\.(?:json|md|py|ts|js|mdc)\b/g, ' ');
+  return (rest.match(/[A-Za-z]{3,}/g) || []).length >= 2;
+}
 function classify(texts) {
   const zh = [], en = [], kept = [];
   for (const t of texts) {
-    if (CJK.test(t)) zh.push(t);
+    if (CJK.test(t)) (STRICT && isPartial(t) ? en : zh).push(t);
     else if (!/[A-Za-z]{2,}/.test(t)) continue;
     else if (KEEP.exact.includes(t) || keepRe.some((r) => r.test(t))) kept.push(t);
     else en.push(t);
@@ -159,6 +167,22 @@ if (classic && ONLY.includes('context')) {
   await contextMenus(classic, 'classic-context', '.explorer-folders-view .monaco-list-row, .sidebar .pane-header, .activitybar .action-item');
 }
 
+// 界面框架：经典窗口的标题栏/活动栏/侧边栏/面板/状态栏，编辑器右键菜单；Agents 窗口主界面（聊天内容由 COLLECT 排除）。
+if (classic && ONLY.includes('chrome')) {
+  process.stderr.write('经典窗口界面框架：\n');
+  await classic.key('Escape'); await sleep(300);
+  for (const [name, sel] of [['标题栏', '.part.titlebar'], ['活动栏', '.part.activitybar, .part.sidebar .composite.title'], ['侧边栏', '.part.sidebar'], ['面板', '.part.panel'], ['状态栏', '.part.statusbar'], ['辅助侧边栏', '.part.auxiliarybar']]) {
+    const texts = await classic.evaluate(`(${COLLECT})(${JSON.stringify(sel)})`);
+    if (texts.length) add('classic-chrome', name, texts);
+  }
+  const ed = await classic.evaluate(`(() => { const e = document.querySelector('.editor-instance .monaco-editor .view-lines'); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.x + 40, y: r.y + 10 }; })()`);
+  if (ed) { await classic.rightClick(ed.x, ed.y); await sleep(800); add('classic-context', '编辑器', await classic.evaluate(`(${COLLECT})(${JSON.stringify(MENU_SEL)})`)); await classic.key('Escape'); await sleep(300); }
+}
+if (agents && ONLY.includes('chrome')) {
+  process.stderr.write('Agents 窗口主界面：\n');
+  add('agents-chrome', '主界面', await agents.evaluate(`(${COLLECT})(null)`));
+}
+
 if (classic && ONLY.includes('classic-settings')) {
   process.stderr.write('经典窗口 Cursor 设置：\n');
   await settingsPages(classic, 'classic-settings', {
@@ -174,11 +198,13 @@ if (classic && ONLY.includes('palette')) {
   await classic.key('Escape'); await sleep(300);
   await classic.key('p', 10); await sleep(1200);
   const all = new Set();
-  for (let i = 0; i < PAGES; i++) {
-    for (const t of await classic.evaluate(`[...document.querySelectorAll('.quick-input-list .monaco-list-row .quick-input-list-row:first-child .label-name, .quick-input-list .monaco-list-row .quick-input-list-separator')].map(e => e.textContent.trim()).filter(Boolean)`)) all.add(t);
-    await classic.key('PageDown'); await sleep(250);
+  // 一直翻到底（连续 5 页没有新条目即停），PAGES 是上限
+  for (let i = 0, same = 0, prev = -1; i < PAGES && same < 5; i++) {
+    for (const t of await classic.evaluate(`[...document.querySelectorAll('.quick-input-list .monaco-list-row')].map(r => { const e = r.querySelector('.label-name'); return e ? e.textContent.trim() : ''; }).filter(Boolean)`)) all.add(t);
+    same = all.size === prev ? same + 1 : 0; prev = all.size;
+    await classic.key('PageDown'); await sleep(150);
   }
-  add('palette', `命令面板（前 ${PAGES} 页）`, [...all]);
+  add('palette', `命令面板（全部 ${all.size} 条）`, [...all]);
   await classic.key('Escape');
 }
 
