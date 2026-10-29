@@ -76,9 +76,21 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
     if (hasClass(node, NAME_CLASSES)) return 2;
     return 0;
   }
-  function inComposerTab(node) {
-    for (var p = node; p; p = p.parentNode) if (p.nodeType === 1 && p.classList && p.classList.contains('composer-tab-label')) return true;
-    return false;
+  // 名字区里允许翻的两种位置：2 = 聊天标签页标题（只翻默认名）；3 = 命令面板（输入以 ">" 开头）条目的主标题（整段精确匹配）
+  function nameArea(node) {
+    var row = null;
+    for (var p = node; p; p = p.parentNode) {
+      if (p.nodeType !== 1 || !p.classList) continue;
+      if (p.classList.contains('composer-tab-label')) return 2;
+      if (p.classList.contains('quick-input-list-label-meta')) return 0; // 命令的英文别名保留
+      if (p.classList.contains('quick-input-list-row')) row = p;
+      if (row && p.classList.contains('quick-input-widget')) {
+        if (row.parentNode && row.parentNode.firstElementChild !== row) return 0;
+        var input = p.querySelector ? (p.querySelector('.quick-input-box input') || p.querySelector('input[type=text]')) : null; // 头部还有“全选”复选框
+        return input && typeof input.value === 'string' && input.value.charAt(0) === '>' ? 3 : 0;
+      }
+    }
+    return 0;
   }
   // 返回节点所处的模式（按祖先链）：1 跳过，2 名字区，0 正常
   function modeOf(node) {
@@ -88,7 +100,7 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
       if (m === 1) return 1;
       if (m === 2) mode = 2;
     }
-    return mode === 2 ? (inComposerTab(node) ? 2 : 1) : 0;
+    return mode === 2 ? (nameArea(node) || 1) : 0;
   }
   function inChrome(node) {
     for (var p = node; p; p = p.parentNode) if (p.nodeType === 1 && hasClass(p, CHROME_CLASSES)) return true;
@@ -146,9 +158,9 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
   }
   function text(t, mode) {
     if (!/[A-Za-z]/.test(t.nodeValue || '')) return;
-    if (mode === 2) { // 聊天标签页标题：只翻默认名
+    if (mode === 2 || mode === 3) { // 2 聊天标签页标题：只翻默认名；3 命令面板主标题：整段精确匹配
       var n = (t.nodeValue || '').trim();
-      if (has.call(DEFAULT_TITLES, n) && has.call(DICT, n)) t.nodeValue = t.nodeValue.replace(n, DICT[n]);
+      if ((mode === 3 || has.call(DEFAULT_TITLES, n)) && has.call(DICT, n)) t.nodeValue = t.nodeValue.replace(n, DICT[n]);
       return;
     }
     if (sentence(t)) return;
@@ -157,15 +169,15 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
     if (!v) { var pv = pattern(t.nodeValue); if (pv && inChrome(t)) v = pv; } // 先匹配模板再查祖先，避免每个文本节点都爬到根
     if (v && v !== t.nodeValue) t.nodeValue = v;
   }
-  // mode：0 正常；2 名字区（只在聊天标签页里出现，其余名字区已在 skip 时整棵跳过）
+  // mode：0 正常；2/3 名字区（聊天标签页 / 命令面板主标题，其余名字区已在 skip 时整棵跳过）
   function walk(node, mode) {
     mode = mode || 0;
     if (node.nodeType === 3) return text(node, mode);
     if (node.nodeType !== 1) return;
     var m = skip(node);
     if (m === 1) return;
-    if (m === 2) { if (!inComposerTab(node)) return; mode = 2; }
-    if (mode !== 2) attrs(node);
+    if (m === 2) { mode = nameArea(node); if (!mode) return; }
+    if (mode !== 2 && mode !== 3) attrs(node);
     for (var c = node.firstChild; c; c = c.nextSibling) walk(c, mode);
   }
   function start() {

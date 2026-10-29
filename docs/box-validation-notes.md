@@ -155,3 +155,63 @@ box 重启会清掉 `/usr/share/cursor`（以及 apt 源 `cursor.list`），`~/.
   - **浏览器与网络**：Browser Tab、Network protocol、Show、Required domains、Network diagnostics
   - **代码智能**：“Accept the next word of a suggestion…”、“Automatically import necessary modules for TypeScript”、“Automatically index repositories…”、Codebase options、“Use with caution. Skip symlinks…”
   - **测试版**：Update Access、Updates
+
+## 第 4 轮（2026-10-29，设置页补译 + 覆盖率扫描）
+
+**新增 `scripts/coverage-scan.mjs`**：Cursor 需要临时用 `--remote-debugging-port=9333` 启动，然后运行
+`node scripts/coverage-scan.mjs --json out.json --md out.md [--palette-pages N] [--only …]`。
+脚本只做只读操作：
+- 依次点击 Agents 窗口设置页和经典窗口 Cursor 设置页的各个导航项。会跳过带 ↗ 图标的外链项（云端智能体、文档），也跳过“返回”、VS Code 设置和账户入口，页面里的按钮一律不点。
+- 打开 Agents 窗口标题栏菜单（文件/编辑/查看/帮助）。
+- 在侧边栏条目上右键打开菜单。
+- 读取命令面板最上面 N 屏（只看主标题，英文别名属于设计保留）。
+
+菜单都用 Escape 关闭。每页统计“中文 / 英文 / 保留”三类节点，按 `scripts/coverage-keep.json`（依据术语表的保留英文：品牌、模型名、快捷键、日期、价格等）把保留项排除在外，再输出覆盖率和剩余英文清单。扫描结果在 `docs/coverage/3.27.22-run4-*.md`。
+
+**本轮改动**
+- 词典新增约 128 条，涵盖：
+  - 设置页：外观、套餐与用量、智能体、源代码管理、浏览器与网络、代码智能、测试版，以及经典窗口特有的“智能体审查”“内联差异”等；
+  - 资源管理器右键菜单；
+  - 常用命令面板命令。
+- `build-anchors.py` 新增两项：
+  - `TEMPLATE_RULES`：对带 `${…}` 的模板和 JSX 数组拆分文案（如 `["Upgrade to ",u.name]`、`["Resets ",…]`、`` `…via ${u}` ``、`` `${X?"\u2318":"Ctrl+"}K` ``），按实际 bundle 文本生成 `{from,to,count}` 片段，变量名随版本变化时重跑一次即可；
+  - 重新生成锚点时保留原有手写片段（前提是仍能精确匹配）。
+- 本轮锚点数量：静态整段 388 / 429 条（desktop / glass），模板片段每个 bundle 27 条。
+- 本轮 localize 结果：静态替换 1549 处，片段替换 74 处，NLS 176 条，未命中 0。
+- DOM 运行时：命令面板（输入框以 `>` 开头时）的主标题可以按整段精确匹配翻译；英文别名（`quick-input-list-label-meta`）、Quick Open 文件名、资源管理器名字仍然不翻。新增对应测试，共 41 项。
+- 关闭了第 2 轮扫描误点“云端智能体”时由 Cursor 拉起的 Chrome 窗口（cursor.com/dashboard/cloud-agents，17:08 打开）。
+
+**覆盖率（扫描结果，前 → 后）**
+- Agents 设置：
+  - 外观 91.7 → 100%
+  - 套餐与用量 28.6 → 100%
+  - 智能体 96.5 → 100%
+  - 语音 92.9 → 100%
+  - 源代码管理 82.6 → 100%
+  - 浏览器与网络 79.2 → 100%
+  - 代码智能 82.8 → 100%
+  - 测试版 60 → 100%
+  - 常规、模型保持 100%
+- 经典 Cursor 设置：
+  - 常规 95.1 → 100%
+  - 套餐与用量 28.6 → 100%
+  - 智能体 75.4 → 100%
+  - 源代码管理 57.6 → 100%
+  - 浏览器与网络 77.3 → 100%
+  - 代码智能 68 → 100%
+  - 测试版 60 → 100%
+  - 语音 92.9 → 100%
+- 菜单：一直是 100%。
+- 资源管理器右键菜单：78.6–80 → 100%。
+- 命令面板：
+  - 前 3 屏 28.1% → 前 2 屏 57.1%。剩下的 6 条都是 Cursor NDJSON Ingest / Deeplink 调试命令。
+  - 前 12 屏 72.2%。剩下 37 条主要是 Developer:/Remote-SSH:/Merge Editor (Dev) 等开发者命令。
+- “前”数据里命令面板那一行用的是旧选择器，把英文别名也算进去了，因此以 28.1% 为准。
+
+**仍是英文（有意保留或暂不处理）**
+- 套餐卡片里的“Pro $20/mo”和日期“Nov 26, 2026”：服务器下发的数据或日期格式。
+- 语音页的 “submit”：语音提交口令。
+- “Tab”“Cursor Tab”“LSP”“GitHub”：术语表规定保留。
+- 命令面板里的开发者/调试命令。
+- Agents 侧边栏当前没有智能体和仓库条目，所以右键菜单这次没有扫到内容；以后有条目时重跑脚本即可。
+- 经典窗口的“自定义”页使用另一套布局，扫描结果是 0/0，需要单独处理。

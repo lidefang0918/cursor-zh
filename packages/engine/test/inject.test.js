@@ -15,6 +15,14 @@ function el(tag, children = [], attrs = {}, classes = []) {
     get textContent() { let s = ''; for (let c = this.firstChild; c; c = c.nextSibling) s += c.nodeType === 3 ? c.nodeValue : c.textContent; return s; } };
   children.forEach((c, i) => { c.parentNode = n; c.nextSibling = children[i + 1] || null; });
   n.firstChild = children[0] || null;
+  n.firstElementChild = children.find((c) => c.nodeType === 1) || null;
+  n.querySelector = (sel) => { // 只支持 "tag" 和 "tag[type=x]"
+    const m = /^(\w+)(?:\[type=(\w+)\])?$/.exec(sel);
+    if (!m) return null;
+    const ok = (c) => c.nodeType === 1 && c.tagName.toLowerCase() === m[1] && (!m[2] || c.attrs.type === m[2]);
+    const walk = (x) => { for (let c = x.firstChild; c; c = c.nextSibling) { if (ok(c)) return c; const r = c.nodeType === 1 && walk(c); if (r) return r; } return null; };
+    return walk(n);
+  };
   return n;
 }
 const text = (v) => ({ nodeType: 3, nodeValue: v });
@@ -175,5 +183,27 @@ describe('DOM runtime injection', () => {
     fire([{ type: 'characterData', target: streamed }]);
     assert.equal(streamed.nodeValue, 'Search');
   });
-});
 
+  it('command palette: translates the primary command label only in ">" mode, keeps the English alias and file names', () => {
+    const d = { 'Close Tab': '关闭标签页', 'Updates': '更新' };
+    const label = (t) => el('A', [el('SPAN', [t], {}, ['monaco-highlighted-label'])], {}, ['label-name']);
+    const rowOf = (main, alias) => el('DIV', [
+      el('DIV', [el('DIV', [el('SPAN', [label(main)], {}, ['monaco-icon-name-container'])], {}, ['monaco-icon-label'])], {}, ['quick-input-list-row']),
+      el('DIV', [el('DIV', [el('DIV', [el('SPAN', [label(alias)], {}, ['monaco-icon-name-container'])], {}, ['monaco-icon-label'])], {}, ['quick-input-list-label-meta'])], {}, ['quick-input-list-row']),
+    ], {}, ['quick-input-list-rows']);
+    const widget = (value, row) => el('DIV', [el('INPUT', [], { type: 'checkbox' }), el('INPUT', [], { type: 'text' }), row], {}, ['quick-input-widget']);
+    const main = text('Close Tab'), alias = text('Close Tab');
+    const cmd = widget('>', rowOf(main, alias));
+    cmd.firstChild.value = 'on'; cmd.firstChild.nextSibling.value = '>';
+    const file = text('Updates'), fileAlias = text('src');
+    const quickOpen = widget('', rowOf(file, fileAlias));
+    quickOpen.firstChild.value = 'on'; quickOpen.firstChild.nextSibling.value = 'upd';
+    const tab = text('Updates');
+    const explorer = el('DIV', [label(tab)]);
+    runInFakeDom(buildInjection({ dict: d, runtimeSource: RUNTIME }), el('BODY', [cmd, quickOpen, explorer]));
+    assert.equal(main.nodeValue, '关闭标签页');
+    assert.equal(alias.nodeValue, 'Close Tab', 'English alias kept for search');
+    assert.equal(file.nodeValue, 'Updates', 'quick open file names untouched');
+    assert.equal(tab.nodeValue, 'Updates', 'explorer names untouched');
+  });
+});
