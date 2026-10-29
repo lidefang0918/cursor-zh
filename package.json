@@ -1,0 +1,7 @@
+{
+  "name": "cursor-zh-localizer",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": { "test": "node --test packages/engine/test/*.test.js" }
+}
