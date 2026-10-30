@@ -2,7 +2,7 @@
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "CursorZh",
   "mainBinaryName": "cursor-zh",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "identifier": "local.cursor-zh-localizer.tauri",
   "build": {
     "frontendDist": "../ui",
