@@ -185,8 +185,13 @@ async function withCursorClosed(o, fn) {
   }
   await fs.rm(relaunchFile, { force: true });
   if (relaunch && o.relaunch !== false) {
-    try { o.relaunchCursor(relaunch); r.relaunched = true; o.onLog(r.ok ? '已重新打开 Cursor' : '已重新打开 Cursor（未做改动）'); }
-    catch (e) { o.onLog(`⚠ 重新打开 Cursor 失败：${e.message}，请手动打开`); }
+    try {
+      // 给内核一点时间消化刚写完的 ad-hoc 签名，再 open，否则 Cursor 启动时拉起的子进程可能 SIGKILL（Code Signature Invalid）
+      if (o.platform === 'darwin') await new Promise((ok) => setTimeout(ok, 1500));
+      o.relaunchCursor(relaunch);
+      r.relaunched = true;
+      o.onLog(r.ok ? '已重新打开 Cursor' : '已重新打开 Cursor（未做改动）');
+    } catch (e) { o.onLog(`⚠ 重新打开 Cursor 失败：${e.message}，请手动打开`); }
   }
   return r;
 }

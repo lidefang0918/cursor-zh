@@ -186,6 +186,8 @@ export async function signAdhoc(app, {
   const args = ['--force', ...(deep ? ['--deep'] : []), '--sign', '-', '--preserve-metadata=entitlements', app];
   const r = await runner('/usr/bin/codesign', args);
   if (r.code !== 0) throw new Error(`ad-hoc 重签名失败：${(r.stderr || r.stdout).trim()}`);
+  // macOS（尤其新系统）在 codesign 刚写完时立刻 exec 同路径，子进程可能被 taskgated 以 Invalid Signature SIGKILL
+  await sleep(1500);
   const v = await verifySignature(app, { runner });
   if (!v.ok) throw new Error(`重签名后校验失败：${v.detail}`);
 }
