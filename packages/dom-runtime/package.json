@@ -1,7 +1,7 @@
 {
   "name": "@cursor-zh/dom-runtime",
   "license": "MIT",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "在 Cursor 渲染进程里运行的 DOM 补漏脚本（由 engine 追加到 workbench.desktop.main.js 末尾）",
   "main": "runtime.js"
