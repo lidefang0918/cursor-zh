@@ -56,7 +56,8 @@ jobs:
             cp $B/release/bundle/deb/*.deb out/cursor-zh-0.1.0-linux-amd64.deb
             cp $B/release/bundle/appimage/*.AppImage out/cursor-zh-0.1.0-linux-x86_64.AppImage
           fi
-          (cd out && shasum -a 256 * | tee SHA256SUMS-${{ runner.os }}.txt)
+          # Windows 的 Git Bash 没有 shasum，优先用 sha256sum
+          (cd out && if command -v sha256sum >/dev/null; then sha256sum *; else shasum -a 256 *; fi | tee SHA256SUMS-${{ runner.os }}.txt)
       - uses: actions/upload-artifact@v4
         with:
           name: tauri-${{ runner.os }}
