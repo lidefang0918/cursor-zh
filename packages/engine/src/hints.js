@@ -3,7 +3,7 @@ export const NEXT_STEP = {
   NOT_FOUND: '请先安装 Cursor（或确认装在默认位置），再重新运行本工具。',
   UNSUPPORTED: '这个目录里的 Cursor 结构和已知版本差别太大（找不到界面文件），本工具没有动它。请确认选的是 Cursor 安装目录，或到 GitHub 反馈你的 Cursor 版本。',
   CURSOR_RUNNING: '请允许本工具关闭 Cursor（命令行加 --close），完成后会自动重新打开。',
-  CLOSE_FAILED: '请手动退出 Cursor（包括托盘/菜单栏图标），再重试。',
+  CLOSE_FAILED: '请用系统菜单退出 Cursor（macOS 用 ⌘Q，不要强制结束），再重试。',
   MODIFIED_INSTALL: 'Cursor 的文件被其他工具改过。请重新安装 Cursor（覆盖安装即可，不会丢设置），再重试。',
   PATCHED_NO_STATE: '请重新安装 Cursor（覆盖安装即可，不会丢设置），再重试；或用“还原”并指定备份目录。',
   INSTALL_CHANGED: 'Cursor 可能刚好在关闭时装上了自动更新。直接再点一次“一键汉化”即可。',

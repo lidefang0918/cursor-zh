@@ -113,17 +113,61 @@ describe('macOS: detection, paths, processes', () => {
     assert.deepEqual(ps.filter((p) => p.main).map((p) => p.pid), [101]);
   });
 
-  it('closes with SIGTERM and relaunches through `open`', async () => {
+  it('does not treat the Tauri engine (engine-ipc.mjs) as a Cursor GUI process', async () => {
+    const stdout = `${PS}\n  500     1 ${root}/MacOS/Cursor /tmp/czl/scripts/engine-ipc.mjs status`;
+    const ps = await listCursorProcesses(root, { platform: 'darwin', runner: async () => ({ code: 0, stdout, stderr: '' }) });
+    assert.deepEqual(ps.map((p) => p.pid), [101, 102, 103]);
+  });
+
+  it('builds an AppleEvent quit with the .app path in argv (not SIGTERM)', () => {
+    const args = mac.quitMacArgs('/Applications/Cursor.app');
+    assert.equal(args.at(-1), '/Applications/Cursor.app');
+    assert.ok(args.includes('tell application (POSIX file (item 1 of argv) as text) to quit'));
+    assert.ok(!args.some((a) => /SIGTERM|SIGKILL|kill/i.test(a)));
+  });
+
+  it('quits via osascript AppleEvent, never SIGTERM, waits until gone, then relaunches through `open`', async () => {
     let alive = true;
     const killed = [];
-    const runner = async () => ({ code: 0, stdout: alive ? PS : '', stderr: '' });
-    const r = await closeCursor(root, { platform: 'darwin', runner, kill: (pid, sig) => { killed.push([pid, sig]); alive = false; } });
-    assert.equal(r.ok, true);
-    assert.deepEqual(killed, [[101, 'SIGTERM']]);
+    const cmds = [];
+    const sleeps = [];
+    const runner = async (cmd, args = []) => {
+      cmds.push([cmd, ...args]);
+      if (cmd === '/usr/bin/osascript') { alive = false; return { code: 0, stdout: '', stderr: '' }; }
+      return { code: 0, stdout: alive ? PS : '', stderr: '' };
+    };
+    const r = await closeCursor(root, {
+      platform: 'darwin', runner, timeoutMs: 5000, settleMs: 25,
+      kill: (pid, sig) => { killed.push([pid, sig]); },
+      sleep: async (ms) => { sleeps.push(ms); },
+    });
+    assert.equal(r.ok, true, r.error);
+    assert.equal(killed.length, 0, 'must not SIGTERM/SIGKILL; that triggers macOS Crash Reporter');
+    const osa = cmds.find((c) => c[0] === '/usr/bin/osascript');
+    assert.ok(osa, 'should send AppleEvent quit via osascript');
+    assert.deepEqual(osa.slice(1), mac.quitMacArgs('/Applications/Cursor.app'));
+    assert.ok(!cmds.some((c) => c[0] === 'kill' || c.includes?.('SIGTERM')));
+    assert.ok(sleeps.includes(25), 'settle after processes vanish so later codesign/write does not kill a still-exiting process');
     assert.deepEqual(r.relaunch, { platform: 'darwin', app: '/Applications/Cursor.app' });
     let got;
     relaunchCursor(r.relaunch, { spawnFn: (c, a) => { got = [c, ...a]; return { pid: 1, unref() {} }; } });
     assert.deepEqual(got, ['/usr/bin/open', '/Applications/Cursor.app']);
+  });
+
+  it('does not fall back to kill when osascript fails; asks the user to ⌘Q', async () => {
+    const killed = [];
+    const runner = async (cmd) => {
+      if (cmd === '/usr/bin/osascript') return { code: 1, stdout: '', stderr: 'not authorized to send Apple events to Cursor.' };
+      return { code: 0, stdout: PS, stderr: '' };
+    };
+    const r = await closeCursor(root, {
+      platform: 'darwin', runner, timeoutMs: 40,
+      kill: (pid, sig) => { killed.push([pid, sig]); },
+      sleep: async () => {},
+    });
+    assert.equal(r.ok, false);
+    assert.equal(killed.length, 0);
+    assert.match(r.error, /⌘Q/);
   });
 });
 

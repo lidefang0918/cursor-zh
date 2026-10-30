@@ -36,7 +36,7 @@
 
 行为说明：
 
-- **Cursor 正在运行**：先询问；同意后正常关闭 Cursor（SIGTERM，最多等 20 秒），写完后按原来的命令行、工作目录和环境重新打开。
+- **Cursor 正在运行**：先询问；同意后正常关闭 Cursor（Linux：SIGTERM；Windows：taskkill；macOS：AppleEvent / ⌘Q，最多等 20 秒），写完后按原来的命令行、工作目录和环境重新打开。
 - **安装目录归 root（deb/rpm 的 `/usr/share/cursor`）**：界面始终以普通用户运行。备份和打补丁都在 `~/.config/cursor-zh-localizer` 里完成，只有“把准备好的文件放进安装目录”这一步交给 `packages/engine/helper/czl-apply.sh`，以 root 运行。这个脚本只认白名单路径，逐个校验 sha256，原子替换，并保留属主和权限。
   - 提权顺序：pkexec（图形授权弹窗）→ 免密 `sudo -n` → 给出一条终端命令，例如 `sudo sh '~/.config/cursor-zh-localizer/elevate/czl-apply.sh' '.../apply.tsv'`。
   - 执行这条命令后点“我已执行，继续”。也可以直接再点“一键汉化”或再运行一次 `localize`，会自动接着完成。

@@ -31,6 +31,7 @@ const KIND = {
   'mac-other': '其他位置的 Cursor.app',
 };
 const WIN = E.platform === 'win32';
+const DARWIN = E.platform === 'darwin';
 
 let S = null;          // 最近一次状态
 let target = null;     // 选中的安装根（null = 自动）
@@ -75,7 +76,9 @@ function describeState(s) {
     } else {
       notice('error', '未找到 Cursor', [WIN
         ? '支持的安装位置：%LOCALAPPDATA%\\Programs\\cursor（用户版安装包）、C:\\Program Files\\cursor（系统版安装包）。装好 Cursor 后点“刷新”。'
-        : '支持的安装位置：/usr/share/cursor（deb/rpm）、/opt/cursor、~/.local/share/cursor；AppImage 版放在 ~/Applications 或 ~/Downloads 后点“刷新”。',
+        : DARWIN
+          ? '支持的安装位置：/Applications/Cursor.app 或 ~/Applications/Cursor.app。装好后点“刷新”，或点“手动选择 Cursor.app”。'
+          : '支持的安装位置：/usr/share/cursor（deb/rpm）、/opt/cursor、~/.local/share/cursor；AppImage 版放在 ~/Applications 或 ~/Downloads 后点“刷新”。',
       s.noRuntime ? '本工具借用 Cursor 自带的运行环境来执行汉化，所以需要先找到 Cursor。' : null].filter(Boolean),
       E.pickRoot ? [['手动选择 Cursor 安装位置…', pickRoot, true]] : []);
     }
@@ -124,8 +127,20 @@ function describeState(s) {
   }
 }
 
+function applyButtons(s) {
+  const blocked = busy || !s.cursor || !s.supported || s.readOnlyFs || !!s.otherInstall;
+  $('localize').disabled = blocked || (s.localized && s.upToDate !== false);
+  $('localize').textContent = !s.cursor ? '一键汉化' : s.stale ? '重新汉化' : s.localized ? (s.upToDate === false ? '更新汉化' : '已汉化 ✔') : '一键汉化';
+  $('revert').disabled = busy || !(s.state?.localized || s.pending);
+}
+
 async function refresh() {
   const s = await E.getStatus(target ? { installRoot: target } : {});
+  // 引擎异常（例如刚退出 Cursor 后瞬时读失败）不要把已经检测到的安装刷成「未找到 Cursor」
+  if (s?.ok === false && s?.code && !s.cursor) {
+    log(`⚠ 无法刷新状态：${s.error || s.code}`, 'err');
+    if (S?.cursor) { applyButtons(S); return S; }
+  }
   S = s;
   const sel = $('installs');
   const installs = s.installs ?? [];
@@ -145,10 +160,7 @@ async function refresh() {
     : s.pending ? el('span', { class: 't-warn' }, s.pending.applied ? '等待完成' : '等待管理员权限') : '未汉化';
   $('state').replaceChildren(st, s.running ? el('span', { class: 'badge' }, 'Cursor 运行中') : '');
   describeState(s);
-  const blocked = busy || !s.cursor || !s.supported || s.readOnlyFs || !!s.otherInstall;
-  $('localize').disabled = blocked || (s.localized && s.upToDate !== false);
-  $('localize').textContent = s.stale ? '重新汉化' : s.localized ? (s.upToDate === false ? '更新汉化' : '已汉化 ✔') : '一键汉化';
-  $('revert').disabled = busy || !(s.state?.localized || s.pending);
+  applyButtons(s);
 }
 
 const fail = (r) => {
@@ -178,7 +190,9 @@ async function run(action, opt = {}) {
       await refresh();
       notice('warn', 'Cursor 正在运行', [
         `${action === 'localize' ? '汉化' : '还原'}需要重启 Cursor 才能生效。`,
-        '点“关闭 Cursor 并继续”：本工具会正常关闭 Cursor（和点关闭按钮一样，未保存的内容由 Cursor 自动保留），完成后按原来的方式重新打开它。',
+        DARWIN
+          ? '点“关闭 Cursor 并继续”：本工具会用和 ⌘Q 一样的方式请 Cursor 退出（不是强制结束，macOS 不会弹出“意外退出”），未保存的内容由 Cursor 自动保留，完成后按原来的方式重新打开它。'
+          : '点“关闭 Cursor 并继续”：本工具会正常关闭 Cursor（和点关闭按钮一样，未保存的内容由 Cursor 自动保留），完成后按原来的方式重新打开它。',
       ], [['关闭 Cursor 并继续', () => run(action, { closeRunning: true }), true], ['取消', () => refresh()]]);
       return;
     } else if (r.code === 'NEED_ELEVATION') {
@@ -241,4 +255,6 @@ $('revert').onclick = () => run('revert');
 $('refresh').onclick = () => refresh();
 $('showlog').onclick = () => E.showLog();
 $('installs').onchange = (e) => { target = e.target.value; refresh(); };
+$('localize').disabled = true;
+$('revert').disabled = true;
 refresh();

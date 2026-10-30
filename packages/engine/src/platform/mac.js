@@ -66,25 +66,49 @@ export async function listMacProcesses(root, { runner = defaultRun, selfPid = pr
     const isMain = cmd === exe || cmd.startsWith(exe + ' ');
     if (!isMain && !cmd.startsWith(fw)) continue;
     if (/\/out\/cli\.js(\s|$)/.test(cmd)) continue;
+    // 本工具借用 Cursor 主程序跑引擎（ELECTRON_RUN_AS_NODE）时，ps 里也会出现这条命令行，不能当成 GUI 进程去退出
+    if (/engine-ipc\.mjs(\s|$)/.test(cmd)) continue;
     out.push({ pid, ppid, command: cmd, argv: [isMain ? exe : cmd], main: isMain && !/\s--type=/.test(cmd) });
   }
   return out;
 }
 
-// Electron 在 macOS 上收到 SIGTERM 会正常退出（未保存内容走热退出）
-export async function closeMac(root, { runner = defaultRun, kill = process.kill.bind(process), timeoutMs = 20000, log = () => {}, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), list = listMacProcesses } = {}) {
+// AppleEvent 退出：argv 传入 .app 路径，避免拼进 AppleScript 源码。等价于 ⌘Q / Dock「退出」，
+// 走 NSApplication.terminate，Crash Reporter 不会当成「意外退出」。不要用 SIGTERM/SIGKILL。
+export function quitMacArgs(app) {
+  return [
+    '-e', 'on run argv',
+    '-e', 'tell application (POSIX file (item 1 of argv) as text) to quit',
+    '-e', 'end run',
+    app,
+  ];
+}
+
+export const MAC_QUIT_SETTLE_MS = 800;
+
+// 等主进程和 Helper 都消失后再返回，并多等一小段：随后会改写/重签 Cursor.app，进程还在退出时内核会因签名校验把它们杀掉，看起来像崩溃
+export async function closeMac(root, { runner = defaultRun, timeoutMs = 20000, log = () => {}, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), list = listMacProcesses, settleMs = MAC_QUIT_SETTLE_MS } = {}) {
   const procs = await list(root, { runner });
   if (!procs.length) return { ok: true, closed: false };
   const mains = procs.filter((p) => p.main);
-  const relaunch = { platform: 'darwin', app: appPathOf(root) };
-  log(`正在关闭 Cursor（${mains.length || procs.length} 个主进程）…`);
-  for (const p of mains.length ? mains : procs) { try { kill(p.pid, 'SIGTERM'); } catch {} }
+  const app = appPathOf(root);
+  const relaunch = { platform: 'darwin', app };
+  log(`正在关闭 Cursor（${mains.length || procs.length} 个主进程，等同 ⌘Q）…`);
+  const quit = await runner('/usr/bin/osascript', quitMacArgs(app));
+  if (quit.code !== 0) {
+    const detail = (quit.stderr || quit.stdout).trim().split('\n')[0];
+    log(`通过系统退出 Cursor 未成功${detail ? `：${detail}` : ''}。请用 ⌘Q 退出（首次可能需要允许本工具控制 Cursor）`);
+  }
   const end = Date.now() + timeoutMs;
   while (Date.now() < end) {
-    if (!(await list(root, { runner })).length) return { ok: true, closed: true, relaunch };
+    if (!(await list(root, { runner })).length) {
+      await sleep(settleMs);
+      if (!(await list(root, { runner })).length) return { ok: true, closed: true, relaunch };
+      continue;
+    }
     await sleep(300);
   }
-  return { ok: false, closed: false, relaunch, error: `Cursor 在 ${Math.round(timeoutMs / 1000)} 秒内没有退出，请手动退出（可能有未保存文件的确认框）后重试` };
+  return { ok: false, closed: false, relaunch, error: `Cursor 在 ${Math.round(timeoutMs / 1000)} 秒内没有退出，请用 ⌘Q 退出 Cursor（可能有未保存文件的确认框，或需在「隐私与安全性 → 自动化」中允许本工具控制 Cursor）后重试` };
 }
 
 // ---------- 签名 ----------
