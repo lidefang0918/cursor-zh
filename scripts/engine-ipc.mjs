@@ -29,9 +29,9 @@ function decodeOpts(arg) {
 }
 
 const OPS = {
-  status: (o) => status(o.installRoot ? { installRoot: o.installRoot } : {}),
-  localize: (o) => localize({ onLog: send, closeRunning: !!o.closeRunning, ...(o.installRoot ? { installRoot: o.installRoot } : {}) }),
-  revert: (o) => revert({ onLog: send, closeRunning: !!o.closeRunning, ...(o.installRoot ? { installRoot: o.installRoot } : {}) }),
+  status: (o) => status({ online: !process.env.CZL_OFFLINE, ...(o.installRoot ? { installRoot: o.installRoot } : {}) }),
+  localize: (o) => localize({ onLog: send, closeRunning: !!o.closeRunning, online: !process.env.CZL_OFFLINE, ...(o.installRoot ? { installRoot: o.installRoot } : {}) }),
+  revert: (o) => revert({ onLog: send, closeRunning: !!o.closeRunning, online: !process.env.CZL_OFFLINE, ...(o.installRoot ? { installRoot: o.installRoot } : {}) }),
   extractAppImage: async (o) => ({ ok: true, ...(await extractAppImage({ appImagePath: o.appImagePath, log: send })) }),
 };
 

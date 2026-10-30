@@ -19,6 +19,19 @@ export async function applyNls({ installRoot, anchors, dict }) {
   if (!anchors.nls?.entries?.length) return { replaced, missing };
   const abs = path.join(installRoot, anchors.nls.relative);
   const msgs = JSON.parse(await fs.readFile(abs, 'utf8'));
+  if (anchors.nls.byText) {
+    // 兼容模式（未适配的新版本）：下标会变，按原文找；同一原文出现多处都换
+    const want = new Set(anchors.nls.entries.map((e) => e.from));
+    const hit = new Set();
+    msgs.forEach((m, i) => {
+      const to = want.has(m) && nlsTranslate(m, dict);
+      if (to) { msgs[i] = to; hit.add(m); }
+    });
+    for (const f of want) if (!hit.has(f)) missing.push(f);
+    replaced = hit.size;
+    if (replaced) await fs.writeFile(abs, JSON.stringify(msgs));
+    return { replaced, missing };
+  }
   for (const { index, from } of anchors.nls.entries) {
     const to = nlsTranslate(from, dict);
     if (msgs[index] !== from || !to) { missing.push(`${from}@${index}`); continue; }

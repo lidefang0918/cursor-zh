@@ -133,7 +133,8 @@ export async function uninstallLanguagePack({ cliPath, extensionsDir, userDataDi
 }
 
 // argv.json 是 JSONC（带注释），用行级正则改 "locale"，不破坏注释
-const LOCALE_LINE = /^[ \t]*"locale"[ \t]*:[ \t]*"([^"]*)"[ \t]*,?[ \t]*\r?\n?/m;
+// 末尾的 (?:…)：Cursor 首次启动往只有 locale 的 argv.json 里追加键时，逗号会单独落在下一行，一并去掉
+const LOCALE_LINE = /^[ \t]*"locale"[ \t]*:[ \t]*"([^"]*)"[ \t]*,?[ \t]*\r?\n?(?:[ \t]*,[ \t]*\r?\n)?/m;
 
 export async function readLocale(argvPath) {
   try { return (await fs.readFile(argvPath, 'utf8')).match(LOCALE_LINE)?.[1] ?? null; }

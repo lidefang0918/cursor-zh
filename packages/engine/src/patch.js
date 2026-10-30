@@ -56,19 +56,20 @@ export function replaceAllLiterals(src, map) {
 export function applyFragments(src, fragments = []) {
   // 快路径：所有片段都带 count 时，用一个正则一遍扫完整个 bundle（比每条 indexOf 扫一遍快 2–3 倍）。
   // 正则匹配天然不重叠；只要每条的命中数都和 count 一致就直接用，否则（片段互相包含等）退回下面的逐条查找
-  if (fragments.length > 1 && fragments.every((f) => f.count !== undefined && f.from)) {
+  // 不带 count（兼容模式）就是“出现几次换几次”，没出现的记为未命中
+  if (fragments.length > 1 && fragments.every((f) => f.from)) {
     const byFrom = new Map(fragments.map((f) => [f.from, f]));
     if (byFrom.size === fragments.length) {
       const re = new RegExp([...byFrom.keys()].sort((a, b) => b.length - a.length).map(escapeRe).join('|'), 'g');
       const seen = new Map();
       const hits = [];
       for (const m of src.matchAll(re)) { seen.set(m[0], (seen.get(m[0]) ?? 0) + 1); hits.push([m.index, m.index + m[0].length, byFrom.get(m[0]).to]); }
-      if (fragments.every((f) => seen.get(f.from) === f.count)) {
+      if (fragments.every((f) => f.count === undefined || seen.get(f.from) === f.count)) {
         const out = [];
         let last = 0;
         for (const [a, b, to] of hits) { out.push(src.slice(last, a), to); last = b; }
         out.push(src.slice(last));
-        return { out: out.join(''), replaced: hits.length, missing: [] };
+        return { out: out.join(''), replaced: hits.length, missing: fragments.filter((f) => !seen.get(f.from)).map((f) => `fragment:${f.from}（0/≥1）`) };
       }
     }
   }
@@ -109,6 +110,8 @@ export async function applyPatch({ installRoot, anchors, dict }) {
   const missing = [];
   let replaced = 0;
   let fragmentsReplaced = 0;
+  let matched = 0;
+  let total = 0;
   const perFileFragments = {};
   const changed = new Map(); // relative -> Buffer
   const perFile = {};
@@ -131,6 +134,8 @@ export async function applyPatch({ installRoot, anchors, dict }) {
     const out = fr.out;
     missing.push(...fr.missing);
     perFileFragments[file.relative] = fr.replaced;
+    total += map.size + (file.fragments?.length ?? 0);
+    matched += (file.fragments?.length ?? 0) - fr.missing.length;
     fragmentsReplaced += fr.replaced;
     let fileCount = 0;
     for (const s of file.strings) {
@@ -139,7 +144,7 @@ export async function applyPatch({ installRoot, anchors, dict }) {
       if (n === 0) {
         if (s.required) throw new Error(`必需锚点缺失：${s.from}（${file.relative}）`);
         missing.push(s.from);
-      }
+      } else matched++;
       fileCount += n;
     }
     perFile[file.relative] = fileCount;
@@ -156,7 +161,7 @@ export async function applyPatch({ installRoot, anchors, dict }) {
   }
 
   const { checksumsUpdated } = await updateChecksums({ installRoot, anchors, relatives: [...changed.keys()] });
-  return { patched, missing, replaced, perFile, fragmentsReplaced, perFileFragments, checksumsUpdated };
+  return { patched, missing, replaced, matched, total, perFile, fragmentsReplaced, perFileFragments, checksumsUpdated };
 }
 
 // 按文件当前内容重算 product.json 里对应的 checksum（Cursor/VS Code 启动时校验，不一致会提示"安装已损坏"）

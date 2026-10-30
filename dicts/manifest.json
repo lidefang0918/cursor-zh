@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "minTool": "0.1.1",
+  "updated": "2026-10-30T06:54:03.809Z",
+  "files": {
+    "dicts/zh-cn.json": "32ff76cc8c7fa004000639507aeb340e12e3ad985bd6007571f098d53d7aa840",
+    "dicts/zh-cn.nls.json": "7453c100c133b2ea0fa1e7a217f6f53ed763c729abe8efe212d61b461b4dcc87",
+    "dicts/zh-cn.patterns.json": "29827f7f00dd492a05b06a03593ad78ad5b6f3d217ee5f98b4e748ce4a4b5972",
+    "anchors/3.27.14.json": "d6b457301b4037900c2bc1c42e62bed386bf6028c920b6341b761d03951e7890",
+    "anchors/3.27.22.json": "12e7cb74330c7751ba398861593159e1242de5914fd35d5eb652970779d95f49"
+  }
+}

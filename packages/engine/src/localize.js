@@ -13,6 +13,7 @@ import { applyPatch, filesToBackup, updateChecksums } from './patch.js';
 import { injectDomRuntime, readRuntime, BEGIN as DOM_BEGIN } from './inject.js';
 import crypto from 'node:crypto';
 import { applyNls, clearNlsCache } from './nls.js';
+import { syncData } from './online.js';
 import {
   ensureLanguagePack, uninstallLanguagePack, registerLanguagePack, unregisterLanguagePack, setLocale, findConflicts, downloadLangpack, langpackVersionFor,
 } from './langpack.js';
@@ -23,6 +24,7 @@ import * as mac from './platform/mac.js';
 export { readState };
 // fileURLToPath：Windows 上 URL.pathname 是 /C:/...，路径里有空格/中文时还是 %20 编码，都不能直接当路径用
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+const TOOL_VERSION = JSON.parse(await fs.readFile(new URL('../package.json', import.meta.url), 'utf8')).version;
 
 // 用户目录（Cursor 3.x：product.dataFolderName = .cursor，三平台扩展目录都在 ~/.cursor）
 // Linux：~/.config/Cursor；Windows：%APPDATA%\Cursor；macOS：~/Library/Application Support/Cursor
@@ -196,16 +198,32 @@ const METHOD = { direct: '直接写入', pkexec: 'pkexec 管理员授权', 'sudo
 const signFiles = (o) => (o.platform === 'darwin' && o.macSign !== 'none' ? mac.MAC_SIGN_FILES : []);
 const runnerOf = (o) => o.platformRunner ?? undefined;
 
+// 在线词典（opts.online）：localize 时联网取最新词典/锚点，status/revert 只读缓存；改写 o 里的词典路径和锚点目录
+async function useData(o, info, network) {
+  if (!o.online || o.data) return;
+  const d = await syncData({
+    bundledDir: REPO, cacheDir: path.join(o.dataDir, 'online'), toolVersion: TOOL_VERSION, version: info.version, platform: o.platform,
+    network, log: network ? o.onLog : () => {}, ...(o.onlineOpts ?? {}),
+  });
+  o.data = d;
+  o.dictPath = path.join(d.dir, 'dicts/zh-cn.json');
+  o.patternsPath = path.join(d.dir, 'dicts/zh-cn.patterns.json');
+  o.nlsDictPath = path.join(d.dir, 'dicts/zh-cn.nls.json');
+  o.anchorsDir = [path.join(d.dir, 'anchors'), ...[o.anchorsDir].flat()];
+  if (network) o.onLog(`词典来源：${d.source}${d.updated ? `（${d.updated.slice(0, 10)} 更新）` : ''}`);
+}
+
 export async function status(opts = {}) {
   const { o, info } = await resolve(opts);
   const state = await readState(o.dataDir);
-  const anchors = info ? await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir }) : null;
+  if (info) await useData(o, info, false);
+  const anchors = info ? await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir, installRoot: info.root }) : null;
   const patched = info ? await installPatched(info.root, domRelatives(anchors, state)) : false;
   const stale = await isStale(o, info, anchors, state);
   const localized = !!state.localized && !stale;
   // upToDate=false：已汉化，但本工具的汉化内容（词典/运行时/锚点）比安装里的新 → 界面提示“更新汉化”
   const upToDate = localized && anchors && state.version === info?.version ? state.fingerprint === (await fingerprint(o, anchors)) : null;
-  const base = { cursor: info, supported: !!anchors, supportedVersions: await supportedVersions(o), state, patched, stale, localized, upToDate };
+  const base = { cursor: info, supported: !!anchors, exact: !!anchors && !anchors.fallback, compatBase: anchors?.base ?? null, data: o.data ?? null, supportedVersions: await supportedVersions(o), state, patched, stale, localized, upToDate };
   if (opts.light) return base;
   const files = anchors ? [...targetFiles(anchors), ...signFiles(o)] : [];
   const w = info && files.length ? await checkWritable(info.root, files, { platform: o.platform, probe: o.probeWritable }) : null;
@@ -235,7 +253,8 @@ export async function localize(opts = {}) {
   if (!info) return fail('NOT_FOUND', '未找到 Cursor 安装');
   log(`检测到 Cursor ${info.version}（VS Code ${info.vscodeVersion}）：${info.root}`);
 
-  const anchors = await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir });
+  await useData(o, info, true);
+  const anchors = await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir, installRoot: info.root });
   let state = await readState(o.dataDir);
   const other = await otherInstall(state, info);
   if (other) return fail('OTHER_INSTALL', `另一个 Cursor 安装（${other}）处于汉化状态，请先还原它`);
@@ -251,8 +270,9 @@ export async function localize(opts = {}) {
   }
   if (!anchors) {
     const sv = await supportedVersions(o);
-    return fail('UNSUPPORTED', `Cursor ${info.version} 暂未适配（目前支持：${sv.join('、') || '无'}），为避免损坏安装，已拒绝修改`, { supportedVersions: sv });
+    return fail('UNSUPPORTED', `没在 ${info.root} 找到 Cursor 的界面文件，无法汉化（已适配：${sv.join('、') || '无'}）`, { supportedVersions: sv });
   }
+  if (anchors.fallback) log(`⚠ Cursor ${info.version} 还没有专门适配，按 ${anchors.base} 的词典尽力汉化：匹配不上的地方保持英文，随时可以一键还原`);
   const files = targetFiles(anchors);
   const backupFiles = [...files, ...signFiles(o)];
   const w = await checkWritable(o.installRoot, backupFiles, { platform: o.platform, probe: o.probeWritable });
@@ -461,7 +481,10 @@ export async function patchTree({ root, anchors, dict, nlsDict = {}, patterns = 
   for (const relative of domTargets) await injectDomRuntime({ installRoot: root, relative, dict, patterns });
   const { checksumsUpdated } = await updateChecksums({ installRoot: root, anchors, relatives: [...new Set([...p.patched, ...domTargets])] });
   log(`DOM 补漏已注入；已更新校验：${checksumsUpdated.join(', ') || '无'}`);
-  return { replaced: p.replaced, perFile: p.perFile, fragmentsReplaced: p.fragmentsReplaced, perFileFragments: p.perFileFragments, missing: p.missing, nlsReplaced: n.replaced, nlsMissing: n.missing, checksumsUpdated };
+  const matched = p.matched + n.replaced;
+  const unmatched = p.total - p.matched + n.missing.length;
+  log(`已汉化 ${matched} 条${unmatched ? `，${unmatched} 条在此版本未匹配（界面上由 DOM 补漏兜底）` : ''}`);
+  return { matched, unmatched, replaced: p.replaced, perFile: p.perFile, fragmentsReplaced: p.fragmentsReplaced, perFileFragments: p.perFileFragments, missing: p.missing, nlsReplaced: n.replaced, nlsMissing: n.missing, checksumsUpdated };
 }
 
 // 安装文件已就位：装语言包、设 locale、清译文缓存、写记录；失败则把安装文件也换回原版
@@ -523,7 +546,8 @@ export async function revert(opts = {}) {
       return { ok: true, cancelledPending: true };
     }
   }
-  const anchors = info ? await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir }) : null;
+  if (info) await useData(o, info, false);
+  const anchors = info ? await loadAnchors({ platform: o.platform, version: info.version, anchorsDir: o.anchorsDir, installRoot: info.root }) : null;
   if (!state.localized && !state.pending) {
     // 记录已丢（旧版误判“过期”），但安装文件仍带补丁 → 用 .stale-* / --from-backup 里的原版恢复
     if (info && (o.fromBackup || (await installPatched(info.root, markerRelatives(anchors, state))))) return recoverFromBackup(o, info, anchors, state);

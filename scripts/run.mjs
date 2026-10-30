@@ -5,6 +5,7 @@
 // 只作用于本机探测到的 Cursor。--close：Cursor 在运行时先优雅关闭，完成后按原命令行重新打开。
 //       --start：localize 成功后若 Cursor 没在运行，就打开它（Windows 命令行包用）
 //       --log=<文件>：输出同时追加到该文件
+//       --offline：不联网取在线词典，只用安装包自带的（也可设环境变量 CZL_OFFLINE=1）
 // Windows 命令行包可以用 Cursor.exe 自带的 Node（ELECTRON_RUN_AS_NODE=1）跑本脚本；子进程（重新打开 Cursor 等）不能继承这个变量
 import fs from 'node:fs';
 import path from 'node:path';
@@ -31,6 +32,7 @@ const opts = {
   onLog,
   closeRunning: !!flag('close'),
   relaunch: !flag('no-relaunch'),
+  online: !flag('offline') && !process.env.CZL_OFFLINE, // 在线词典（GitHub → jsDelivr → 缓存 → 自带）；--offline 只用自带
   ...(val('elevate') ? { elevateStrategies: val('elevate').split(',') } : {}),
   ...(val('root') ? { installRoot: val('root') } : {}),
   ...(val('mac-sign') ? { macSign: val('mac-sign') } : {}),
@@ -57,4 +59,6 @@ if (cmd === 'localize' && r.ok && flag('start') && !r.relaunched) {
 const doneText = cmd === 'localize' ? (r.already ? '已是最新汉化，无需重复操作' : r.refreshed ? '汉化已更新' : '汉化完成') : '已还原';
 if (cmd !== 'status') console.log(r.ok === false ? `\n✖ 失败：${r.error ?? r.code}${nextStep(r.code) ? `\n  下一步：${nextStep(r.code)}` : ''}${logFile ? `\n  日志：${logFile}` : ''}` : `\n✔ ${doneText}${r.relaunched ? '，Cursor 已重新打开' : r.already ? '' : '，重启 Cursor 后生效'}`);
 if (cmd === 'status') console.log(`\n${!r.cursor ? '✖ 未找到 Cursor' : r.stale ? `⚠ Cursor 已更新/重装，汉化已失效${r.supported ? '：运行“一键汉化”即可重新汉化' : `，且 Cursor ${r.cursor.version} 暂未适配（支持：${r.supportedVersions.join('、')}）`}` : r.localized ? (r.upToDate === false ? '✔ 已汉化（本工具有更新的汉化内容：再运行一次“一键汉化”即可更新）' : '✔ 已汉化') : r.supported ? '· 未汉化' : `✖ Cursor ${r.cursor.version} 暂未适配（支持：${r.supportedVersions.join('、')}）`}`);
+if (cmd === 'status' && r.cursor && r.supported && !r.exact) console.log(`⚠ Cursor ${r.cursor.version} 还没有专门适配：将按 ${r.compatBase} 的词典尽力汉化，匹配不上的地方保持英文`);
+if (cmd === 'localize' && r.ok && r.unmatched) console.log(`  已汉化 ${r.matched} 条，${r.unmatched} 条在此版本未匹配`);
 process.exitCode = r.ok === false ? 1 : 0;

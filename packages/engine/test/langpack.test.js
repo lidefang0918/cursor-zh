@@ -80,6 +80,10 @@ describe('langpack', () => {
     const argvPath = path.join(await tmp('argv-'), 'sub', 'argv.json');
     await setLocale({ argvPath, locale: 'zh-cn' });
     assert.equal(await readLocale(argvPath), 'zh-cn');
+    // Cursor 首次启动会接着追加自己的键，逗号单独占一行；还原后不能留下孤立的逗号
+    await fs.writeFile(argvPath, (await fs.readFile(argvPath, 'utf8')).replace(/\n\}\n$/, '\n,\n\n\t// c\n\t"enable-crash-reporter": true\n}\n'));
+    await setLocale({ argvPath, locale: null });
+    assert.equal(await fs.readFile(argvPath, 'utf8'), '{\n\n\t// c\n\t"enable-crash-reporter": true\n}\n');
   });
 });
 

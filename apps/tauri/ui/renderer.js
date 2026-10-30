@@ -88,9 +88,12 @@ function describeState(s) {
     notice('info', '管理员命令已执行', ['补丁文件已写入安装目录，点“一键汉化”完成剩余步骤（语言包、界面语言）。']);
   }
   if (!s.supported) {
-    notice('error', `Cursor ${c.version} 暂未适配`, [
-      `已适配的版本：${s.supportedVersions?.join('、') || '无'}。`,
-      '为避免改坏 Cursor，本工具不会修改未适配的版本。请等待本工具更新，或安装已适配的 Cursor 版本。',
+    notice('error', `无法汉化 Cursor ${c.version}`, [
+      `没在安装目录里找到 Cursor 的界面文件。已适配的版本：${s.supportedVersions?.join('、') || '无'}。`,
+    ]);
+  } else if (!s.exact && !s.localized) {
+    notice('warn', `Cursor ${c.version} 是新版本，还没有专门适配`, [
+      `可以照常汉化：会按 ${s.compatBase} 的词典尽力匹配，匹配不上的地方保持英文；不满意随时一键还原。本工具会自动从网上获取最新词典，适配好后再点一次即可补全。`,
     ]);
   }
   if (s.stale) {
@@ -98,7 +101,7 @@ function describeState(s) {
       notice('warn', 'Cursor 已更新，汉化已失效', ['Cursor 被更新或重装后，安装文件变回了原版英文。点下面的按钮重新汉化即可（旧备份已自动留档，不会用来覆盖新版本）。'],
         [['重新汉化', () => run('localize'), true]]);
     } else {
-      notice('warn', `Cursor 已更新到 ${c.version}，汉化已失效`, ['本工具还没适配这个新版本，暂时无法汉化（为了不改坏 Cursor，本工具不会修改未适配的版本）。请等本工具更新后再点“一键汉化”。']);
+      notice('warn', `Cursor 已更新到 ${c.version}，汉化已失效`, ['新版本的界面文件找不到，暂时无法汉化。']);
     }
   } else if (s.localized && s.upToDate === false) {
     notice('info', '有更新的汉化内容', ['本工具的词典/界面补漏比 Cursor 里现在用的更新（覆盖更全、修了问题）。点“更新汉化”即可，不需要先还原。'],
@@ -134,7 +137,7 @@ async function refresh() {
   $('root').textContent = sel.hidden ? (s.cursor?.root ?? '未找到 Cursor') : '';
   $('kind').textContent = s.cursor ? (KIND[s.kind] ?? s.kind ?? '-') : '-';
   $('version').replaceChildren(s.cursor ? `${s.cursor.version}（VS Code ${s.cursor.vscodeVersion}）` : '-',
-    s.cursor ? el('span', { class: `badge ${s.supported ? 't-ok' : 't-bad'}` }, s.supported ? '已适配' : '暂未适配') : '');
+    s.cursor ? el('span', { class: `badge ${s.exact ? 't-ok' : s.supported ? 't-warn' : 't-bad'}` }, s.exact ? '已适配' : s.supported ? '兼容模式' : '无法汉化') : '');
   $('perm').replaceChildren(!s.cursor ? '-' : s.readOnlyFs ? el('span', { class: 't-bad' }, '只读，无法修改')
     : s.writable == null ? '-' : s.writable ? el('span', { class: 't-ok' }, '可直接写入') : el('span', { class: 't-warn' }, '需要管理员权限'));
   const st = s.stale ? el('span', { class: 't-warn' }, '汉化已失效（Cursor 被重装或更新）')
@@ -168,7 +171,7 @@ async function run(action, opt = {}) {
     if (r.ok) {
       pendingAction = null;
       const done = action === 'localize' ? (r.already ? '✔ 已是最新汉化，无需重复操作' : r.refreshed ? '✔ 汉化已更新' : '✔ 汉化完成') : r.cancelledPending ? '✔ 已取消未完成的汉化' : '✔ 已还原';
-      log(`${done}${r.relaunched ? '，Cursor 已重新打开' : r.already ? '' : '，重启 Cursor 后生效'}`, 'done');
+      log(`${done}${r.unmatched ? `（已汉化 ${r.matched} 条，${r.unmatched} 条在此版本未匹配）` : ''}${r.relaunched ? '，Cursor 已重新打开' : r.already ? '' : '，重启 Cursor 后生效'}`, 'done');
     } else if (r.code === 'CURSOR_RUNNING') {
       busy = false;
       $('progress').hidden = true;

@@ -7,7 +7,15 @@
 - `packages/engine`：汉化引擎（Node，ESM）。负责检测 Cursor 安装、备份、打静态补丁、注入 NLS 文案、安装语言包、还原，以及各平台的提权写入和重签名。
 - `packages/dom-runtime`：注入到 Cursor 工作台的运行时补漏脚本（DOM 层，处理静态补丁覆盖不到的动态文案）。
 - `dicts/`：词典（`zh-cn.json` 整串、`zh-cn.templates.json` 模板片段、`zh-cn.nls.json` NLS、`zh-cn.patterns.json` 规则）与术语表 `glossary.md`。
-- `anchors/<版本>.json`：每个已适配 Cursor 版本的锚点（用于校验补丁命中、拒绝未适配版本）。
+- `anchors/<版本>.json`：每个已适配 Cursor 版本的锚点（要替换哪些字面量 / 模板片段 / NLS 下标，以及原版 sha256）。
+- `dicts/manifest.json`：在线词典清单（格式版本 `schema`、最低工具版本 `minTool`、`updated`、每个文件的 sha256）。改了 `dicts/` 或 `anchors/` 后运行 `node scripts/build-manifest.mjs`，`npm test` 会检查它是否最新。
+
+### 版本兼容与在线词典
+
+- **兼容模式**：安装的 Cursor 版本没有对应锚点时，不再拒绝，而是用最新一版锚点逐条“尽力匹配”（`anchors.js` 的 `fallbackAnchors`）：去掉原版 sha256 校验、必需条目和模板片段的次数要求，NLS 改按原文匹配；匹配不上的只计数（结果里的 `matched` / `unmatched`，日志“已汉化 N 条，M 条在此版本未匹配”）。DOM 补漏追加在 bundle 末尾，不依赖代码结构。备份 / 还原流程不变，还原仍逐字节一致。界面上显示“兼容模式”（`status().exact === false`）。
+- **在线词典**（`packages/engine/src/online.js`）：图形界面和 `run.mjs` 默认开启（`--offline` 或 `CZL_OFFLINE=1` 关闭）。汉化时依次尝试 `raw.githubusercontent.com/lidefang0918/cursor-zh/main/` → `cdn.jsdelivr.net/gh/lidefang0918/cursor-zh@main/` → 上次的缓存（数据目录下的 `online/`）→ 安装包自带。只下载 3 个词典和当前 Cursor 版本的锚点，每个文件按 manifest 校验 sha256；`schema` 不同或 `minTool` 比本工具新的不用；比自带的旧也不用。status / 还原只读缓存，不联网。
+- **新版本检测**：`.github/workflows/ci.yml` 每天检查 Cursor 最新版本；未适配就下载 .deb，用 `scripts/compat-report.mjs` 在新版上试打补丁、`static-strings.mjs` 扫新文案，开 issue 贴报告，并生成锚点作为产物。人审核后提交锚点 / 词典 + manifest，推到 main 后用户下次汉化自动生效，不用发新版。
+- 本地看匹配率：`node scripts/compat-report.mjs <原版安装根> [--base=<锚点版本>] [--platform=…]`。
 - `apps/tauri`：桌面界面（Tauri 2）。引擎在构建时由 `build.rs` 嵌入，运行时解压到缓存目录，借用已安装的 Cursor 主程序以 `ELECTRON_RUN_AS_NODE=1` 运行，因此安装包只有几 MB。
 - `apps/desktop`：旧版 Electron 界面（备用，不随 Release 发布）。
 
@@ -24,7 +32,7 @@
 ## 命令行与行为（Linux）
 
 - 图形界面：安装 `cursor-zh-<ver>-linux-amd64.deb`，或直接运行 `cursor-zh-<ver>-linux-x86_64.AppImage`（没有 FUSE 时加环境变量 `APPIMAGE_EXTRACT_AND_RUN=1`）。
-- 命令行：`node scripts/run.mjs status|localize|revert [--close] [--no-relaunch] [--elevate=pkexec,sudo-n,manual] [--root=<安装目录>]`；`node scripts/run.mjs extract-appimage <Cursor.AppImage>`。
+- 命令行：`node scripts/run.mjs status|localize|revert [--close] [--no-relaunch] [--offline] [--elevate=pkexec,sudo-n,manual] [--root=<安装目录>]`；`node scripts/run.mjs extract-appimage <Cursor.AppImage>`。
 
 行为说明：
 
@@ -52,7 +60,7 @@
 
 ## 开发
 
-- 新版本 Cursor 适配：`sh scripts/new-version.sh [版本号|latest] [--all-platforms]`（下载官方包 → 生成锚点 → 全流程校验 → 测试，打印缺失词条和下一步）；CI 草稿 `.github/workflows/ci.yml` 每周自动检查一次
+- 新版本 Cursor 适配：`sh scripts/new-version.sh [版本号|latest] [--all-platforms]`（下载官方包 → 生成锚点 → 全流程校验 → 测试，打印缺失词条和下一步）；`.github/workflows/ci.yml` 每天自动检查一次（见“版本兼容与在线词典”）
 - 术语一致性：`node scripts/check-glossary.mjs`（也在 `npm test` 里）
 
 - `npm test`

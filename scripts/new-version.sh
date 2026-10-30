@@ -31,6 +31,7 @@ say "commit $COMMIT"
 if [ -f "$REPO/anchors/$V.json" ]; then say "anchors/$V.json 已存在，将按新词典重新生成"; fi
 python3 "$REPO/scripts/build-anchors.py" "$LROOT" > "$D/anchors-report.txt" 2>&1 || { cat "$D/anchors-report.txt"; die "生成锚点失败"; }
 tail -1 "$D/anchors-report.txt"
+node "$REPO/scripts/build-manifest.mjs" >/dev/null   # 在线词典清单跟着更新（npm test 会校验）
 
 SPECS="linux=linux:$LROOT"
 if [ "$ALL" = 1 ]; then
@@ -76,7 +77,7 @@ say "只能走 DOM 的词条 $(grep -c '^UNSAFE' "$D/anchors-tsv.txt" || true) �
 cat <<NEXT
 
 下一步：
-  1. git add anchors/$V.json && git commit（提交前看一眼 missing.txt：改了英文文案的，按新英文补词典后重跑本脚本）
+  1. git add anchors/$V.json dicts/manifest.json && git commit（提交前看一眼 missing.txt：改了英文文案的，按新英文补词典后重跑本脚本）
   2. 在 box 的 Cursor 上实测：sh scripts/reinstall-cursor-box.sh（如需）→ node scripts/run.mjs localize → node scripts/coverage-scan.mjs
   3. 重新打包：node scripts/build-desktop.mjs && node scripts/build-desktop.mjs --win && node scripts/build-desktop.mjs --mac
 NEXT

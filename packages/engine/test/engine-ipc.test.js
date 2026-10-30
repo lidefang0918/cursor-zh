@@ -24,7 +24,7 @@ async function fakeInstall(version = '0.0.1-ipc-test') {
   await fs.mkdir(path.join(root, 'resources/app/out'), { recursive: true });
   await fs.writeFile(path.join(root, 'resources/app/product.json'), JSON.stringify({ version, vscodeVersion: '1.128.0', commit: 'c0ffee', checksums: {} }));
   const home = await tmp('home-');
-  return { root, home, env: { HOME: home, USERPROFILE: home, APPDATA: path.join(home, 'AppData/Roaming'), LOCALAPPDATA: path.join(home, 'AppData/Local'), CZL_GUI_LOG: path.join(home, 'gui.log'), ELECTRON_RUN_AS_NODE: '1' } };
+  return { root, home, env: { HOME: home, USERPROFILE: home, APPDATA: path.join(home, 'AppData/Roaming'), LOCALAPPDATA: path.join(home, 'AppData/Local'), CZL_GUI_LOG: path.join(home, 'gui.log'), ELECTRON_RUN_AS_NODE: '1', CZL_OFFLINE: '1' } };
 }
 
 describe('engine-ipc', () => {

@@ -35,9 +35,10 @@ const pick = (o = {}) => ({
   onLog: send,
   ...(rootOf(o) ? { installRoot: rootOf(o) } : {}),
   closeRunning: !!o.closeRunning,
+  online: !process.env.CZL_OFFLINE, // 在线词典；CZL_OFFLINE=1 只用自带词典
 });
 
-ipcMain.handle('getStatus', async (_e, o = {}) => JSON.parse(JSON.stringify(await status(rootOf(o) ? { installRoot: rootOf(o) } : {}))));
+ipcMain.handle('getStatus', async (_e, o = {}) => JSON.parse(JSON.stringify(await status({ online: !process.env.CZL_OFFLINE, ...(rootOf(o) ? { installRoot: rootOf(o) } : {}) }))));
 ipcMain.handle('localize', (_e, o) => exclusive(() => localize(pick(o))));
 ipcMain.handle('revert', (_e, o) => exclusive(() => revert(pick(o))));
 ipcMain.handle('extractAppImage', (_e, appImagePath) => exclusive(async () => ({ ok: true, ...(await extractAppImage({ appImagePath, log: send })) })));

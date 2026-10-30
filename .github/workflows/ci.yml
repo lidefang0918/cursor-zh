@@ -1,14 +1,16 @@
-# 草稿（未推送、未在 GitHub 上跑过）。
 # - 每次 push / PR：单元测试 + 术语一致性检查（几秒钟）。
-# - 每周一次（或手动）：检查 Cursor 是否出了新版本；出了就跑 scripts/new-version.sh 生成锚点并全流程校验，
-#   把 anchors/<版本>.json 和报告作为产物上传，由人审核后提交（不会自动提交、不会发布）。
+# - 每天一次（或手动）：检查 Cursor 是否出了新版本；出了就
+#   1. 用现有词典/锚点在新版上试打补丁（兼容模式，和用户升级 Cursor 后点“一键汉化”的效果一样），统计匹配率、列出没匹配上的；
+#   2. 静态扫描设置页里还没翻译的新文案；
+#   3. 开一个 issue 贴报告（同一版本只开一次），再跑 scripts/new-version.sh 生成锚点并把 anchors/<版本>.json 作为产物上传。
+#   不会自动提交、不会发布：人审核后提交锚点/词典（再跑 node scripts/build-manifest.mjs），推到 main 后用户的工具下次汉化就会自动取到。
 name: ci
 on:
   push:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * 1'   # 每周一 01:00 UTC（北京时间 09:00）
+    - cron: '0 1 * * *'   # 每天 01:00 UTC（北京时间 09:00）
 
 jobs:
   test:
@@ -24,6 +26,8 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: test
     runs-on: ubuntu-latest
+    permissions: { contents: read, issues: write }
+    env: { GH_TOKEN: '${{ github.token }}', CZL_CACHE: '${{ runner.temp }}/cursor' }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,12 +38,30 @@ jobs:
           v=$(curl -fsL 'https://cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).version))')
           echo "version=$v" >> "$GITHUB_OUTPUT"
           if [ -f "anchors/$v.json" ]; then echo "known=1" >> "$GITHUB_OUTPUT"; echo "Cursor $v 已适配"; else echo "known=0" >> "$GITHUB_OUTPUT"; echo "Cursor $v 尚未适配"; fi
+      - run: npm ci
+        if: steps.v.outputs.known == '0'
+      - name: 兼容性报告（现有词典在新版上能匹配多少）
+        if: steps.v.outputs.known == '0'
+        run: |
+          v=${{ steps.v.outputs.version }}; d="$CZL_CACHE/$v"; mkdir -p "$d"
+          curl -fL --retry 3 -o "$d/cursor.deb" "https://downloads.cursor.com/aptrepo/pool/stable/c/cu/cursor_${v}_amd64.deb"
+          dpkg-deb -x "$d/cursor.deb" "$d/linux"
+          root="$d/linux/usr/share/cursor"
+          node scripts/compat-report.mjs "$root" --md="$d/report.md"
+          node scripts/static-strings.mjs "$root" > "$d/static-strings.txt" || true
+          { echo; echo "### 设置页静态扫描"; grep '^静态可见字符串' "$d/static-strings.txt" || true
+            echo; echo "<details><summary>还没翻译的文案（前 200 条）</summary>"; echo; echo '```'; grep '^MISS' "$d/static-strings.txt" | head -200; echo '```'; echo '</details>'
+            echo; echo "完整报告和生成的锚点见本次运行的产物：${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; } >> "$d/report.md"
+          title="Cursor $v 已发布：兼容性报告"
+          if [ "$(gh issue list --state all --search "\"$title\" in:title" --json number --jq length)" = 0 ]; then
+            head -c 60000 "$d/report.md" > "$d/issue.md"; gh issue create --title "$title" --body-file "$d/issue.md"
+          else echo "issue 已存在，跳过"; fi
       - name: 安装解包工具
         if: steps.v.outputs.known == '0'
         run: sudo apt-get update && sudo apt-get install -y innoextract 7zip
       - name: 生成锚点并校验
         if: steps.v.outputs.known == '0'
-        env: { CZL_CACHE: '${{ runner.temp }}/cursor' }
+        continue-on-error: true
         run: sh scripts/new-version.sh "${{ steps.v.outputs.version }}" --all-platforms
       - uses: actions/upload-artifact@v4
         if: always() && steps.v.outputs.known == '0'
@@ -48,4 +70,5 @@ jobs:
           path: |
             anchors/${{ steps.v.outputs.version }}.json
             ${{ runner.temp }}/cursor/${{ steps.v.outputs.version }}/*.txt
+            ${{ runner.temp }}/cursor/${{ steps.v.outputs.version }}/*.md
             ${{ runner.temp }}/cursor/${{ steps.v.outputs.version }}/*.log

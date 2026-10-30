@@ -124,13 +124,63 @@ describe('localize/revert', () => {
     await assert.rejects(fs.access(cache));
   });
 
-  it('refuses unknown versions without touching anything', async () => {
-    const { root, js, opts } = await setup({ version: '0.0.1' });
+  it('refuses an install whose UI bundle is missing, touching nothing', async () => {
+    const { root, opts } = await setup({ version: '0.0.1' });
+    await fs.rm(path.join(root, REL));
     const r = await localize(opts);
-    assert.equal(r.ok, false);
-    assert.match(r.error, /暂未适配/);
-    assert.equal(await read(path.join(root, REL)), js);
+    assert.equal(r.code, 'UNSUPPORTED');
     assert.equal(await readLocale(opts.argvPath), null);
+  });
+
+  it('localizes an unknown (newer) Cursor version best-effort with the newest anchors, and reverts byte-for-byte', async () => {
+    // 1.0.0 的锚点：必需条目、带次数的模板片段、按下标的 NLS；新版 2.0.0 里有的变了/没了
+    const anchorsDir = await tmp('anchors-');
+    await fs.writeFile(path.join(anchorsDir, '1.0.0.json'), JSON.stringify({
+      version: '1.0.0', productJson: 'resources/app/product.json', checksumBase: 'resources/app/out', pristine: { [REL]: 'x'.repeat(64) },
+      files: [{ relative: REL, strings: [{ from: 'Cursor Settings', required: true }, { from: 'New Agent' }],
+        fragments: [{ from: '`Tab Stats: ${', to: '`Tab 统计：${', count: 1 }, { from: '`Gone: ${', to: '`没了：${', count: 1 }] },
+      { relative: 'resources/app/out/vs/workbench/workbench.glass.main.js', strings: [{ from: 'New Agent' }] }],
+      nls: { relative: 'resources/app/out/nls.messages.json', entries: [{ index: 1, from: '&&Edit' }, { index: 2, from: 'Copy' }] },
+    }));
+    const js = 'a="New Agent";b=`Tab Stats: ${n}`;c=`Tab Stats: ${m}`;';
+    const { root, opts } = await setup({ js, version: '2.0.0' });
+    const nls = path.join(root, 'resources/app/out/nls.messages.json');
+    const nlsBefore = JSON.stringify(['OK', 'Paste', '&&Edit']);
+    await fs.writeFile(nls, nlsBefore);
+    const pj = path.join(root, 'resources/app/product.json');
+    const productBefore = await read(pj);
+    const o = { ...opts, anchorsDir };
+    const st = await status({ ...o, light: true });
+    assert.deepEqual([st.supported, st.exact, st.compatBase], [true, false, '1.0.0']);
+    const logs = [];
+    const r = await localize({ ...o, onLog: (m) => logs.push(m) });
+    assert.equal(r.ok, true, r.error);
+    assert.ok(logs.some((l) => /还没有专门适配，按 1\.0\.0/.test(l)));
+    assert.ok(logs.some((l) => /已汉化 3 条，3 条在此版本未匹配/.test(l)), logs.join('\n'));
+    assert.deepEqual([r.matched, r.unmatched], [3, 3]);
+    const out = await read(path.join(root, REL));
+    assert.match(out, /a="新建 Agent";b=`Tab 统计：\$\{n\}`;c=`Tab 统计：\$\{m\}`;/);
+    assert.match(out, /CURSOR_ZH_DOM_BEGIN/);
+    assert.deepEqual(JSON.parse(await read(nls)), ['OK', 'Paste', '编辑(&&E)'], 'NLS matched by text, not by the old index');
+    assert.equal(JSON.parse(await read(pj)).checksums[KEY], vscodeChecksum(Buffer.from(out)));
+    assert.equal((await localize(o)).already, true);
+    assert.equal((await revert(o)).ok, true);
+    assert.equal(await read(path.join(root, REL)), js);
+    assert.equal(await read(nls), nlsBefore);
+    assert.equal(await read(pj), productBefore);
+    assert.equal(await readLocale(opts.argvPath), null);
+  });
+
+  it('online mode offline: falls back to the bundled dictionaries and says so', async () => {
+    const { root, opts } = await setup();
+    const logs = [];
+    const offline = async () => { throw new TypeError('fetch failed'); };
+    const r = await localize({ ...opts, online: true, onlineOpts: { fetchImpl: offline }, onLog: (m) => logs.push(m) });
+    assert.equal(r.ok, true, r.error);
+    assert.ok(logs.some((l) => /在线词典不可用/.test(l)) && logs.some((l) => /词典来源：内置/.test(l)), logs.join('\n'));
+    assert.match(await read(path.join(root, REL)), /"Cursor 设置"/);
+    assert.equal((await status({ ...opts, online: true, light: true })).data.source, '内置');
+    assert.equal((await revert({ ...opts, online: true })).ok, true);
   });
 
   it('rolls back everything when a required anchor is missing', async () => {
