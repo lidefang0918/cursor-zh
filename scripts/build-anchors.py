@@ -17,7 +17,7 @@ REQUIRED = {('workbench.desktop.main.js', 'Cursor Settings'), ('workbench.deskto
 # 字面量前面出现这些 → 当作逻辑用法（比较、switch、对象键、集合查找、id/type 字段等），不做静态替换
 UNSAFE_PREV = re.compile(r'(===|!==|==|!=|\bcase|\[|\bin|\.has\(|\.get\(|\.delete\(|includes\(|startsWith\(|endsWith\(|indexOf\(|\.set\(|\b(id|key|type|kind|mode|value|tabId|section|category|scheme|role|name|state|status|reason|source|variant|icon|command|menubarKey|glassCategory|category|action|error|prefix|group|when|event|tab|view|page|route|path)\s*:)\s*$')
 # 单个词（无空格）碰撞风险高：每处出现都必须在这些展示字段后面，否则只走 DOM
-DISPLAY_PREV = re.compile(r'(\b(label|title|children|tooltip|heading|description|placeholder|primaryLabel|secondaryLabel|defaultLabel|accessibleLabel|labelOutsidePicker|displayName|buttonText|text|message|detail|header|subtitle|ariaLabel)|"aria-label")\s*:\s*$')
+DISPLAY_PREV = re.compile(r'(\b(label|title|children|tooltip|heading|description|placeholder|primaryLabel|secondaryLabel|defaultLabel|accessibleLabel|labelOutsidePicker|displayName|buttonText|text|message|detail|header|subtitle|ariaLabel|elementName)|"aria-label")\s*:\s*$')
 
 
 # 这些词条在 bundle 里还当默认值写进用户数据并拿来比较（如 N2i="New Project" 与 t.name===N2i），
@@ -98,6 +98,42 @@ TEMPLATE_RULES = [
     (r'label:`Preview Box for Terminal ' + _K + r'K`', lambda m: 'label:`终端 ' + _k(m) + 'K 预览框`'),
     (r'`Automatically jump to the next diff when accepting changes with ' + _K + r'Y`', lambda m: '`使用 ' + _k(m) + 'Y 接受更改时自动跳到下一处差异`'),
 ]
+
+
+# 反引号模板词典（dicts/zh-cn.templates.json）：整个模板字面量与 key 完全相同（插值表达式任意、不含花括号/反引号）才替换
+_tpl_path = os.path.join(REPO, 'dicts/zh-cn.templates.json')
+TEMPLATES = json.load(open(_tpl_path, encoding='utf-8'))['templates'] if os.path.exists(_tpl_path) else {}
+_SLOT = re.compile(r'\$\{(\d+)\}')
+
+
+def template_rule(key, val):
+    parts, slots, pos = [], [], 0
+    for m in _SLOT.finditer(key):
+        parts.append(re.escape(key[pos:m.start()]))
+        parts.append(r'\$\{([^{}`]+)\}')
+        slots.append(int(m.group(1)))
+        pos = m.end()
+    parts.append(re.escape(key[pos:]))
+    rx = '`' + ''.join(parts) + '`'
+
+    def fn(m):
+        exprs = {n: m.group(i + 1) for i, n in enumerate(slots)}
+        return '`' + _SLOT.sub(lambda x: '${' + exprs[int(x.group(1))] + '}', val) + '`'
+    return rx, fn
+
+
+# JSX 拆分句：children:["整句前半段", " ", <链接>…] 里第一个元素前面是 "["，整串替换判为不安全；
+# 这里只认 children:["…", 这种上下文，且前半段必须是词典里的多词条目
+def _jsx_head(m):
+    t = WORDS.get(m.group(1))
+    return 'children:[' + json.dumps(t, ensure_ascii=False) + ',' if t and ' ' in m.group(1) else None
+
+
+TEMPLATE_RULES += [template_rule(k, v) for k, v in TEMPLATES.items()]
+TEMPLATE_RULES.append((r'children:\["([^"\\]*[A-Za-z][^"\\]*)",', _jsx_head))
+# 聊天框模型按钮的提示："Switch Model (Ctrl+/) · Cycle ${参数名} (${快捷键})"：后半段在这里，参数名来自服务端，保留；"Switch Model" 走词典
+TEMPLATE_RULES.append((r'(let [\w$]+=)"Switch Model";return', lambda m: m.group(1) + '"切换模型";return'))
+TEMPLATE_RULES.append((r'([\w$]+\+=` \\xB7 )Cycle (\$\{[\w$]+\} \(\$\{[\w$]+\}\)`)', lambda m: m.group(1) + '切换 ' + m.group(2)))
 
 
 def template_fragments(src):

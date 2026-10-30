@@ -9,7 +9,8 @@
 // 默认严格口径（中英混排算半翻译、计入英文），--loose 用旧口径（含中文即算已译）。
 // 用法（--palette-pages 为翻页上限，默认 400，翻到底自动停）：
 //   cursor --remote-debugging-port=9333 &   # 临时调试端口，扫描后请正常重启
-//   node scripts/coverage-scan.mjs [--port 9333] [--json out.json] [--md out.md] [--only agents-settings,classic-settings,palette,menus,context,chrome] [--loose]
+//   node scripts/coverage-scan.mjs [--port 9333] [--json out.json] [--md out.md] [--only agents-settings,classic-settings,palette,menus,context,chrome,dropdowns] [--loose]
+// dropdowns：每个设置页展开全部折叠区（如 模型 > API 密钥），逐个打开下拉（只打开不选），外加聊天输入框里的模式/模型下拉；同时统计 aria-label/title/placeholder。
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,7 +19,7 @@ const args = process.argv.slice(2);
 const opt = (name, dflt) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : dflt; };
 const PORT = +opt('port', '9333');
 const PAGES = +opt('palette-pages', '400');
-const ONLY = opt('only', 'agents-settings,classic-settings,palette,menus,context,chrome').split(',');
+const ONLY = opt('only', 'agents-settings,classic-settings,palette,menus,context,chrome,dropdowns').split(',');
 const here = dirname(fileURLToPath(import.meta.url));
 const KEEP = JSON.parse(readFileSync(join(here, 'coverage-keep.json'), 'utf8'));
 const SKIP_NAV = ['返回', 'Back', '云端智能体', 'Cloud Agents', '文档', 'Docs', 'VS Code 设置', 'VS Code Settings'];
@@ -40,10 +41,13 @@ async function connect(titlePart) {
   };
   const KEYS = { ',': ['Comma', 188], p: ['KeyP', 80], j: ['KeyJ', 74], Escape: ['Escape', 27], PageDown: ['PageDown', 34] };
   const key = async (k, mod = 0) => { const [code, vk] = KEYS[k]; for (const type of ['rawKeyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: k, code, windowsVirtualKeyCode: vk, modifiers: mod }); };
+  const click = async (x, y) => {
+    for (const type of ['mouseMoved', 'mousePressed', 'mouseReleased']) await send('Input.dispatchMouseEvent', { type, x, y, button: type === 'mouseMoved' ? 'none' : 'left', clickCount: 1 });
+  };
   const rightClick = async (x, y) => {
     for (const type of ['mouseMoved', 'mousePressed', 'mouseReleased']) await send('Input.dispatchMouseEvent', { type, x, y, button: type === 'mouseMoved' ? 'none' : 'right', clickCount: 1 });
   };
-  return { title: t.title, evaluate, key, rightClick, close: () => ws.close() };
+  return { title: t.title, evaluate, key, click, rightClick, close: () => ws.close() };
 }
 
 // 页面内执行：收集 root 下可见文本节点（排除编辑器/代码/聊天内容），返回去重后的文本。
@@ -60,6 +64,9 @@ const COLLECT = `(sel, minX) => {
       if (el.closest('script,style,textarea,input,pre,code,[contenteditable=true],[aria-hidden=true]')) continue;
       let bad = false; for (let p = el; p && p !== document.body; p = p.parentElement) { if (typeof p.className === 'string' && skip.test(p.className)) { bad = true; break; } }
       if (bad) continue;
+      // 字体选择器里每项用自身字体预览（字体名不翻）
+      let font = false; for (let p = el, i = 0; p && i < 3; p = p.parentElement, i++) { const f = p.style && p.style.fontFamily; if (f && f !== 'inherit') { font = true; break; } }
+      if (font) continue;
       const r = el.getClientRects(); if (!r.length || !r[0].width) continue;
       if (minX != null && r[0].x < minX) continue;
       const cs = getComputedStyle(el); if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity === 0) continue;
@@ -68,6 +75,24 @@ const COLLECT = `(sel, minX) => {
   }
   return [...out];
 }`;
+
+// 页面内执行：收集 root 下可见元素的 aria-label / title / placeholder（下拉选项、图标按钮、输入框提示）
+const COLLECT_ATTRS = `(sel, exclude) => {
+  const roots = [...document.querySelectorAll(sel)];
+  const skip = /monaco-editor|view-lines|xterm|markdown|ProseMirror|tiptap|composer-human-message/;
+  const out = new Set();
+  for (const root of roots) for (const el of [root, ...root.querySelectorAll('[aria-label],[title],[placeholder]')]) {
+    if (exclude && el.closest(exclude)) continue;
+    if (!el.getClientRects().length) continue;
+    let bad = false; for (let p = el; p && p !== document.body; p = p.parentElement) { if (typeof p.className === 'string' && skip.test(p.className)) { bad = true; break; } }
+    if (bad) continue;
+    for (const a of ['aria-label', 'title', 'placeholder']) { const v = (el.getAttribute(a) || '').replace(/\\s+/g, ' ').trim(); if (v && /[A-Za-z\\u3400-\\u9fff]/.test(v)) out.add(v.slice(0, 160)); }
+  }
+  return [...out];
+}`;
+// 弹出层：下拉列表 / 菜单 / 浮层（React portal 挂在 body 下、VS Code context-view、monaco select box 列表）
+const POPUP_SEL = '[role=listbox], [role=menu], [role=dialog]:not(.quick-input-widget), .context-view .monaco-select-box-dropdown-container, .context-view .monaco-menu, .monaco-select-box-dropdown-container, [data-side], [data-base-ui-portal], .ui-select-popup, .ui-menu-popup, .ui-popover, .typeahead-popover';
+const POPUP_EXCLUDE = '.quick-input-widget, .cursor-settings-pane-content, [data-component=glass-settings-panel]';
 
 const CJK = /[\u3400-\u9fff\u3000-\u303f\uff00-\uffef]/;
 const keepRe = KEEP.regex.map((r) => new RegExp(r));
@@ -118,6 +143,61 @@ async function settingsPages(win, section, { open, navSel, labelOf, contentSel }
   }
 }
 const CUSTOMIZE_TABS = ['插件', 'MCP', '技能', '子智能体', '规则', '命令', '钩子', 'Plugins', 'Skills', 'Subagents', 'Rules', 'Commands', 'Hooks'];
+
+// 下拉与折叠区：在每个设置页里先展开所有折叠区（aria-expanded=false 且不是下拉触发器），
+// 再逐个打开下拉（combobox / aria-haspopup / 原生 select），收集弹出列表文本与选项 aria-label，然后 Escape 关闭。
+// 只打开、不选择任何选项，不改动设置。
+const TRIGGER_SEL = '[role=combobox], [aria-haspopup=listbox], [aria-haspopup=menu], [aria-haspopup=true], [aria-haspopup=dialog], select, .monaco-select-box';
+async function dropdownPages(win, section, { open, navSel, labelOf, contentSel }) {
+  const ensureOpen = async () => {
+    if (await win.evaluate(`!!document.querySelector(${JSON.stringify(contentSel)}) && document.querySelectorAll(${JSON.stringify(navSel)}).length > 0`)) return true;
+    await open(); await sleep(1800);
+    return win.evaluate(`!!document.querySelector(${JSON.stringify(contentSel)})`);
+  };
+  if (!await ensureOpen()) { process.stderr.write(`  无法打开设置页（${section}）\n`); return; }
+  const navs = await win.evaluate(`(() => [...document.querySelectorAll(${JSON.stringify(navSel)})].filter(e => e.getClientRects().length).map(e => ({ label: (${labelOf})(e), ext: !!e.querySelector('[data-icon-name=arrow-right-up],.codicon-link-external,[data-icon-name=link-external]') })))()`);
+  for (const [i, n] of navs.entries()) {
+    if (!n.label || n.ext || SKIP_NAV.includes(n.label) || i === navs.length - 1 && /agents/.test(section) && !/[\u3400-\u9fff]/.test(n.label)) continue;
+    if (!await ensureOpen()) break;
+    const ok = await win.evaluate(`(() => { const e = [...document.querySelectorAll(${JSON.stringify(navSel)})].filter(e => e.getClientRects().length).find(e => (${labelOf})(e) === ${JSON.stringify(n.label)}); if (!e) return false; e.click(); return true; })()`);
+    if (!ok) continue;
+    await sleep(1500);
+    // 展开折叠区（最多 3 轮，展开后可能出现嵌套折叠区）
+    let expanded = 0;
+    for (let round = 0; round < 3; round++) {
+      const c = await win.evaluate(`(() => { const root = document.querySelector(${JSON.stringify(contentSel)}); if (!root) return 0; let c = 0; for (const b of root.querySelectorAll('[aria-expanded=false]')) { if (b.matches(${JSON.stringify(TRIGGER_SEL)}) || b.getAttribute('aria-haspopup') || !b.getClientRects().length) continue; b.click(); c++; } return c; })()`);
+      expanded += c; if (!c) break; await sleep(700);
+    }
+    const page = [...await win.evaluate(`(${COLLECT})(${JSON.stringify(contentSel)})`), ...await win.evaluate(`(${COLLECT_ATTRS})(${JSON.stringify(contentSel)})`)];
+    add(section, `${n.label}（展开 ${expanded} 个折叠区 + 属性）`, page);
+    const count = await win.evaluate(`[...document.querySelector(${JSON.stringify(contentSel)}).querySelectorAll(${JSON.stringify(TRIGGER_SEL)})].filter(e => e.getClientRects().length).length`);
+    const popupTexts = new Set();
+    for (let k = 0; k < Math.min(count, 40); k++) {
+      const p = await win.evaluate(`(() => { const e = [...document.querySelector(${JSON.stringify(contentSel)}).querySelectorAll(${JSON.stringify(TRIGGER_SEL)})].filter(e => e.getClientRects().length)[${k}]; if (!e) return null; e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2, native: e.tagName === 'SELECT', opts: e.tagName === 'SELECT' ? [...e.options].map(o => o.textContent.trim()) : [] }; })()`);
+      if (!p) continue;
+      if (p.native) { p.opts.forEach((t) => popupTexts.add(t)); continue; }
+      await win.click(p.x, p.y); await sleep(600);
+      for (const t of await win.evaluate(`(${COLLECT})(${JSON.stringify(POPUP_SEL)})`)) popupTexts.add(t);
+      for (const t of await win.evaluate(`(${COLLECT_ATTRS})(${JSON.stringify(POPUP_SEL)}, ${JSON.stringify(POPUP_EXCLUDE)})`)) popupTexts.add(t);
+      await win.key('Escape'); await sleep(350);
+      if (!await win.evaluate(`!!document.querySelector(${JSON.stringify(contentSel)})`)) { await ensureOpen(); await win.evaluate(`(() => { const e = [...document.querySelectorAll(${JSON.stringify(navSel)})].find(e => (${labelOf})(e) === ${JSON.stringify(n.label)}); e && e.click(); })()`); await sleep(1200); }
+    }
+    if (count) add(section, `${n.label} / 下拉列表（${count} 个）`, [...popupTexts]);
+  }
+}
+// 聊天输入框/主界面里的下拉：模式（智能体/计划/询问…）、模型选择器、项目/环境选择、账户菜单等（标题栏菜单另由 menus 扫）
+async function composerDropdowns(win, section, sel) {
+  const triggers = await win.evaluate(`[...document.querySelectorAll(${JSON.stringify(sel)})].filter(e => e.getClientRects().length && !e.closest('[role=banner], .titlebar, .part.titlebar')).map((e, i) => { const r = e.getBoundingClientRect(); return { i, t: (e.getAttribute('aria-label') || e.textContent).trim().slice(0, 24), x: r.x + r.width / 2, y: r.y + r.height / 2 }; })`);
+  const seen = new Set();
+  for (const t of triggers) {
+    if (seen.has(t.t)) continue; seen.add(t.t);
+    await win.key('Escape'); await sleep(200);
+    await win.click(t.x, t.y); await sleep(800);
+    const texts = [...await win.evaluate(`(${COLLECT})(${JSON.stringify(POPUP_SEL)})`), ...await win.evaluate(`(${COLLECT_ATTRS})(${JSON.stringify(POPUP_SEL)}, '.quick-input-widget')`)];
+    if (texts.length) add(section, `下拉：${t.t}`, texts);
+    await win.key('Escape'); await sleep(400);
+  }
+}
 
 const agents = await connect(/^Cursor Agents$/) || await connect('Cursor Agents');
 const classic = await connect(/ - Cursor$/);
@@ -191,6 +271,22 @@ if (classic && ONLY.includes('classic-settings')) {
     labelOf: 'e => e.textContent.trim()',
     contentSel: '.cursor-settings-pane-content, .ui-customize-view',
   });
+}
+
+if (ONLY.includes('dropdowns')) {
+  if (classic) {
+    process.stderr.write('经典窗口 Cursor 设置（下拉/折叠区）：\n');
+    await classic.key('Escape'); await sleep(300);
+    await dropdownPages(classic, 'classic-dropdowns', { open: () => classic.key('j', 10), navSel: '.cursor-settings-sidebar-nav-cell', labelOf: 'e => e.textContent.trim()', contentSel: '.cursor-settings-pane-content, .ui-customize-view' });
+    await composerDropdowns(classic, 'classic-dropdowns', '.composer-unified-dropdown, .ui-model-picker__trigger, .part.auxiliarybar [aria-haspopup], .part.auxiliarybar [role=combobox]');
+  }
+  if (agents) {
+    process.stderr.write('Agents 窗口设置（下拉/折叠区）：\n');
+    await dropdownPages(agents, 'agents-dropdowns', { open: () => agents.key(',', 2), navSel: 'nav[data-component=workspace-sidebar] .ui-sidebar-menu-button', labelOf: "e => (e.querySelector('.ui-sidebar-menu-button-label') || e).textContent.trim()", contentSel: '[data-component=glass-settings-panel]' });
+    await agents.evaluate(`(() => { const b = [...document.querySelectorAll('.ui-sidebar-menu-button')].find(e => e.textContent.trim() === '返回' || e.textContent.trim() === 'Back'); b && b.click(); })()`);
+    await sleep(1200);
+    await composerDropdowns(agents, 'agents-dropdowns', '[aria-haspopup], [role=combobox]');
+  }
 }
 
 if (classic && ONLY.includes('palette')) {

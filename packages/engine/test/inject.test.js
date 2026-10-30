@@ -74,6 +74,24 @@ describe('DOM runtime injection', () => {
     assert.equal(btn.attrs['aria-label'], '关闭窗格 (Ctrl+W)');
   });
 
+  it('translates placeholder/aria-label on inputs (and later attribute changes) but never their value', () => {
+    const d = { 'Anthropic API key': 'Anthropic API 密钥', 'Enter API key': '输入 API 密钥', 'Search': '搜索' };
+    const inp = el('INPUT', [], { 'aria-label': 'Anthropic API key', placeholder: 'Enter API key', value: 'Search' });
+    const ta = el('TEXTAREA', [text('Search')], { placeholder: 'Search' });
+    const inEditor = el('INPUT', [], { placeholder: 'Search' });
+    const body = el('BODY', [el('DIV', [inp]), ta, el('DIV', [inEditor], {}, ['monaco-editor'])]);
+    const fire = runInFakeDom(buildInjection({ dict: d, runtimeSource: RUNTIME }), body);
+    assert.equal(inp.attrs['aria-label'], 'Anthropic API 密钥');
+    assert.equal(inp.attrs.placeholder, '输入 API 密钥');
+    assert.equal(inp.attrs.value, 'Search', 'input value is user data');
+    assert.equal(ta.attrs.placeholder, '搜索');
+    assert.equal(ta.firstChild.nodeValue, 'Search', 'textarea content is user data');
+    assert.equal(inEditor.attrs.placeholder, 'Search', 'inputs inside skipped areas stay');
+    inp.attrs['aria-label'] = 'Anthropic API key';
+    fire([{ type: 'attributes', target: inp }]);
+    assert.equal(inp.attrs['aria-label'], 'Anthropic API 密钥');
+  });
+
   it('never rewrites its own output (no MutationObserver feedback loop)', () => {
     let writes = 0;
     const watched = (v) => { let val = v; return { nodeType: 3, get nodeValue() { return val; }, set nodeValue(x) { writes++; val = x; } }; };

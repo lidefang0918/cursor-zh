@@ -186,13 +186,15 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
     if (!v) { var pv = pattern(t.nodeValue); if (pv && inChrome(t)) v = pv; } // 先匹配模板再查祖先，避免每个文本节点都爬到根
     if (v && v !== t.nodeValue) t.nodeValue = v;
   }
+  // 输入框本身整棵跳过（里面是用户输入），但它的 placeholder / aria-label / title 是界面文案，照常翻
+  function isField(node) { return node && (node.tagName === 'INPUT' || node.tagName === 'TEXTAREA'); }
   // mode：0 正常；2/3 名字区（聊天标签页 / 命令面板主标题，其余名字区已在 skip 时整棵跳过）
   function walk(node, mode) {
     mode = mode || 0;
     if (node.nodeType === 3) return text(node, mode);
     if (node.nodeType !== 1) return;
     var m = skip(node);
-    if (m === 1) return;
+    if (m === 1) { if (mode === 0 && isField(node)) attrs(node); return; }
     if (m === 2) { mode = nameArea(node); if (!mode) return; }
     if (mode !== 2 && mode !== 3) attrs(node);
     for (var c = node.firstChild; c; c = c.nextSibling) walk(c, mode);
@@ -220,7 +222,7 @@ function cursorZhDom(DICT, doc, MO, PATTERNS) {
       try {
         var m = muts[i];
         var mode = modeOf(m.target || {});
-        if (mode === 1) continue;
+        if (mode === 1) { if (m.type === 'attributes' && isField(m.target) && modeOf(m.target.parentNode || {}) === 0) attrs(m.target); continue; }
         if (m.type === 'childList') for (var j = 0; j < m.addedNodes.length; j++) walk(m.addedNodes[j], mode);
         else if (m.type === 'characterData') text(m.target, mode);
         else if (m.type === 'attributes' && mode === 0) attrs(m.target);

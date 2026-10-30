@@ -1678,6 +1678,681 @@
         },
         {
           "from": "Choose a plan with more usage"
+        },
+        {
+          "from": "Open Cursor Account"
+        },
+        {
+          "from": "Are you sure? This replaces your settings and extensions with your vscode ones. This cannot be undone."
+        },
+        {
+          "from": "Confirm VS Code import"
+        },
+        {
+          "from": "Last Used Windows"
+        },
+        {
+          "from": "Agent Window"
+        },
+        {
+          "from": "Auto-Run Network Access"
+        },
+        {
+          "from": "Control which network requests are allowed when commands run in the sandbox. Edit allowed/denied domains in sandbox.json in your workspace."
+        },
+        {
+          "from": "sandbox.json + Defaults"
+        },
+        {
+          "from": "sandbox.json Only"
+        },
+        {
+          "from": "Allowlist (with Sandbox)"
+        },
+        {
+          "from": "Allow All"
+        },
+        {
+          "from": "Allow all"
+        },
+        {
+          "from": "Command Allowlist"
+        },
+        {
+          "from": "Add Suggestions"
+        },
+        {
+          "from": "Fetch Domain Allowlist"
+        },
+        {
+          "from": "Domains that Agent can fetch from automatically. Use '*' for all domains, '*.example.com' for wildcard subdomains."
+        },
+        {
+          "from": "Add commands..."
+        },
+        {
+          "from": "Add MCP tools..."
+        },
+        {
+          "from": "Edit Fetch Domain Allowlist, one domain per line"
+        },
+        {
+          "from": "Add paths or globs (for example, /tmp/*)"
+        },
+        {
+          "from": "Extra Large"
+        },
+        {
+          "from": "Steer the agent without stopping it"
+        },
+        {
+          "from": "Send after Agent finishes"
+        },
+        {
+          "from": "Send After Current Message"
+        },
+        {
+          "from": "Send Right Away"
+        },
+        {
+          "from": "Stop the agent and send the message"
+        },
+        {
+          "from": "OpenAI API Key"
+        },
+        {
+          "from": "your OpenAI key"
+        },
+        {
+          "from": "to use OpenAI models at cost."
+        },
+        {
+          "from": "API Key"
+        },
+        {
+          "from": "Override OpenAI Base URL"
+        },
+        {
+          "from": "Change the base URL for OpenAI API requests."
+        },
+        {
+          "from": "your Anthropic key"
+        },
+        {
+          "from": "to use Claude at cost. When enabled, this key will be used for all models beginning with \"claude-\"."
+        },
+        {
+          "from": "Google API Key"
+        },
+        {
+          "from": "your Google AI Studio key"
+        },
+        {
+          "from": "to use Google models at-cost."
+        },
+        {
+          "from": "Configure Azure OpenAI to use OpenAI models through your Azure account."
+        },
+        {
+          "from": "Use Azure OpenAI"
+        },
+        {
+          "from": "Deployment Name"
+        },
+        {
+          "from": "Cursor Enterprise teams can configure IAM roles to access Bedrock without any Access Keys."
+        },
+        {
+          "from": "Use AWS Bedrock"
+        },
+        {
+          "from": "Access Key ID"
+        },
+        {
+          "from": "Secret Access Key"
+        },
+        {
+          "from": "Test Model"
+        },
+        {
+          "from": "About the default Explore model"
+        },
+        {
+          "from": "Refresh model list"
+        },
+        {
+          "from": "OpenAI API key"
+        },
+        {
+          "from": "OpenAI base URL"
+        },
+        {
+          "from": "Azure OpenAI base URL"
+        },
+        {
+          "from": "e.g. my-resource.openai.azure.com"
+        },
+        {
+          "from": "Azure OpenAI deployment name"
+        },
+        {
+          "from": "e.g. gpt-35-turbo"
+        },
+        {
+          "from": "Azure OpenAI API key"
+        },
+        {
+          "from": "AWS Bedrock access key ID"
+        },
+        {
+          "from": "AWS Access Key ID"
+        },
+        {
+          "from": "AWS Bedrock secret access key"
+        },
+        {
+          "from": "AWS Secret Access Key"
+        },
+        {
+          "from": "AWS Bedrock region"
+        },
+        {
+          "from": "e.g. us-east-1"
+        },
+        {
+          "from": "AWS Bedrock test model"
+        },
+        {
+          "from": "e.g. anthropic.claude-3-sonnet-20240229-v1:0"
+        },
+        {
+          "from": "Model selection"
+        },
+        {
+          "from": "Search menu items"
+        },
+        {
+          "from": "Search models"
+        },
+        {
+          "from": "Play voice sample"
+        },
+        {
+          "from": "Arabic (Egypt)"
+        },
+        {
+          "from": "Arabic (Saudi Arabia)"
+        },
+        {
+          "from": "Arabic (United Arab Emirates)"
+        },
+        {
+          "from": "Chinese (Simplified)"
+        },
+        {
+          "from": "Portuguese (Brazil)"
+        },
+        {
+          "from": "Portuguese (Portugal)"
+        },
+        {
+          "from": "Spanish (Mexico)"
+        },
+        {
+          "from": "Spanish (Spain)"
+        },
+        {
+          "from": "Maximum worktree count"
+        },
+        {
+          "from": "Maximum total worktree size in gigabytes"
+        },
+        {
+          "from": "Manage scope"
+        },
+        {
+          "from": "Browser Mode"
+        },
+        {
+          "from": "e.g., *.md, **/generated/**"
+        },
+        {
+          "from": "Early Access"
+        },
+        {
+          "from": "Share Data"
+        },
+        {
+          "from": "No training. Code may be stored for Background Agent and other features."
+        },
+        {
+          "from": "Remote Control"
+        },
+        {
+          "from": "About Allowlist"
+        },
+        {
+          "from": "Accept Cursor Tab Suggestion"
+        },
+        {
+          "from": "Accept Edits"
+        },
+        {
+          "from": "Accept Partial Edit"
+        },
+        {
+          "from": "Add account"
+        },
+        {
+          "from": "Add to Home"
+        },
+        {
+          "from": "Add to Project"
+        },
+        {
+          "from": "Add to this computer"
+        },
+        {
+          "from": "Always Apply"
+        },
+        {
+          "from": "Anyone with the link"
+        },
+        {
+          "from": "Apply Intelligently"
+        },
+        {
+          "from": "Apply Manually"
+        },
+        {
+          "from": "Apply to Specific Files"
+        },
+        {
+          "from": "Archive Prior Chats"
+        },
+        {
+          "from": "Ask Agent"
+        },
+        {
+          "from": "Balanced"
+        },
+        {
+          "from": "Board"
+        },
+        {
+          "from": "Cancel Edits"
+        },
+        {
+          "from": "Checkout & Move to Local"
+        },
+        {
+          "from": "Checkout Branch"
+        },
+        {
+          "from": "Clear Notification"
+        },
+        {
+          "from": "Close Chat"
+        },
+        {
+          "from": "Close Other Chats"
+        },
+        {
+          "from": "Commit on Main"
+        },
+        {
+          "from": "Continue Anyway"
+        },
+        {
+          "from": "Continue Locally"
+        },
+        {
+          "from": "Copy Base Branch Name"
+        },
+        {
+          "from": "Copy Image"
+        },
+        {
+          "from": "Copy Path"
+        },
+        {
+          "from": "Copy Prompt"
+        },
+        {
+          "from": "Copy Table"
+        },
+        {
+          "from": "Copy worktree path"
+        },
+        {
+          "from": "Create Chat"
+        },
+        {
+          "from": "Create New Branch"
+        },
+        {
+          "from": "Create PR"
+        },
+        {
+          "from": "Cursor & User Rules"
+        },
+        {
+          "from": "Decline"
+        },
+        {
+          "from": "Disable Privacy Mode"
+        },
+        {
+          "from": "Discard"
+        },
+        {
+          "from": "Do not use browser"
+        },
+        {
+          "from": "Don't allow"
+        },
+        {
+          "from": "Don't show again"
+        },
+        {
+          "from": "Download Git"
+        },
+        {
+          "from": "Enable Run Everything"
+        },
+        {
+          "from": "Enable Storage"
+        },
+        {
+          "from": "Export Transcript"
+        },
+        {
+          "from": "Files & Folders"
+        },
+        {
+          "from": "Fix All"
+        },
+        {
+          "from": "Fix with Agent"
+        },
+        {
+          "from": "For Review"
+        },
+        {
+          "from": "Fork Chat"
+        },
+        {
+          "from": "Go to Next Change"
+        },
+        {
+          "from": "Go to Next Diff File"
+        },
+        {
+          "from": "Go to Previous Change"
+        },
+        {
+          "from": "Go to Previous Diff File"
+        },
+        {
+          "from": "Go to Settings"
+        },
+        {
+          "from": "Grid"
+        },
+        {
+          "from": "Icons"
+        },
+        {
+          "from": "Import without extensions"
+        },
+        {
+          "from": "In Progress"
+        },
+        {
+          "from": "Incomplete"
+        },
+        {
+          "from": "Incorrect"
+        },
+        {
+          "from": "Investigate Error in Chat"
+        },
+        {
+          "from": "Keep Files"
+        },
+        {
+          "from": "Keep both"
+        },
+        {
+          "from": "Last 30 Days"
+        },
+        {
+          "from": "Last 7 Days"
+        },
+        {
+          "from": "Local Only"
+        },
+        {
+          "from": "Mark as Read"
+        },
+        {
+          "from": "Mark as Unread"
+        },
+        {
+          "from": "Mark ready for review"
+        },
+        {
+          "from": "Merge manually"
+        },
+        {
+          "from": "Most Used"
+        },
+        {
+          "from": "Move to New Chat"
+        },
+        {
+          "from": "Myself"
+        },
+        {
+          "from": "New chat"
+        },
+        {
+          "from": "No deployment"
+        },
+        {
+          "from": "Open Canvas"
+        },
+        {
+          "from": "Open Pull Request"
+        },
+        {
+          "from": "Open Rule"
+        },
+        {
+          "from": "Open Terminal"
+        },
+        {
+          "from": "Open as Editor"
+        },
+        {
+          "from": "Open as Pane"
+        },
+        {
+          "from": "Open from new branch"
+        },
+        {
+          "from": "Open from this branch"
+        },
+        {
+          "from": "Open in New Tab"
+        },
+        {
+          "from": "Open in Web"
+        },
+        {
+          "from": "Open new window in worktree"
+        },
+        {
+          "from": "Open terminal in worktree"
+        },
+        {
+          "from": "Others"
+        },
+        {
+          "from": "Past Chats"
+        },
+        {
+          "from": "Pinned"
+        },
+        {
+          "from": "Push branch to remote"
+        },
+        {
+          "from": "Queued"
+        },
+        {
+          "from": "Quick Question"
+        },
+        {
+          "from": "Rebase merge"
+        },
+        {
+          "from": "Refresh Status"
+        },
+        {
+          "from": "Reject All Edits"
+        },
+        {
+          "from": "Reject Partial Edit"
+        },
+        {
+          "from": "Reload Window"
+        },
+        {
+          "from": "Rename Chat"
+        },
+        {
+          "from": "Replace the account version"
+        },
+        {
+          "from": "Resubmit"
+        },
+        {
+          "from": "Revert Files"
+        },
+        {
+          "from": "Review Changes"
+        },
+        {
+          "from": "Rewrite Now"
+        },
+        {
+          "from": "Scope"
+        },
+        {
+          "from": "Send to Chat"
+        },
+        {
+          "from": "Share Transcript"
+        },
+        {
+          "from": "Show History"
+        },
+        {
+          "from": "Side Chat"
+        },
+        {
+          "from": "Split Down"
+        },
+        {
+          "from": "Split Right"
+        },
+        {
+          "from": "Squash merge"
+        },
+        {
+          "from": "Stash changes"
+        },
+        {
+          "from": "Stop sharing"
+        },
+        {
+          "from": "Team Default"
+        },
+        {
+          "from": "Thumbs Down"
+        },
+        {
+          "from": "Thumbs Up"
+        },
+        {
+          "from": "Too slow"
+        },
+        {
+          "from": "Try Again"
+        },
+        {
+          "from": "Undo & Apply"
+        },
+        {
+          "from": "Undo Edits"
+        },
+        {
+          "from": "Unlink"
+        },
+        {
+          "from": "Use Cursor Browser"
+        },
+        {
+          "from": "Use External Browser"
+        },
+        {
+          "from": "Use the account version"
+        },
+        {
+          "from": "View All Changes"
+        },
+        {
+          "from": "View Details"
+        },
+        {
+          "from": "View PR"
+        },
+        {
+          "from": "View Source"
+        },
+        {
+          "from": "Your Cursor account"
+        },
+        {
+          "from": "the server's configuration"
+        },
+        {
+          "from": "web searches"
+        },
+        {
+          "from": "Grouping"
+        },
+        {
+          "from": "Ordering"
+        },
+        {
+          "from": "path pattern"
+        },
+        {
+          "from": "Cursor Default"
+        },
+        {
+          "from": "Resize sidebar"
+        },
+        {
+          "from": "More options"
+        },
+        {
+          "from": "No commit has been scored yet"
+        },
+        {
+          "from": "Search settings"
         }
       ],
       "fragments": [
@@ -1824,6 +2499,196 @@
         {
           "from": "children:[\"Browse\",Zb(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\" Marketplace\"})]",
           "to": "children:[\"浏览\",Zb(\"span\",{className:\"cursor-ui-1s85apg cursor-ui-lrknoy\",children:\"插件市场\"})]",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${n}`",
+          "to": "`移除 ${n}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${h[\"aria-label\"]}`",
+          "to": "`移除 ${h[\"aria-label\"]}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${D}`",
+          "to": "`移除 ${D}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${u}`",
+          "to": "`移除 ${u}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${Vt.displayModelName}`",
+          "to": "`移除 ${Vt.displayModelName}`",
+          "count": 2
+        },
+        {
+          "from": "`Remove ${i} ${E}`",
+          "to": "`移除 ${i} ${E}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${n.label} account`",
+          "to": "`移除 ${n.label} 账户`",
+          "count": 1
+        },
+        {
+          "from": "`Confirm removing ${n.label} account`",
+          "to": "`确认移除 ${n.label} 账户`",
+          "count": 1
+        },
+        {
+          "from": "`Confirm removing ${U} account`",
+          "to": "`确认移除 ${U} 账户`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${e.name} from your Cursor account?`",
+          "to": "`要从 Cursor 账户中移除 ${e.name} 吗？`",
+          "count": 1
+        },
+        {
+          "from": "`${n} enabled`",
+          "to": "`${n} 已启用`",
+          "count": 1
+        },
+        {
+          "from": "`${t.join(\", \")} enabled`",
+          "to": "`${t.join(\", \")} 已启用`",
+          "count": 1
+        },
+        {
+          "from": "`${Vt.displayModelName} enabled`",
+          "to": "`${Vt.displayModelName} 已启用`",
+          "count": 1
+        },
+        {
+          "from": "`Partial Accepts keybinding: ${u}`",
+          "to": "`部分接受快捷键：${u}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${n.displayName}`",
+          "to": "`添加 ${n.displayName}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${i.mcpInfo.name}`",
+          "to": "`添加 ${i.mcpInfo.name}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${i.pluginDisplayName}`",
+          "to": "`添加 ${i.pluginDisplayName}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${e}`",
+          "to": "`添加 ${e}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${t}...`",
+          "to": "`添加 ${t}…`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${e}...`",
+          "to": "`添加 ${e}…`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${i}...`",
+          "to": "`添加 ${i}…`",
+          "count": 1
+        },
+        {
+          "from": "`Commands that can run automatically${h}`",
+          "to": "`可自动运行的命令${h}`",
+          "count": 1
+        },
+        {
+          "from": "`MCP tools that can run automatically. Format: 'server:tool', 'server:*' for all tools from a server, '*:tool' for a tool from any server, or *:* for all tools from all servers${l}`",
+          "to": "`可自动运行的 MCP 工具。格式：'server:tool'；'server:*' 表示某服务器的全部工具；'*:tool' 表示任意服务器上的某个工具；*:* 表示所有服务器的全部工具${l}`",
+          "count": 1
+        },
+        {
+          "from": "` \\u2014 current setting is from ${EHa(e,t)}`",
+          "to": "` — 当前设置来自 ${EHa(e,t)}`",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Open Customize\",",
+          "to": "children:[\"打开自定义\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Improve Cursor for everyone\",",
+          "to": "children:[\"帮助所有人改进 Cursor\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Your prompts, edits and other usage data will be stored and trained on by Cursor to improve the product.\",",
+          "to": "children:[\"你的提示词、编辑和其他使用数据将被 Cursor 存储并用于训练，以改进产品。\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Your codebase, prompts, edits and other usage data will be stored and trained on by Cursor to improve the product.\",",
+          "to": "children:[\"你的代码库、提示词、编辑和其他使用数据将被 Cursor 存储并用于训练，以改进产品。\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Files to exclude from indexing in addition to .gitignore.\",",
+          "to": "children:[\"除 .gitignore 外，还要从索引中排除的文件。\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Task Models\",",
+          "to": "children:[\"任务模型\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Explore Subagent Model\",",
+          "to": "children:[\"探索子智能体模型\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"You can put in\",",
+          "to": "children:[\"可填入\",",
+          "count": 3
+        },
+        {
+          "from": "children:[\"Configure AWS Bedrock to use Anthropic Claude models through your AWS account.\",",
+          "to": "children:[\"配置 AWS Bedrock，通过你的 AWS 账户使用 Anthropic Claude 模型。\",",
+          "count": 1
+        },
+        {
+          "from": "`${n} API Key`",
+          "to": "`${n} API 密钥`",
+          "count": 2
+        },
+        {
+          "from": "`${n} API key`",
+          "to": "`${n} API 密钥`",
+          "count": 1
+        },
+        {
+          "from": "`Search settings ${o}`",
+          "to": "`搜索设置 ${o}`",
+          "count": 1
+        },
+        {
+          "from": "let Dr=\"Switch Model\";return",
+          "to": "let Dr=\"切换模型\";return",
+          "count": 1
+        },
+        {
+          "from": "Dr+=` \\xB7 Cycle ${Hr} (${ra})`",
+          "to": "Dr+=` \\xB7 切换 ${Hr} (${ra})`",
           "count": 1
         }
       ]
@@ -3720,6 +4585,951 @@
         },
         {
           "from": "Choose a plan with more usage"
+        },
+        {
+          "from": "Open Cursor Account"
+        },
+        {
+          "from": "Are you sure? This replaces your settings and extensions with your vscode ones. This cannot be undone."
+        },
+        {
+          "from": "Confirm VS Code import"
+        },
+        {
+          "from": "Last Used Windows"
+        },
+        {
+          "from": "Agent Window"
+        },
+        {
+          "from": "Auto-Run Network Access"
+        },
+        {
+          "from": "Control which network requests are allowed when commands run in the sandbox. Edit allowed/denied domains in sandbox.json in your workspace."
+        },
+        {
+          "from": "sandbox.json + Defaults"
+        },
+        {
+          "from": "sandbox.json Only"
+        },
+        {
+          "from": "Allowlist (with Sandbox)"
+        },
+        {
+          "from": "Allow All"
+        },
+        {
+          "from": "Allow all"
+        },
+        {
+          "from": "Command Allowlist"
+        },
+        {
+          "from": "Add Suggestions"
+        },
+        {
+          "from": "Fetch Domain Allowlist"
+        },
+        {
+          "from": "Domains that Agent can fetch from automatically. Use '*' for all domains, '*.example.com' for wildcard subdomains."
+        },
+        {
+          "from": "Add commands..."
+        },
+        {
+          "from": "Add MCP tools..."
+        },
+        {
+          "from": "Edit Fetch Domain Allowlist, one domain per line"
+        },
+        {
+          "from": "Add paths or globs (for example, /tmp/*)"
+        },
+        {
+          "from": "Extra Large"
+        },
+        {
+          "from": "Steer the agent without stopping it"
+        },
+        {
+          "from": "Send after Agent finishes"
+        },
+        {
+          "from": "Send After Current Message"
+        },
+        {
+          "from": "Send Right Away"
+        },
+        {
+          "from": "Stop the agent and send the message"
+        },
+        {
+          "from": "OpenAI API Key"
+        },
+        {
+          "from": "your OpenAI key"
+        },
+        {
+          "from": "to use OpenAI models at cost."
+        },
+        {
+          "from": "API Key"
+        },
+        {
+          "from": "Override OpenAI Base URL"
+        },
+        {
+          "from": "Change the base URL for OpenAI API requests."
+        },
+        {
+          "from": "your Anthropic key"
+        },
+        {
+          "from": "to use Claude at cost. When enabled, this key will be used for all models beginning with \"claude-\"."
+        },
+        {
+          "from": "Google API Key"
+        },
+        {
+          "from": "your Google AI Studio key"
+        },
+        {
+          "from": "to use Google models at-cost."
+        },
+        {
+          "from": "Configure Azure OpenAI to use OpenAI models through your Azure account."
+        },
+        {
+          "from": "Use Azure OpenAI"
+        },
+        {
+          "from": "Deployment Name"
+        },
+        {
+          "from": "Cursor Enterprise teams can configure IAM roles to access Bedrock without any Access Keys."
+        },
+        {
+          "from": "Use AWS Bedrock"
+        },
+        {
+          "from": "Access Key ID"
+        },
+        {
+          "from": "Secret Access Key"
+        },
+        {
+          "from": "Test Model"
+        },
+        {
+          "from": "About the default Explore model"
+        },
+        {
+          "from": "Refresh model list"
+        },
+        {
+          "from": "OpenAI API key"
+        },
+        {
+          "from": "OpenAI base URL"
+        },
+        {
+          "from": "Azure OpenAI base URL"
+        },
+        {
+          "from": "e.g. my-resource.openai.azure.com"
+        },
+        {
+          "from": "Azure OpenAI deployment name"
+        },
+        {
+          "from": "e.g. gpt-35-turbo"
+        },
+        {
+          "from": "Azure OpenAI API key"
+        },
+        {
+          "from": "AWS Bedrock access key ID"
+        },
+        {
+          "from": "AWS Access Key ID"
+        },
+        {
+          "from": "AWS Bedrock secret access key"
+        },
+        {
+          "from": "AWS Secret Access Key"
+        },
+        {
+          "from": "AWS Bedrock region"
+        },
+        {
+          "from": "e.g. us-east-1"
+        },
+        {
+          "from": "AWS Bedrock test model"
+        },
+        {
+          "from": "e.g. anthropic.claude-3-sonnet-20240229-v1:0"
+        },
+        {
+          "from": "Model selection"
+        },
+        {
+          "from": "Search menu items"
+        },
+        {
+          "from": "Search models"
+        },
+        {
+          "from": "Select Model"
+        },
+        {
+          "from": "Play voice sample"
+        },
+        {
+          "from": "Arabic (Egypt)"
+        },
+        {
+          "from": "Arabic (Saudi Arabia)"
+        },
+        {
+          "from": "Arabic (United Arab Emirates)"
+        },
+        {
+          "from": "Chinese (Simplified)"
+        },
+        {
+          "from": "Portuguese (Brazil)"
+        },
+        {
+          "from": "Portuguese (Portugal)"
+        },
+        {
+          "from": "Spanish (Mexico)"
+        },
+        {
+          "from": "Spanish (Spain)"
+        },
+        {
+          "from": "Maximum worktree count"
+        },
+        {
+          "from": "Maximum total worktree size in gigabytes"
+        },
+        {
+          "from": "Manage scope"
+        },
+        {
+          "from": "Browser Mode"
+        },
+        {
+          "from": "e.g., *.md, **/generated/**"
+        },
+        {
+          "from": "Early Access"
+        },
+        {
+          "from": "Sidebar"
+        },
+        {
+          "from": "Close Settings"
+        },
+        {
+          "from": "Share Data"
+        },
+        {
+          "from": "No training. Code may be stored for Background Agent and other features."
+        },
+        {
+          "from": "Conversation density"
+        },
+        {
+          "from": "Conversation density preview"
+        },
+        {
+          "from": "Chat width"
+        },
+        {
+          "from": "Tint hue"
+        },
+        {
+          "from": "Tint intensity"
+        },
+        {
+          "from": "Sample diff preview for the code font"
+        },
+        {
+          "from": "Search fonts"
+        },
+        {
+          "from": "New Worktree"
+        },
+        {
+          "from": "Remote Machines"
+        },
+        {
+          "from": "All Remote Machines"
+        },
+        {
+          "from": "Remote Control"
+        },
+        {
+          "from": "Select Environment"
+        },
+        {
+          "from": "Select a project"
+        },
+        {
+          "from": "About Allowlist"
+        },
+        {
+          "from": "Accept Cursor Tab Suggestion"
+        },
+        {
+          "from": "Accept Edits"
+        },
+        {
+          "from": "Accept Partial Edit"
+        },
+        {
+          "from": "Active Searches"
+        },
+        {
+          "from": "Add account"
+        },
+        {
+          "from": "Add to Home"
+        },
+        {
+          "from": "Add to Project"
+        },
+        {
+          "from": "Add to this computer"
+        },
+        {
+          "from": "All Tasks"
+        },
+        {
+          "from": "Always Apply"
+        },
+        {
+          "from": "Anyone with the link"
+        },
+        {
+          "from": "Apply Intelligently"
+        },
+        {
+          "from": "Apply Manually"
+        },
+        {
+          "from": "Apply to Specific Files"
+        },
+        {
+          "from": "Archive All Below"
+        },
+        {
+          "from": "Archive Prior Chats"
+        },
+        {
+          "from": "Ask Agent"
+        },
+        {
+          "from": "Available at build"
+        },
+        {
+          "from": "Available at runtime"
+        },
+        {
+          "from": "Balanced"
+        },
+        {
+          "from": "Black"
+        },
+        {
+          "from": "Brown"
+        },
+        {
+          "from": "Cancel Edits"
+        },
+        {
+          "from": "Checkout & Move to Local"
+        },
+        {
+          "from": "Checkout Branch"
+        },
+        {
+          "from": "Clear Filter"
+        },
+        {
+          "from": "Clear History"
+        },
+        {
+          "from": "Clear Notification"
+        },
+        {
+          "from": "Clone Repository"
+        },
+        {
+          "from": "Close Chat"
+        },
+        {
+          "from": "Close Other Chats"
+        },
+        {
+          "from": "Commit changes"
+        },
+        {
+          "from": "Commit current changes to checkpoint"
+        },
+        {
+          "from": "Commit on Main"
+        },
+        {
+          "from": "Continue Anyway"
+        },
+        {
+          "from": "Continue Locally"
+        },
+        {
+          "from": "Continue in cloud and leave changes on this branch undisturbed"
+        },
+        {
+          "from": "Copy Agent ID"
+        },
+        {
+          "from": "Copy Base Branch Name"
+        },
+        {
+          "from": "Copy Branch"
+        },
+        {
+          "from": "Copy Deep Link"
+        },
+        {
+          "from": "Copy Image"
+        },
+        {
+          "from": "Copy PR Link"
+        },
+        {
+          "from": "Copy Path"
+        },
+        {
+          "from": "Copy Prompt"
+        },
+        {
+          "from": "Copy Table"
+        },
+        {
+          "from": "Copy Transcript"
+        },
+        {
+          "from": "Copy request ID"
+        },
+        {
+          "from": "Copy worktree path"
+        },
+        {
+          "from": "Create Chat"
+        },
+        {
+          "from": "Create Draft PR"
+        },
+        {
+          "from": "Create New Branch"
+        },
+        {
+          "from": "Create PR"
+        },
+        {
+          "from": "Create a Merge Commit"
+        },
+        {
+          "from": "Cursor & User Rules"
+        },
+        {
+          "from": "Daily"
+        },
+        {
+          "from": "Decline"
+        },
+        {
+          "from": "Delay"
+        },
+        {
+          "from": "Disable Privacy Mode"
+        },
+        {
+          "from": "Discard changes"
+        },
+        {
+          "from": "Discard your current uncommitted changes"
+        },
+        {
+          "from": "Do not use browser"
+        },
+        {
+          "from": "Don't allow"
+        },
+        {
+          "from": "Don't show again"
+        },
+        {
+          "from": "Download Git"
+        },
+        {
+          "from": "Enable & Reload"
+        },
+        {
+          "from": "Enable Run Everything"
+        },
+        {
+          "from": "Enable Storage"
+        },
+        {
+          "from": "Errors"
+        },
+        {
+          "from": "Export First"
+        },
+        {
+          "from": "Export Transcript"
+        },
+        {
+          "from": "Files & Folders"
+        },
+        {
+          "from": "Fix All"
+        },
+        {
+          "from": "Fix with Agent"
+        },
+        {
+          "from": "For Review"
+        },
+        {
+          "from": "Fork Chat"
+        },
+        {
+          "from": "Go to Next Change"
+        },
+        {
+          "from": "Go to Next Diff File"
+        },
+        {
+          "from": "Go to Previous Change"
+        },
+        {
+          "from": "Go to Previous Diff File"
+        },
+        {
+          "from": "Go to Settings"
+        },
+        {
+          "from": "Got it"
+        },
+        {
+          "from": "Gray"
+        },
+        {
+          "from": "Grid"
+        },
+        {
+          "from": "Group by Environment"
+        },
+        {
+          "from": "Group by Repository"
+        },
+        {
+          "from": "Group by Source"
+        },
+        {
+          "from": "Group by Status"
+        },
+        {
+          "from": "Group by Updated"
+        },
+        {
+          "from": "Group by Workspace"
+        },
+        {
+          "from": "Hidden from agent"
+        },
+        {
+          "from": "Hourly"
+        },
+        {
+          "from": "Icons"
+        },
+        {
+          "from": "Import without extensions"
+        },
+        {
+          "from": "In Progress"
+        },
+        {
+          "from": "Incomplete"
+        },
+        {
+          "from": "Incorrect"
+        },
+        {
+          "from": "Investigate Error in Chat"
+        },
+        {
+          "from": "Keep Files"
+        },
+        {
+          "from": "Keep both"
+        },
+        {
+          "from": "Last 30 Days"
+        },
+        {
+          "from": "Last 30 days"
+        },
+        {
+          "from": "Last 7 Days"
+        },
+        {
+          "from": "Last 7 days"
+        },
+        {
+          "from": "Local Only"
+        },
+        {
+          "from": "Manage Processes"
+        },
+        {
+          "from": "Mark as Read"
+        },
+        {
+          "from": "Mark as Unread"
+        },
+        {
+          "from": "Mark ready for review"
+        },
+        {
+          "from": "Merge manually"
+        },
+        {
+          "from": "Most Used"
+        },
+        {
+          "from": "Move to"
+        },
+        {
+          "from": "Move to New Chat"
+        },
+        {
+          "from": "Myself"
+        },
+        {
+          "from": "New Section"
+        },
+        {
+          "from": "New chat"
+        },
+        {
+          "from": "No PR"
+        },
+        {
+          "from": "No deployment"
+        },
+        {
+          "from": "Now Enabled"
+        },
+        {
+          "from": "Open Canvas"
+        },
+        {
+          "from": "Open Log"
+        },
+        {
+          "from": "Open Pull Request"
+        },
+        {
+          "from": "Open Rule"
+        },
+        {
+          "from": "Open Terminal"
+        },
+        {
+          "from": "Open as Editor"
+        },
+        {
+          "from": "Open as Pane"
+        },
+        {
+          "from": "Open billing settings"
+        },
+        {
+          "from": "Open from new branch"
+        },
+        {
+          "from": "Open from this branch"
+        },
+        {
+          "from": "Open in New Tab"
+        },
+        {
+          "from": "Open in New Window"
+        },
+        {
+          "from": "Open in Web"
+        },
+        {
+          "from": "Open new window in worktree"
+        },
+        {
+          "from": "Open terminal in worktree"
+        },
+        {
+          "from": "PR Closed"
+        },
+        {
+          "from": "PR Draft"
+        },
+        {
+          "from": "PR Merged"
+        },
+        {
+          "from": "PR Open"
+        },
+        {
+          "from": "Past Chats"
+        },
+        {
+          "from": "People you invite"
+        },
+        {
+          "from": "Push branch to remote"
+        },
+        {
+          "from": "Quick Question"
+        },
+        {
+          "from": "Rebase"
+        },
+        {
+          "from": "Rebase Merge"
+        },
+        {
+          "from": "Rebase merge"
+        },
+        {
+          "from": "Rebuild Container"
+        },
+        {
+          "from": "Refresh Status"
+        },
+        {
+          "from": "Reject All Edits"
+        },
+        {
+          "from": "Reject Partial Edit"
+        },
+        {
+          "from": "Reload Window"
+        },
+        {
+          "from": "Rename Chat"
+        },
+        {
+          "from": "Replace the account version"
+        },
+        {
+          "from": "Resubmit"
+        },
+        {
+          "from": "Revert Files"
+        },
+        {
+          "from": "Review Changes"
+        },
+        {
+          "from": "Rewrite Now"
+        },
+        {
+          "from": "Run in Background"
+        },
+        {
+          "from": "Same chat"
+        },
+        {
+          "from": "Search Providers"
+        },
+        {
+          "from": "Send to Chat"
+        },
+        {
+          "from": "Share Transcript"
+        },
+        {
+          "from": "Show Changes"
+        },
+        {
+          "from": "Show History"
+        },
+        {
+          "from": "Side Chat"
+        },
+        {
+          "from": "Side chats"
+        },
+        {
+          "from": "Split Down"
+        },
+        {
+          "from": "Split Right"
+        },
+        {
+          "from": "Squash"
+        },
+        {
+          "from": "Squash & Merge"
+        },
+        {
+          "from": "Squash and Merge"
+        },
+        {
+          "from": "Squash merge"
+        },
+        {
+          "from": "Stash and save your changes so you can restore them later"
+        },
+        {
+          "from": "Stash changes"
+        },
+        {
+          "from": "Stop sharing"
+        },
+        {
+          "from": "Table"
+        },
+        {
+          "from": "Team Default"
+        },
+        {
+          "from": "Team-only"
+        },
+        {
+          "from": "Thumbs Down"
+        },
+        {
+          "from": "Thumbs Up"
+        },
+        {
+          "from": "Too slow"
+        },
+        {
+          "from": "Try Again"
+        },
+        {
+          "from": "Undo & Apply"
+        },
+        {
+          "from": "Undo Edits"
+        },
+        {
+          "from": "Unlink"
+        },
+        {
+          "from": "Use Cursor Browser"
+        },
+        {
+          "from": "Use External Browser"
+        },
+        {
+          "from": "Use the account version"
+        },
+        {
+          "from": "View All Changes"
+        },
+        {
+          "from": "View Details"
+        },
+        {
+          "from": "View PR"
+        },
+        {
+          "from": "View Source"
+        },
+        {
+          "from": "Violet"
+        },
+        {
+          "from": "Weekdays"
+        },
+        {
+          "from": "Weekly"
+        },
+        {
+          "from": "Your Cursor account"
+        },
+        {
+          "from": "the server's configuration"
+        },
+        {
+          "from": "web searches"
+        },
+        {
+          "from": "Grouping"
+        },
+        {
+          "from": "Ordering"
+        },
+        {
+          "from": "Sidebar filters"
+        },
+        {
+          "from": "New Folder"
+        },
+        {
+          "from": "Account menu"
+        },
+        {
+          "from": "Loading fonts..."
+        },
+        {
+          "from": "path pattern"
+        },
+        {
+          "from": "Cursor Default"
+        },
+        {
+          "from": "Resize sidebar"
+        },
+        {
+          "from": "Resize panel"
+        },
+        {
+          "from": "Open new tab menu"
+        },
+        {
+          "from": "Enter Full Screen"
+        },
+        {
+          "from": "Exit Full Screen"
+        },
+        {
+          "from": "Hide Apps"
+        },
+        {
+          "from": "More options"
+        },
+        {
+          "from": "Search history or enter a URL"
+        },
+        {
+          "from": "Search or enter URL..."
+        },
+        {
+          "from": "No commit has been scored yet"
+        },
+        {
+          "from": "Search settings"
         }
       ],
       "fragments": [
@@ -3931,6 +5741,266 @@
         {
           "from": "N({key:\"glassOsEditSelectAll\",comment:[\"&& denotes a mnemonic\"]},\"Select &&All\"",
           "to": "N({key:\"glassOsEditSelectAll\",comment:[\"&& denotes a mnemonic\"]},\"全选(&&A)\"",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${n}`",
+          "to": "`移除 ${n}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${d[\"aria-label\"]}`",
+          "to": "`移除 ${d[\"aria-label\"]}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${s.name}`",
+          "to": "`移除 ${s.name}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${E}`",
+          "to": "`移除 ${E}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${u}`",
+          "to": "`移除 ${u}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${He.displayModelName}`",
+          "to": "`移除 ${He.displayModelName}`",
+          "count": 2
+        },
+        {
+          "from": "`Remove ${H}`",
+          "to": "`移除 ${H}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${S}`",
+          "to": "`移除 ${S}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${h.fullLabel}`",
+          "to": "`移除 ${h.fullLabel}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${Kob(r)}`",
+          "to": "`移除 ${Kob(r)}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${t.name}`",
+          "to": "`移除 ${t.name}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${r}`",
+          "to": "`移除 ${r}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${i} ${S}`",
+          "to": "`移除 ${i} ${S}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${n.label} account`",
+          "to": "`移除 ${n.label} 账户`",
+          "count": 1
+        },
+        {
+          "from": "`Confirm removing ${n.label} account`",
+          "to": "`确认移除 ${n.label} 账户`",
+          "count": 1
+        },
+        {
+          "from": "`Confirm removing ${D} account`",
+          "to": "`确认移除 ${D} 账户`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${t.name} from your Cursor account?`",
+          "to": "`要从 Cursor 账户中移除 ${t.name} 吗？`",
+          "count": 1
+        },
+        {
+          "from": "`${n} enabled`",
+          "to": "`${n} 已启用`",
+          "count": 1
+        },
+        {
+          "from": "`${e.join(\", \")} enabled`",
+          "to": "`${e.join(\", \")} 已启用`",
+          "count": 1
+        },
+        {
+          "from": "`${He.displayModelName} enabled`",
+          "to": "`${He.displayModelName} 已启用`",
+          "count": 1
+        },
+        {
+          "from": "`Partial Accepts keybinding: ${u}`",
+          "to": "`部分接受快捷键：${u}`",
+          "count": 1
+        },
+        {
+          "from": "`Skip step ${n.ordinal} of ${n.total}`",
+          "to": "`跳过第 ${n.ordinal} 步（共 ${n.total} 步）`",
+          "count": 1
+        },
+        {
+          "from": "`${Ue}, select environment`",
+          "to": "`${Ue}，选择环境`",
+          "count": 1
+        },
+        {
+          "from": "`${n}, select project`",
+          "to": "`${n}，选择项目`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${n.displayName}`",
+          "to": "`添加 ${n.displayName}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${i.mcpInfo.name}`",
+          "to": "`添加 ${i.mcpInfo.name}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${i.pluginDisplayName}`",
+          "to": "`添加 ${i.pluginDisplayName}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${t}`",
+          "to": "`添加 ${t}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${n.pluginDisplayName}`",
+          "to": "`添加 ${n.pluginDisplayName}`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${e}...`",
+          "to": "`添加 ${e}…`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${t}...`",
+          "to": "`添加 ${t}…`",
+          "count": 1
+        },
+        {
+          "from": "`Add ${i}...`",
+          "to": "`添加 ${i}…`",
+          "count": 1
+        },
+        {
+          "from": "`Commands that can run automatically${d}`",
+          "to": "`可自动运行的命令${d}`",
+          "count": 1
+        },
+        {
+          "from": "`MCP tools that can run automatically. Format: 'server:tool', 'server:*' for all tools from a server, '*:tool' for a tool from any server, or *:* for all tools from all servers${c}`",
+          "to": "`可自动运行的 MCP 工具。格式：'server:tool'；'server:*' 表示某服务器的全部工具；'*:tool' 表示任意服务器上的某个工具；*:* 表示所有服务器的全部工具${c}`",
+          "count": 1
+        },
+        {
+          "from": "` \\u2014 current setting is from ${Swc(t,e)}`",
+          "to": "` — 当前设置来自 ${Swc(t,e)}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${se} from recents`",
+          "to": "`从最近使用中移除 ${se}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${ve} from recents`",
+          "to": "`从最近使用中移除 ${ve}`",
+          "count": 1
+        },
+        {
+          "from": "`Remove ${le} from recents`",
+          "to": "`从最近使用中移除 ${le}`",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Improve Cursor for everyone\",",
+          "to": "children:[\"帮助所有人改进 Cursor\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Your prompts, edits and other usage data will be stored and trained on by Cursor to improve the product.\",",
+          "to": "children:[\"你的提示词、编辑和其他使用数据将被 Cursor 存储并用于训练，以改进产品。\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Your codebase, prompts, edits and other usage data will be stored and trained on by Cursor to improve the product.\",",
+          "to": "children:[\"你的代码库、提示词、编辑和其他使用数据将被 Cursor 存储并用于训练，以改进产品。\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Files to exclude from indexing in addition to .gitignore.\",",
+          "to": "children:[\"除 .gitignore 外，还要从索引中排除的文件。\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Task Models\",",
+          "to": "children:[\"任务模型\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Explore Subagent Model\",",
+          "to": "children:[\"探索子智能体模型\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"You can put in\",",
+          "to": "children:[\"可填入\",",
+          "count": 3
+        },
+        {
+          "from": "children:[\"Configure AWS Bedrock to use Anthropic Claude models through your AWS account.\",",
+          "to": "children:[\"配置 AWS Bedrock，通过你的 AWS 账户使用 Anthropic Claude 模型。\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Open Customize\",",
+          "to": "children:[\"打开自定义\",",
+          "count": 1
+        },
+        {
+          "from": "`${n} API Key`",
+          "to": "`${n} API 密钥`",
+          "count": 2
+        },
+        {
+          "from": "`${n} API key`",
+          "to": "`${n} API 密钥`",
+          "count": 1
+        },
+        {
+          "from": "`Search settings ${o}`",
+          "to": "`搜索设置 ${o}`",
+          "count": 1
+        },
+        {
+          "from": "let ni=\"Switch Model\";return",
+          "to": "let ni=\"切换模型\";return",
+          "count": 1
+        },
+        {
+          "from": "ni+=` \\xB7 Cycle ${Zn} (${Ii})`",
+          "to": "ni+=` \\xB7 切换 ${Zn} (${Ii})`",
           "count": 1
         }
       ]

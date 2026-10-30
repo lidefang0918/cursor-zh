@@ -1,0 +1,24 @@
+{
+  "note": "模板字面量词典：key 是 bundle 里反引号模板的原文（${1}、${2} 依次代表原模板里的插值表达式，原样保留），value 是译文。只在静态补丁里按“整个模板字面量完全相同”精确替换。由 scripts/build-anchors.py 读取。",
+  "templates": {
+    "Remove ${1}": "移除 ${1}",
+    "Remove ${1} ${2}": "移除 ${1} ${2}",
+    "Remove ${1} account": "移除 ${1} 账户",
+    "Confirm removing ${1} account": "确认移除 ${1} 账户",
+    "Remove ${1} from your Cursor account?": "要从 Cursor 账户中移除 ${1} 吗？",
+    "${1} enabled": "${1} 已启用",
+    "Partial Accepts keybinding: ${1}": "部分接受快捷键：${1}",
+    "Skip step ${1} of ${2}": "跳过第 ${1} 步（共 ${2} 步）",
+    "${1}, select environment": "${1}，选择环境",
+    "${1}, select project": "${1}，选择项目",
+    "Add ${1}": "添加 ${1}",
+    "Add ${1}...": "添加 ${1}…",
+    "Commands that can run automatically${1}": "可自动运行的命令${1}",
+    "MCP tools that can run automatically. Format: 'server:tool', 'server:*' for all tools from a server, '*:tool' for a tool from any server, or *:* for all tools from all servers${1}": "可自动运行的 MCP 工具。格式：'server:tool'；'server:*' 表示某服务器的全部工具；'*:tool' 表示任意服务器上的某个工具；*:* 表示所有服务器的全部工具${1}",
+    " \\u2014 current setting is from ${1}": " — 当前设置来自 ${1}",
+    "Remove ${1} from recents": "从最近使用中移除 ${1}",
+    "${1} API Key": "${1} API 密钥",
+    "${1} API key": "${1} API 密钥",
+    "Search settings ${1}": "搜索设置 ${1}"
+  }
+}
