@@ -10,7 +10,7 @@
 [![下载量](https://img.shields.io/github/downloads/lidefang0918/cursor-zh/total?label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=2ea44f)](https://github.com/lidefang0918/cursor-zh/releases)
 [![许可证](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-MIT-yellow)](LICENSE)
 [![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#-下载安装)
-[![Cursor](https://img.shields.io/badge/Cursor-3.27.14%20%7C%203.27.22-black)](#支持哪些-cursor-版本)
+[![Cursor](https://img.shields.io/badge/Cursor-3.27.14%20%2F%203.27.22-000000)](#支持哪些-cursor-版本)
 
 [下载](#-下载安装) · [使用步骤](#-使用步骤) · [常见问题](#-常见问题) · [反馈](https://github.com/lidefang0918/cursor-zh/issues)
 
