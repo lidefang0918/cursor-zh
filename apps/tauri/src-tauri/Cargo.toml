@@ -1,6 +1,6 @@
 [package]
 name = "cursor-zh-tauri"
-version = "0.1.1"
+version = "0.2.0"
 description = "Cursor 一键汉化（Tauri 外壳）"
 edition = "2021"
 license = "MIT"
