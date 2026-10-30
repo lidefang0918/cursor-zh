@@ -3,6 +3,14 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "apps/*"],
-  "scripts": { "test": "node --test packages/engine/test/*.test.js" }
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "node --test packages/engine/test/*.test.js"
+  },
+  "devDependencies": {
+    "acorn": "^8.19.0"
+  }
 }

@@ -13,15 +13,20 @@ export const RULES = [
   [/\bplugins?\b/i, '插件'],
   [/\bhooks?\b/i, '钩子'],
   [/\bundo\b/i, '撤销'],
+  [/\ballowlists?\b/i, '允许列表'],
+  [/\bsandbox(ed)?\b/i, '沙箱'],
+  [/\bremote control\b/i, '远程控制'],
+  [/\bauto-?review\b/i, '自动审查'],
+  [/\brun everything\b/i, '全部运行'],
 ];
 // 禁用的旧译/异译
-export const BANNED = [[/撤消/, '撤销'], [/工作区树/, '工作树']];
+export const BANNED = [[/撤消/, '撤销'], [/工作区树/, '工作树'], [/白名单/, '允许列表'], [/沙盒/, '沙箱']];
 
 export function checkGlossary(dict) {
   const bad = [];
   for (const [en, zh] of Object.entries(dict)) {
     if (typeof zh !== 'string') continue;
-    const text = en.replace(/(^|\s)[/@][\w-]+/g, ' '); // 斜杠命令、@ 提及原样保留，不算术语
+    const text = en.replace(/(^|\s)[/@][\w-]+/g, ' ').replace(/[\w.-]+\.json\b/g, ' '); // 斜杠命令、@ 提及、sandbox.json 这类文件名原样保留，不算术语
     for (const [re, want] of RULES) if (re.test(text) && !zh.includes(want)) bad.push(`${en} → ${zh}（应含“${want}”）`);
     for (const [re, want] of BANNED) if (re.test(zh)) bad.push(`${en} → ${zh}（用“${want}”）`);
   }

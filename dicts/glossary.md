@@ -26,6 +26,14 @@
 | Menu Bar（macOS） | 菜单栏 | 系统设置路径按 macOS 中文界面：系统设置 > 菜单栏 > 允许在菜单栏中显示 |
 | Settings | 设置 | |
 | Undo / Redo | 撤销 / 重做 | VS Code 语言包里是"撤消"，我们自己的词条用"撤销" |
+| Allowlist / Denylist | 允许列表 / 拒绝列表 | 不用"白名单/黑名单" |
+| Sandbox / Unsandboxed | 沙箱 / 无沙箱 | 不用"沙盒"；`sandbox.json` 这类文件名原样保留 |
+| Auto-Review | 自动审查 | 运行模式；"Auto-Review (with Sandbox)" → 自动审查（沙箱） |
+| Run Everything | 全部运行 | 运行模式；"Run Everything (Unsandboxed)" → 全部运行（无沙箱） |
+| Ask Every Time | 每次询问 | 运行模式 |
+| Remote Control | 远程控制 | 设置 → 远程控制；其中的 "this computer" 译"这台电脑"，computer 统一译"电脑"，register/unregister → 注册/取消注册 |
+| Paired Devices / Self-Hosted Workers | 已配对的设备 / 自托管 Worker | Worker 不译 |
+| On-Demand（用量） | 按需 | |
 | 菜单助记键 &&File | 文件(&&F) | NLS 层沿用 VS Code 中文惯例 |
 
 ## 保持英文（不翻）

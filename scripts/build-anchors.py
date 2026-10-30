@@ -129,6 +129,20 @@ def _jsx_head(m):
     return 'children:[' + json.dumps(t, ensure_ascii=False) + ',' if t and ' ' in m.group(1) else None
 
 
+# 设置页里被功能开关挡住、box 上渲染不出来的分区（远程控制 / 隐私 / 用量 / 模型密钥）：嵌套模板与 JSX 拆分句，按原句结构精确替换
+TEMPLATE_RULES += [
+    (r'`Paired with this computer \\xB7 \$\{', lambda m: '`已与这台电脑配对 · ${'),
+    (r'`Included usage with your subscription\.\$\{', lambda m: '`订阅包含的用量。${'),
+    (r'` Resets \$\{([\w$]+\([\w$]+\))\}\.`', lambda m: '` 重置于 ${' + m.group(1) + '}。`'),
+    (r'"Data Sharing is controlled by ",([\w$]+)\?"the":"your"," team admin\."', lambda m: '"数据共享由",' + m.group(1) + '?"":"你的","团队管理员控制。"'),
+    (r'"Sharing will activate in ",([\w$]+)," hour",([\w$]+)===1\?"":"s","\."', lambda m: '"数据共享将在 ",' + m.group(1) + '," 小时后开启",' + m.group(2) + '===1?"":"","。"'),
+    (r'children:\["With your Cursor ",([\w$]+),"subscription, you do not need to use your own ",([\w$]+)," key!"\]',
+     lambda m: 'children:["你的 Cursor ",' + m.group(1) + ',"订阅已包含，无需使用自己的 ",' + m.group(2) + '," 密钥！"]'),
+    (r'children:\["Turn Off ",([\w$]+)," Key"\]', lambda m: 'children:["关闭 ",' + m.group(1) + '," 密钥"]'),
+    # 设置里的确认框（prettyDialogService.openDialog）按钮：单词标签（Cancel / Retry / Resume）整串替换判为不安全，按按钮上下文翻
+    (r'((?:cancelButton|primaryButton):\{(?:id:[\w$"-]+,)?label:|extraButtons:\[\{(?:id:[\w$"-]+,)?label:)"([A-Za-z]+)"',
+     lambda m: m.group(1) + json.dumps(WORDS[m.group(2)], ensure_ascii=False) if m.group(2) in WORDS else None),
+]
 TEMPLATE_RULES += [template_rule(k, v) for k, v in TEMPLATES.items()]
 TEMPLATE_RULES.append((r'children:\["([^"\\]*[A-Za-z][^"\\]*)",', _jsx_head))
 # 聊天框模型按钮的提示："Switch Model (Ctrl+/) · Cycle ${参数名} (${快捷键})"：后半段在这里，参数名来自服务端，保留；"Switch Model" 走词典
@@ -203,6 +217,9 @@ def main():
                 continue
             if all(f['from'] != g['from'] for g in frags):
                 frags.append(f)
+        # 引擎按顺序做片段替换：被别的片段包含的短片段（如 `?" (controlled by admin)":""`）排到长片段之后，
+        # 否则长片段（整句模板）先被短片段改掉就对不上了；稳定排序，其余顺序不变
+        frags = sorted(frags, key=lambda f, all_=list(frags): sum(1 for g in all_ if g is not f and f['from'] in g['from']))
         report.append(f"FRAGS   {b[10:20]} {len(frags)}")
         files.append({'relative': rel, 'strings': strings, 'fragments': frags})
     anchors = {

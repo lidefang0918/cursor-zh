@@ -2353,6 +2353,582 @@
         },
         {
           "from": "Search settings"
+        },
+        {
+          "from": "Enable Run Everything?"
+        },
+        {
+          "from": "Use Sandbox instead"
+        },
+        {
+          "from": "Use Allowlist instead"
+        },
+        {
+          "from": "Leave Ask Every Time?"
+        },
+        {
+          "from": "Commands run in a protected sandbox that limits access to your files, network, and git. You can allowlist specific commands to run with full access when needed. Be cautious of potential prompt injection risks."
+        },
+        {
+          "from": "Only commands you've added to your allowlist will run automatically. Other commands will require user approval. Be cautious of potential prompt injection risks."
+        },
+        {
+          "from": "This allows the agent to execute any tool or shell command without approval. A prompt injection or a malicious tool could delete files or exfiltrate secrets from your machine. We recommend using Sandbox."
+        },
+        {
+          "from": "This allows the agent to execute any tool or shell command without approval. A prompt injection or a malicious tool could delete files or exfiltrate secrets from your machine. We recommend using Allowlist."
+        },
+        {
+          "from": "Run Everything (Unsandboxed)"
+        },
+        {
+          "from": "Auto-review (with Sandbox)"
+        },
+        {
+          "from": "Agent will ask for approval before running tools."
+        },
+        {
+          "from": "Commands that are allowlisted will run automatically."
+        },
+        {
+          "from": "Many commands will run automatically inside the sandbox, and you can also allowlist other actions."
+        },
+        {
+          "from": "A classifier will run for each action and decide whether it's safe to execute this command. Allowlists are still respected."
+        },
+        {
+          "from": "All commands will run without approval, classification or sandboxing."
+        },
+        {
+          "from": "Ask for permission before running each operation"
+        },
+        {
+          "from": "Tools will auto-run in a sandbox if possible, otherwise respect the allowlist or ask for approval"
+        },
+        {
+          "from": "Automatically run operations after you approve them once"
+        },
+        {
+          "from": "Automatically run operations that Auto-review classifies as safe, using sandboxing when possible"
+        },
+        {
+          "from": "Automatically run operations that Auto-review classifies as safe"
+        },
+        {
+          "from": "Automatically run all operations without asking for permission"
+        },
+        {
+          "from": "Sandboxed network access is disabled by your admin."
+        },
+        {
+          "from": "Sandboxed network access is controlled by your admin. You can still edit allowed/denied domains in sandbox.json in your workspace, but admin policy takes precedence."
+        },
+        {
+          "from": "Use AI-powered command classification to intelligently match commands against allowlist patterns and suggest sandbox modes"
+        },
+        {
+          "from": "Smart Allowlist"
+        },
+        {
+          "from": "Deprecated Feature:"
+        },
+        {
+          "from": " The command denylist is often bypassable, providing a false sense of security. Consider using the allowlist approach instead for better security."
+        },
+        {
+          "from": "MCP Tools Protection"
+        },
+        {
+          "from": "You can configure Shell, MCP and Fetch allowlists for Auto mode. However, Auto works well without these."
+        },
+        {
+          "from": "Run Mode Disabled by Team Admin"
+        },
+        {
+          "from": "Run Mode Controlled by Team Admin (Sandbox Enabled)"
+        },
+        {
+          "from": "Run Mode Controlled by Team Admin"
+        },
+        {
+          "from": "Sandboxing is disabled by your admin."
+        },
+        {
+          "from": "Disabled by your team admin."
+        },
+        {
+          "from": "Enabled by Run Everything Auto-Run Mode: Agent bypasses approval prompts for tools including Web Search."
+        },
+        {
+          "from": "Enabled by Run Everything Auto-Run Mode."
+        },
+        {
+          "from": "Run Everything Mode Warning"
+        },
+        {
+          "from": "Custom words that submit a voice prompt. Spaces and punctuation are ignored."
+        },
+        {
+          "from": "Adjust the default behavior of sending a message while Agent is running"
+        },
+        {
+          "from": "What sending a message while Agent is running does"
+        },
+        {
+          "from": "What the queued-message Send Now action does"
+        },
+        {
+          "from": "Allow agent to switch to modes without asking. When off, skips if unanswered within 15 seconds."
+        },
+        {
+          "from": "Default voice for voice chats"
+        },
+        {
+          "from": "File paths and glob patterns agents can read without approval."
+        },
+        {
+          "from": "Use legacy terminal tool on unsupported shells"
+        },
+        {
+          "from": "Cursor syncs your local skills so they can be used with Cloud Agents"
+        },
+        {
+          "from": "Show Add to Chat and Quick Edit buttons"
+        },
+        {
+          "from": "Show the Cmd/Ctrl+K hint in Terminal"
+        },
+        {
+          "from": "Preview Box for Terminal Cmd/Ctrl+K"
+        },
+        {
+          "from": "Loading Cloud Agents settings..."
+        },
+        {
+          "from": "Loading Cloud Agents settings"
+        },
+        {
+          "from": "Cloud Agents require data storage to function."
+        },
+        {
+          "from": "Cloud Agents Unavailable"
+        },
+        {
+          "from": "Open Privacy Settings"
+        },
+        {
+          "from": "Cloud Agents are not available when your privacy mode is set to disable data storage. To use Cloud Agents, please update your privacy settings to allow data storage."
+        },
+        {
+          "from": "Privacy Mode Enabled"
+        },
+        {
+          "from": "Connect GitHub/GitLab, manage team and user settings, and configure environments"
+        },
+        {
+          "from": "Manage Settings"
+        },
+        {
+          "from": "Work with Cloud Agents from Slack"
+        },
+        {
+          "from": "Connect Slack"
+        },
+        {
+          "from": "Integrations"
+        },
+        {
+          "from": "An organization policy turns off updates on this device."
+        },
+        {
+          "from": "An organization policy turns off automatic update checks on this device. Use Check for Updates to get new versions."
+        },
+        {
+          "from": "An organization policy limits update checks on this device to when Cursor starts."
+        },
+        {
+          "from": "Enterprise users can only be notified on stable updates."
+        },
+        {
+          "from": "Updates Managed by Organization Policy"
+        },
+        {
+          "from": "This track will silently download and install updates without prompting whenever Cursor is closed."
+        },
+        {
+          "from": "Agents Window Type"
+        },
+        {
+          "from": "Local agent runtime"
+        },
+        {
+          "from": "Run Private Inference in a separate local process to isolate it from remote workspace activity. Reload Cursor after changing this setting."
+        },
+        {
+          "from": "Desktop Bridge"
+        },
+        {
+          "from": " CLI command, which lists and sends messages to agent threads open in this desktop app. Restart Cursor after changing this setting."
+        },
+        {
+          "from": "Allow CLI to access desktop agents"
+        },
+        {
+          "from": "API requests"
+        },
+        {
+          "from": "Cursor Tab (regional)"
+        },
+        {
+          "from": "Agent requests"
+        },
+        {
+          "from": "Training telemetry"
+        },
+        {
+          "from": "Authentication UI (login page)"
+        },
+        {
+          "from": "Extension marketplace"
+        },
+        {
+          "from": "Marketplace CDN"
+        },
+        {
+          "from": "Client updates"
+        },
+        {
+          "from": "Authentication UI"
+        },
+        {
+          "from": "Agent Endpoint"
+        },
+        {
+          "from": "Not run"
+        },
+        {
+          "from": "Running Diagnostic"
+        },
+        {
+          "from": "Copy results"
+        },
+        {
+          "from": "Hide Logs"
+        },
+        {
+          "from": "Show Logs"
+        },
+        {
+          "from": "Select Custom Chime Sound"
+        },
+        {
+          "from": "Choose Custom Sound..."
+        },
+        {
+          "from": "Default Sound"
+        },
+        {
+          "from": "Reset to default sound"
+        },
+        {
+          "from": "Extension Security"
+        },
+        {
+          "from": "Extension signature verification is only available with the OpenVSX or Cursor marketplace. Your current marketplace does not support this feature."
+        },
+        {
+          "from": "Open chat as editor tabs is unavailable while non-chat content is placed in the Secondary Side Bar."
+        },
+        {
+          "from": "Island"
+        },
+        {
+          "from": "No Hidden Dialogs Yet"
+        },
+        {
+          "from": "Reset All"
+        },
+        {
+          "from": "Switch Privacy Mode?"
+        },
+        {
+          "from": "Failed to update privacy settings"
+        },
+        {
+          "from": "Privacy Mode (Legacy)"
+        },
+        {
+          "from": "No training and no storage. Background Agent and other features that require code storage will be disabled."
+        },
+        {
+          "from": " Prompts and limited telemetry may also be shared with model providers when you explicitly select their models."
+        },
+        {
+          "from": "Unify dashboard"
+        },
+        {
+          "from": "Updating privacy settings"
+        },
+        {
+          "from": "Privacy Mode (Legacy) is enabled. Background Agent and some features not available."
+        },
+        {
+          "from": "Switch to Privacy Mode"
+        },
+        {
+          "from": "Configure here."
+        },
+        {
+          "from": "Learn more about Data Sharing."
+        },
+        {
+          "from": "Data Sharing is paused for your first day of usage."
+        },
+        {
+          "from": "Share Now"
+        },
+        {
+          "from": "Copy sign in link"
+        },
+        {
+          "from": "Accelerate development, shared knowledge, and context across your team"
+        },
+        {
+          "from": "Invite Team Members"
+        },
+        {
+          "from": "Choose Origin (cursor.com/codebase) or GitHub for GitHub pull request links on web and desktop"
+        },
+        {
+          "from": "Failed to save"
+        },
+        {
+          "from": "Cursor-managed worktrees grouped by source repository"
+        },
+        {
+          "from": "Source repository unknown"
+        },
+        {
+          "from": "Untitled agent"
+        },
+        {
+          "from": "No linked agents"
+        },
+        {
+          "from": "TypeScript and Python"
+        },
+        {
+          "from": "CPP and auto-imports are temporarily disabled"
+        },
+        {
+          "from": "CPP is temporarily disabled"
+        },
+        {
+          "from": "Auto-imports are temporarily disabled"
+        },
+        {
+          "from": "Enable auto import for Python. This is a beta feature."
+        },
+        {
+          "from": "Auto Import for Python"
+        },
+        {
+          "from": "Changing Instant Grep requires reloading the window."
+        },
+        {
+          "from": "Disable AI features in specific repositories based on file pattern"
+        },
+        {
+          "from": "Team-Level Repository Control"
+        },
+        {
+          "from": "Model name looks like a URL or secret. Please enter only the model name."
+        },
+        {
+          "from": "Refreshing model list"
+        },
+        {
+          "from": "No models available"
+        },
+        {
+          "from": "MAX Only"
+        },
+        {
+          "from": "Custom model name"
+        },
+        {
+          "from": "Enter model name"
+        },
+        {
+          "from": "Reset to default"
+        },
+        {
+          "from": "Inherit from parent"
+        },
+        {
+          "from": "Subagent model overrides will only be used in Max Mode"
+        },
+        {
+          "from": "Default chooses an Explore model based on availability and cost"
+        },
+        {
+          "from": "Max Mode required"
+        },
+        {
+          "from": "Secret saved"
+        },
+        {
+          "from": "Use OpenAI API Key"
+        },
+        {
+          "from": "Your team has configured AWS Bedrock access. You can use your teams Bedrock instance without any additional configuration."
+        },
+        {
+          "from": "AWS Bedrock team configuration"
+        },
+        {
+          "from": "Use Team AWS Bedrock"
+        },
+        {
+          "from": "AWS region used by your team's Bedrock configuration."
+        },
+        {
+          "from": "Not configured"
+        },
+        {
+          "from": "OpenAI-compatible API base URL for the local agent."
+        },
+        {
+          "from": "API key used for requests to your gateway."
+        },
+        {
+          "from": "Configure gateway"
+        },
+        {
+          "from": "Weekly usage limit"
+        },
+        {
+          "from": "Monthly usage limit"
+        },
+        {
+          "from": " Used before your credits."
+        },
+        {
+          "from": "Loading usage"
+        },
+        {
+          "from": "Total included usage"
+        },
+        {
+          "from": "Usage past your limit is billed later as on-demand."
+        },
+        {
+          "from": "Requests stop at this limit. Overage from requests already running isn't billed unless the limit is raised this billing cycle."
+        },
+        {
+          "from": "Loading on-demand limit"
+        },
+        {
+          "from": "Enable on-demand usage to go beyond your plan's included usage. Requires a paid plan."
+        },
+        {
+          "from": "On-Demand Usage"
+        },
+        {
+          "from": "On-demand spending is currently disabled"
+        },
+        {
+          "from": "On-Demand Spending"
+        },
+        {
+          "from": "On-Demand"
+        },
+        {
+          "from": "On-demand usage"
+        },
+        {
+          "from": "Spend limits for team plans are managed by team admins in the dashboard"
+        },
+        {
+          "from": "Set a fixed amount or make it unlimited."
+        },
+        {
+          "from": "Monthly limit amount"
+        },
+        {
+          "from": "Current Plan"
+        },
+        {
+          "from": "Adjust Plan"
+        },
+        {
+          "from": "Upgrade Available"
+        },
+        {
+          "from": "Failed to save on-demand limit"
+        },
+        {
+          "from": "On-demand limit saved successfully"
+        },
+        {
+          "from": "Failed to load usage data."
+        },
+        {
+          "from": "Failed to load chart data."
+        },
+        {
+          "from": "Showing cached usage data because the latest refresh failed."
+        },
+        {
+          "from": "Showing cached chart data because the latest refresh failed."
+        },
+        {
+          "from": "Personal Usage"
+        },
+        {
+          "from": "We were unable to load your usage metrics. Please try again later."
+        },
+        {
+          "from": "Showing cached usage data"
+        },
+        {
+          "from": "The latest refresh failed. Retry to fetch the newest usage."
+        },
+        {
+          "from": "Track your spend against last month and your limit."
+        },
+        {
+          "from": "Track your spend against last month."
+        },
+        {
+          "from": "Cumulative Spend"
+        },
+        {
+          "from": "This chart shows on-demand usage only for request-based users. Included usage is not shown."
+        },
+        {
+          "from": "web dashboard"
+        },
+        {
+          "from": "Daily usage charts are only available for billing periods starting on or after Nov 20, 2025."
+        },
+        {
+          "from": "Finish unifying"
+        },
+        {
+          "from": "Contact support"
+        },
+        {
+          "from": "Choose a voice"
+        },
+        {
+          "from": "Stop voice sample"
+        },
+        {
+          "from": "Ask Every Time will disappear from this menu after you switch away from it. Allowlist auto-runs tools that are already in your allowlist, including MCP tools. If you want every shell command to keep asking for approval, keep your shell allowlist empty. With an empty shell allowlist, shell commands still ask every time and Cursor skips shell allowlist parsing."
+        },
+        {
+          "from": "Wait indefinitely; otherwise skip prompts after 30 seconds"
         }
       ],
       "fragments": [
@@ -2435,11 +3011,6 @@
           "from": "`Apply .cursorignore files to all subdirectories${",
           "to": "`将 .cursorignore 文件应用到所有子目录${",
           "count": 1
-        },
-        {
-          "from": "?\" (controlled by admin)\":\"\"",
-          "to": "?\"（由管理员控制）\":\"\"",
-          "count": 8
         },
         {
           "from": "}. Changing this setting requires restarting Cursor.`",
@@ -2690,6 +3261,326 @@
           "from": "Dr+=` \\xB7 Cycle ${Hr} (${ra})`",
           "to": "Dr+=` \\xB7 切换 ${Hr} (${ra})`",
           "count": 1
+        },
+        {
+          "from": "`Included usage with your subscription.${",
+          "to": "`订阅包含的用量。${",
+          "count": 1
+        },
+        {
+          "from": "` Resets ${sSa(e)}.`",
+          "to": "` 重置于 ${sSa(e)}。`",
+          "count": 1
+        },
+        {
+          "from": "\"Data Sharing is controlled by \",w?\"the\":\"your\",\" team admin.\"",
+          "to": "\"数据共享由\",w?\"\":\"你的\",\"团队管理员控制。\"",
+          "count": 1
+        },
+        {
+          "from": "\"Sharing will activate in \",f,\" hour\",f===1?\"\":\"s\",\".\"",
+          "to": "\"数据共享将在 \",f,\" 小时后开启\",f===1?\"\":\"\",\"。\"",
+          "count": 1
+        },
+        {
+          "from": "children:[\"With your Cursor \",l,\"subscription, you do not need to use your own \",n,\" key!\"]",
+          "to": "children:[\"你的 Cursor \",l,\"订阅已包含，无需使用自己的 \",n,\" 密钥！\"]",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Turn Off \",n,\" Key\"]",
+          "to": "children:[\"关闭 \",n,\" 密钥\"]",
+          "count": 1
+        },
+        {
+          "from": "`Prevent Agent from deleting files automatically${s}`",
+          "to": "`阻止智能体自动删除文件${s}`",
+          "count": 1
+        },
+        {
+          "from": "`Prevent Agent from creating or modifying files outside of the workspace automatically${a?\" (controlled by admin)\":\"\"}`",
+          "to": "`阻止智能体自动创建或修改工作区外的文件${a?\" (controlled by admin)\":\"\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Commands that can't run automatically${r?\" (controlled by admin)\":\" - DEPRECATED\"}`",
+          "to": "`不能自动运行的命令${r?\" (controlled by admin)\":\" - DEPRECATED\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Command Denylist${r?\"\":\" (Deprecated)\"}`",
+          "to": "`命令拒绝列表${r?\"\":\" (Deprecated)\"}`",
+          "count": 1
+        },
+        {
+          "from": "`File paths and glob patterns agents can read without approval${l}`",
+          "to": "`智能体无需批准即可读取的文件路径和 glob 模式${l}`",
+          "count": 1
+        },
+        {
+          "from": "`Prevent Agent from automatically running MCP tools${r?\" (controlled by admin)\":\"\"}`",
+          "to": "`阻止智能体自动运行 MCP 工具${r?\" (controlled by admin)\":\"\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Run Mode (Enforced by ~/${e.dataFolderName??\".cursor\"}/permissions.json)`",
+          "to": "`运行模式（由 ~/${e.dataFolderName??\".cursor\"}/permissions.json 强制设定）`",
+          "count": 1
+        },
+        {
+          "from": "`Allowlist controls are set by ${EHa(u,n.dataFolderName)}. Dashboard values apply for auto-run fields omitted by that file.`",
+          "to": "`允许列表由 ${EHa(u,n.dataFolderName)} 设定。该文件未指定的自动运行字段使用控制台中的值。`",
+          "count": 1
+        },
+        {
+          "from": "`Allowlist and approval behavior are set by ${EHa(u??\"userPermissionsFile\",n.dataFolderName)}. Run Everything is disabled while that file defines allowlists or a restrictive approvalMode.`",
+          "to": "`允许列表和批准行为由 ${EHa(u??\"userPermissionsFile\",n.dataFolderName)} 设定。只要该文件定义了允许列表或限制性的 approvalMode，“全部运行”就不可用。`",
+          "count": 1
+        },
+        {
+          "from": "`Server name: ${o.error}`",
+          "to": "`服务器名称：${o.error}`",
+          "count": 1
+        },
+        {
+          "from": "`Tool name: ${o.error}`",
+          "to": "`工具名称：${o.error}`",
+          "count": 1
+        },
+        {
+          "from": "`${Li?\"\\u2318Enter\":\"Ctrl+Enter\"} submits chat, Enter inserts a newline, and primary actions move to ${Li?\"\\u2325\\u2318Enter\":\"Ctrl+Alt+Enter\"}`",
+          "to": "`${Li?\"\\u2318Enter\":\"Ctrl+Enter\"} 发送消息，Enter 换行，主要操作改为 ${Li?\"\\u2325\\u2318Enter\":\"Ctrl+Alt+Enter\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Submit with ${Li?\"\\u2318 + \":\"Ctrl + \"}Enter`",
+          "to": "`用 ${Li?\"\\u2318 + \":\"Ctrl + \"}Enter 发送`",
+          "count": 1
+        },
+        {
+          "from": "`Type of Agents Window is managed by the ${nLa} gate.`",
+          "to": "`智能体窗口类型由 ${nLa} 开关控制。`",
+          "count": 1
+        },
+        {
+          "from": "`Resolved to ${c.address} in ${l}ms`",
+          "to": "`已解析为 ${c.address}，用时 ${l}ms`",
+          "count": 1
+        },
+        {
+          "from": "`DNS lookup took ${l}ms`",
+          "to": "`DNS 查询用时 ${l}ms`",
+          "count": 1
+        },
+        {
+          "from": "`Unexpected protocol: ${o.protocol}`",
+          "to": "`意外的协议：${o.protocol}`",
+          "count": 1
+        },
+        {
+          "from": "`Verify extension signatures when installing and loading extensions. May require an editor restart to take effect.${r?\" (controlled by admin)\":\"\"}`",
+          "to": "`安装和加载扩展时验证扩展签名。可能需要重启编辑器才能生效。${r?\" (controlled by admin)\":\"\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Please try again. Request ID: ${X}`",
+          "to": "`请重试。请求 ID：${X}`",
+          "count": 1
+        },
+        {
+          "from": "`Mark pull requests as made with Cursor${a}`",
+          "to": "`将拉取请求标记为由 Cursor 创建${a}`",
+          "count": 1
+        },
+        {
+          "from": "`Sensitive key ${e}... detected. Please enter only the model name.`",
+          "to": "`检测到敏感密钥 ${e}…，请只输入模型名称。`",
+          "count": 1
+        },
+        {
+          "from": "`Model name must be at most ${i} characters.`",
+          "to": "`模型名称最多 ${i} 个字符。`",
+          "count": 1
+        },
+        {
+          "from": "`Use ${n} API Key`",
+          "to": "`使用 ${n} API 密钥`",
+          "count": 1
+        },
+        {
+          "from": "`Included in ${o}`",
+          "to": "`包含在 ${o} 中`",
+          "count": 1
+        },
+        {
+          "from": "`Included in ${v}`",
+          "to": "`包含在 ${v} 中`",
+          "count": 2
+        },
+        {
+          "from": "children:[\"Enable the \",",
+          "to": "children:[\"启用 \",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"You can also manage Privacy Mode in the\",",
+          "to": "children:[\"也可以在这里管理隐私模式：\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"We could not determine your primary enterprise team or dashboard user ID. You can still review usage in the\",",
+          "to": "children:[\"无法确定你的主要企业团队或控制台用户 ID。你仍可以前往\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"View more advanced analytics in the\",",
+          "to": "children:[\"更多高级分析请前往\",",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel\",label:\"取消\"",
+          "count": 22
+        },
+        {
+          "from": "primaryButton:{id:\"continue\",label:\"Continue\"",
+          "to": "primaryButton:{id:\"continue\",label:\"继续\"",
+          "count": 3
+        },
+        {
+          "from": "cancelButton:{id:mHo,label:\"Cancel\"",
+          "to": "cancelButton:{id:mHo,label:\"取消\"",
+          "count": 2
+        },
+        {
+          "from": "primaryButton:{id:gHo,label:\"Continue\"",
+          "to": "primaryButton:{id:gHo,label:\"继续\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel-discard-changes\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel-discard-changes\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:qsa,label:\"Delete\"",
+          "to": "primaryButton:{id:qsa,label:\"删除\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:BKp,label:\"Cancel\"",
+          "to": "cancelButton:{id:BKp,label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{label:\"Continue\"",
+          "to": "primaryButton:{label:\"继续\"",
+          "count": 2
+        },
+        {
+          "from": "primaryButton:{id:\"loading\",label:\"Applying\"",
+          "to": "primaryButton:{id:\"loading\",label:\"正在应用\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"loading\",label:\"Importing\"",
+          "to": "primaryButton:{id:\"loading\",label:\"正在导入\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"done\",label:\"Done\"",
+          "to": "primaryButton:{id:\"done\",label:\"完成\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"resetMode\",label:\"Reset\"",
+          "to": "primaryButton:{id:\"resetMode\",label:\"重置\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancelResetMode\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancelResetMode\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "extraButtons:[{id:\"retry-background-completion\",label:\"Resume\"",
+          "to": "extraButtons:[{id:\"retry-background-completion\",label:\"继续\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"proceed\",label:\"Continue\"",
+          "to": "primaryButton:{id:\"proceed\",label:\"继续\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"cancel\",label:\"Cancel\"",
+          "to": "primaryButton:{id:\"cancel\",label:\"取消\"",
+          "count": 2
+        },
+        {
+          "from": "primaryButton:{id:\"delete\",label:\"Delete\"",
+          "to": "primaryButton:{id:\"delete\",label:\"删除\"",
+          "count": 3
+        },
+        {
+          "from": "primaryButton:{id:\"import\",label:\"Import\"",
+          "to": "primaryButton:{id:\"import\",label:\"导入\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"confirm\",label:\"Switch\"",
+          "to": "primaryButton:{id:\"confirm\",label:\"切换\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"remove-model\",label:\"Remove\"",
+          "to": "primaryButton:{id:\"remove-model\",label:\"移除\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel-remove-model\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel-remove-model\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:nMw,label:\"Cancel\"",
+          "to": "cancelButton:{id:nMw,label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"move\",label:\"Move\"",
+          "to": "primaryButton:{id:\"move\",label:\"移动\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"remove\",label:\"Remove\"",
+          "to": "primaryButton:{id:\"remove\",label:\"移除\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"remove-local-plugin\",label:\"Remove\"",
+          "to": "primaryButton:{id:\"remove-local-plugin\",label:\"移除\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel-remove-local-plugin\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel-remove-local-plugin\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{label:\"Import\"",
+          "to": "primaryButton:{label:\"导入\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{label:\"Cancel\"",
+          "to": "cancelButton:{label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "?\" (controlled by admin)\":\"\"",
+          "to": "?\"（由管理员控制）\":\"\"",
+          "count": 8
         }
       ]
     },
@@ -5530,6 +6421,774 @@
         },
         {
           "from": "Search settings"
+        },
+        {
+          "from": "Enable Run Everything?"
+        },
+        {
+          "from": "Use Sandbox instead"
+        },
+        {
+          "from": "Use Allowlist instead"
+        },
+        {
+          "from": "Leave Ask Every Time?"
+        },
+        {
+          "from": "Commands run in a protected sandbox that limits access to your files, network, and git. You can allowlist specific commands to run with full access when needed. Be cautious of potential prompt injection risks."
+        },
+        {
+          "from": "Only commands you've added to your allowlist will run automatically. Other commands will require user approval. Be cautious of potential prompt injection risks."
+        },
+        {
+          "from": "This allows the agent to execute any tool or shell command without approval. A prompt injection or a malicious tool could delete files or exfiltrate secrets from your machine. We recommend using Sandbox."
+        },
+        {
+          "from": "This allows the agent to execute any tool or shell command without approval. A prompt injection or a malicious tool could delete files or exfiltrate secrets from your machine. We recommend using Allowlist."
+        },
+        {
+          "from": "Run Everything (Unsandboxed)"
+        },
+        {
+          "from": "Auto-review (with Sandbox)"
+        },
+        {
+          "from": "Agent will ask for approval before running tools."
+        },
+        {
+          "from": "Commands that are allowlisted will run automatically."
+        },
+        {
+          "from": "Many commands will run automatically inside the sandbox, and you can also allowlist other actions."
+        },
+        {
+          "from": "A classifier will run for each action and decide whether it's safe to execute this command. Allowlists are still respected."
+        },
+        {
+          "from": "All commands will run without approval, classification or sandboxing."
+        },
+        {
+          "from": "Ask for permission before running each operation"
+        },
+        {
+          "from": "Tools will auto-run in a sandbox if possible, otherwise respect the allowlist or ask for approval"
+        },
+        {
+          "from": "Automatically run operations after you approve them once"
+        },
+        {
+          "from": "Automatically run operations that Auto-review classifies as safe, using sandboxing when possible"
+        },
+        {
+          "from": "Automatically run operations that Auto-review classifies as safe"
+        },
+        {
+          "from": "Automatically run all operations without asking for permission"
+        },
+        {
+          "from": "Sandboxed network access is disabled by your admin."
+        },
+        {
+          "from": "Sandboxed network access is controlled by your admin. You can still edit allowed/denied domains in sandbox.json in your workspace, but admin policy takes precedence."
+        },
+        {
+          "from": "Use AI-powered command classification to intelligently match commands against allowlist patterns and suggest sandbox modes"
+        },
+        {
+          "from": "Smart Allowlist"
+        },
+        {
+          "from": "Deprecated Feature:"
+        },
+        {
+          "from": " The command denylist is often bypassable, providing a false sense of security. Consider using the allowlist approach instead for better security."
+        },
+        {
+          "from": "MCP Tools Protection"
+        },
+        {
+          "from": "You can configure Shell, MCP and Fetch allowlists for Auto mode. However, Auto works well without these."
+        },
+        {
+          "from": "Run Mode Disabled by Team Admin"
+        },
+        {
+          "from": "Run Mode Controlled by Team Admin (Sandbox Enabled)"
+        },
+        {
+          "from": "Run Mode Controlled by Team Admin"
+        },
+        {
+          "from": "Sandboxing is disabled by your admin."
+        },
+        {
+          "from": "Disabled by your team admin."
+        },
+        {
+          "from": "Enabled by Run Everything Auto-Run Mode: Agent bypasses approval prompts for tools including Web Search."
+        },
+        {
+          "from": "Enabled by Run Everything Auto-Run Mode."
+        },
+        {
+          "from": "Run Everything Mode Warning"
+        },
+        {
+          "from": "Custom words that submit a voice prompt. Spaces and punctuation are ignored."
+        },
+        {
+          "from": "Adjust the default behavior of sending a message while Agent is running"
+        },
+        {
+          "from": "What sending a message while Agent is running does"
+        },
+        {
+          "from": "What the queued-message Send Now action does"
+        },
+        {
+          "from": "Allow agent to switch to modes without asking. When off, skips if unanswered within 15 seconds."
+        },
+        {
+          "from": "Default voice for voice chats"
+        },
+        {
+          "from": "File paths and glob patterns agents can read without approval."
+        },
+        {
+          "from": "Use legacy terminal tool on unsupported shells"
+        },
+        {
+          "from": "Cursor syncs your local skills so they can be used with Cloud Agents"
+        },
+        {
+          "from": "Show Add to Chat and Quick Edit buttons"
+        },
+        {
+          "from": "Show the Cmd/Ctrl+K hint in Terminal"
+        },
+        {
+          "from": "Preview Box for Terminal Cmd/Ctrl+K"
+        },
+        {
+          "from": "Loading Cloud Agents settings..."
+        },
+        {
+          "from": "Loading Cloud Agents settings"
+        },
+        {
+          "from": "Cloud Agents require data storage to function."
+        },
+        {
+          "from": "Cloud Agents Unavailable"
+        },
+        {
+          "from": "Open Privacy Settings"
+        },
+        {
+          "from": "Cloud Agents are not available when your privacy mode is set to disable data storage. To use Cloud Agents, please update your privacy settings to allow data storage."
+        },
+        {
+          "from": "Privacy Mode Enabled"
+        },
+        {
+          "from": "Connect GitHub/GitLab, manage team and user settings, and configure environments"
+        },
+        {
+          "from": "Manage Settings"
+        },
+        {
+          "from": "Work with Cloud Agents from Slack"
+        },
+        {
+          "from": "Connect Slack"
+        },
+        {
+          "from": "Integrations"
+        },
+        {
+          "from": "An organization policy turns off updates on this device."
+        },
+        {
+          "from": "An organization policy turns off automatic update checks on this device. Use Check for Updates to get new versions."
+        },
+        {
+          "from": "An organization policy limits update checks on this device to when Cursor starts."
+        },
+        {
+          "from": "Enterprise users can only be notified on stable updates."
+        },
+        {
+          "from": "Updates Managed by Organization Policy"
+        },
+        {
+          "from": "This track will silently download and install updates without prompting whenever Cursor is closed."
+        },
+        {
+          "from": "Agents Window Type"
+        },
+        {
+          "from": "Local agent runtime"
+        },
+        {
+          "from": "Run Private Inference in a separate local process to isolate it from remote workspace activity. Reload Cursor after changing this setting."
+        },
+        {
+          "from": "Desktop Bridge"
+        },
+        {
+          "from": " CLI command, which lists and sends messages to agent threads open in this desktop app. Restart Cursor after changing this setting."
+        },
+        {
+          "from": "Allow CLI to access desktop agents"
+        },
+        {
+          "from": "API requests"
+        },
+        {
+          "from": "Cursor Tab (regional)"
+        },
+        {
+          "from": "Agent requests"
+        },
+        {
+          "from": "Training telemetry"
+        },
+        {
+          "from": "Authentication UI (login page)"
+        },
+        {
+          "from": "Extension marketplace"
+        },
+        {
+          "from": "Marketplace CDN"
+        },
+        {
+          "from": "Client updates"
+        },
+        {
+          "from": "Authentication UI"
+        },
+        {
+          "from": "Agent Endpoint"
+        },
+        {
+          "from": "Not run"
+        },
+        {
+          "from": "Running Diagnostic"
+        },
+        {
+          "from": "Copy results"
+        },
+        {
+          "from": "Hide Logs"
+        },
+        {
+          "from": "Show Logs"
+        },
+        {
+          "from": "Select Custom Chime Sound"
+        },
+        {
+          "from": "Choose Custom Sound..."
+        },
+        {
+          "from": "Default Sound"
+        },
+        {
+          "from": "Reset to default sound"
+        },
+        {
+          "from": "Extension Security"
+        },
+        {
+          "from": "Extension signature verification is only available with the OpenVSX or Cursor marketplace. Your current marketplace does not support this feature."
+        },
+        {
+          "from": "Open chat as editor tabs is unavailable while non-chat content is placed in the Secondary Side Bar."
+        },
+        {
+          "from": "Island"
+        },
+        {
+          "from": "No Hidden Dialogs Yet"
+        },
+        {
+          "from": "Reset All"
+        },
+        {
+          "from": "Switch Privacy Mode?"
+        },
+        {
+          "from": "Failed to update privacy settings"
+        },
+        {
+          "from": "Privacy Mode (Legacy)"
+        },
+        {
+          "from": "No training and no storage. Background Agent and other features that require code storage will be disabled."
+        },
+        {
+          "from": " Prompts and limited telemetry may also be shared with model providers when you explicitly select their models."
+        },
+        {
+          "from": "Unify dashboard"
+        },
+        {
+          "from": "Updating privacy settings"
+        },
+        {
+          "from": "Privacy Mode (Legacy) is enabled. Background Agent and some features not available."
+        },
+        {
+          "from": "Switch to Privacy Mode"
+        },
+        {
+          "from": "Configure here."
+        },
+        {
+          "from": "Learn more about Data Sharing."
+        },
+        {
+          "from": "Data Sharing is paused for your first day of usage."
+        },
+        {
+          "from": "Share Now"
+        },
+        {
+          "from": "Copy sign in link"
+        },
+        {
+          "from": "Accelerate development, shared knowledge, and context across your team"
+        },
+        {
+          "from": "Invite Team Members"
+        },
+        {
+          "from": "Choose Origin (cursor.com/codebase) or GitHub for GitHub pull request links on web and desktop"
+        },
+        {
+          "from": "Failed to save"
+        },
+        {
+          "from": "Cursor-managed worktrees grouped by source repository"
+        },
+        {
+          "from": "Source repository unknown"
+        },
+        {
+          "from": "Untitled agent"
+        },
+        {
+          "from": "No linked agents"
+        },
+        {
+          "from": "TypeScript and Python"
+        },
+        {
+          "from": "CPP and auto-imports are temporarily disabled"
+        },
+        {
+          "from": "CPP is temporarily disabled"
+        },
+        {
+          "from": "Auto-imports are temporarily disabled"
+        },
+        {
+          "from": "Enable auto import for Python. This is a beta feature."
+        },
+        {
+          "from": "Auto Import for Python"
+        },
+        {
+          "from": "Changing Instant Grep requires reloading the window."
+        },
+        {
+          "from": "Disable AI features in specific repositories based on file pattern"
+        },
+        {
+          "from": "Team-Level Repository Control"
+        },
+        {
+          "from": "Model name looks like a URL or secret. Please enter only the model name."
+        },
+        {
+          "from": "Refreshing model list"
+        },
+        {
+          "from": "No models available"
+        },
+        {
+          "from": "MAX Only"
+        },
+        {
+          "from": "Custom model name"
+        },
+        {
+          "from": "Enter model name"
+        },
+        {
+          "from": "Reset to default"
+        },
+        {
+          "from": "Inherit from parent"
+        },
+        {
+          "from": "Subagent model overrides will only be used in Max Mode"
+        },
+        {
+          "from": "Default chooses an Explore model based on availability and cost"
+        },
+        {
+          "from": "Max Mode required"
+        },
+        {
+          "from": "Secret saved"
+        },
+        {
+          "from": "Use OpenAI API Key"
+        },
+        {
+          "from": "Your team has configured AWS Bedrock access. You can use your teams Bedrock instance without any additional configuration."
+        },
+        {
+          "from": "AWS Bedrock team configuration"
+        },
+        {
+          "from": "Use Team AWS Bedrock"
+        },
+        {
+          "from": "AWS region used by your team's Bedrock configuration."
+        },
+        {
+          "from": "Not configured"
+        },
+        {
+          "from": "OpenAI-compatible API base URL for the local agent."
+        },
+        {
+          "from": "API key used for requests to your gateway."
+        },
+        {
+          "from": "Configure gateway"
+        },
+        {
+          "from": "Configure the local agent LLM gateway base URL and API key"
+        },
+        {
+          "from": "Weekly usage limit"
+        },
+        {
+          "from": "Monthly usage limit"
+        },
+        {
+          "from": " Used before your credits."
+        },
+        {
+          "from": "Loading usage"
+        },
+        {
+          "from": "Total included usage"
+        },
+        {
+          "from": "Usage past your limit is billed later as on-demand."
+        },
+        {
+          "from": "Requests stop at this limit. Overage from requests already running isn't billed unless the limit is raised this billing cycle."
+        },
+        {
+          "from": "Loading on-demand limit"
+        },
+        {
+          "from": "Enable on-demand usage to go beyond your plan's included usage. Requires a paid plan."
+        },
+        {
+          "from": "On-Demand Usage"
+        },
+        {
+          "from": "On-demand spending is currently disabled"
+        },
+        {
+          "from": "On-Demand Spending"
+        },
+        {
+          "from": "On-demand usage"
+        },
+        {
+          "from": "Spend limits for team plans are managed by team admins in the dashboard"
+        },
+        {
+          "from": "Set a fixed amount or make it unlimited."
+        },
+        {
+          "from": "Monthly limit amount"
+        },
+        {
+          "from": "Current Plan"
+        },
+        {
+          "from": "Adjust Plan"
+        },
+        {
+          "from": "Upgrade Available"
+        },
+        {
+          "from": "Failed to save on-demand limit"
+        },
+        {
+          "from": "On-demand limit saved successfully"
+        },
+        {
+          "from": "Failed to load usage data."
+        },
+        {
+          "from": "Failed to load chart data."
+        },
+        {
+          "from": "Showing cached usage data because the latest refresh failed."
+        },
+        {
+          "from": "Showing cached chart data because the latest refresh failed."
+        },
+        {
+          "from": "Personal Usage"
+        },
+        {
+          "from": "We were unable to load your usage metrics. Please try again later."
+        },
+        {
+          "from": "Showing cached usage data"
+        },
+        {
+          "from": "The latest refresh failed. Retry to fetch the newest usage."
+        },
+        {
+          "from": "Track your spend against last month and your limit."
+        },
+        {
+          "from": "Track your spend against last month."
+        },
+        {
+          "from": "Cumulative Spend"
+        },
+        {
+          "from": "This chart shows on-demand usage only for request-based users. Included usage is not shown."
+        },
+        {
+          "from": "web dashboard"
+        },
+        {
+          "from": "Daily usage charts are only available for billing periods starting on or after Nov 20, 2025."
+        },
+        {
+          "from": "Finish unifying"
+        },
+        {
+          "from": "Contact support"
+        },
+        {
+          "from": "Review personal enterprise usage and spend"
+        },
+        {
+          "from": "Review usage included in your current plan"
+        },
+        {
+          "from": "Review your plan's included usage"
+        },
+        {
+          "from": "Enable usage beyond your plan's included amount"
+        },
+        {
+          "from": "Review enabled on-demand usage and spending"
+        },
+        {
+          "from": "Review whether on-demand spending is enabled"
+        },
+        {
+          "from": "Choose a voice"
+        },
+        {
+          "from": "Stop voice sample"
+        },
+        {
+          "from": "Convert this agent to remote control"
+        },
+        {
+          "from": "Keep this agent running here and control it from another machine"
+        },
+        {
+          "from": "Not used yet"
+        },
+        {
+          "from": "Allow agents on this computer to be controlled remotely from mobile"
+        },
+        {
+          "from": "Turn Remote Control on again to reset this computer"
+        },
+        {
+          "from": "Paired Devices"
+        },
+        {
+          "from": "No devices are currently paired with this computer."
+        },
+        {
+          "from": "Unnamed device"
+        },
+        {
+          "from": "Disconnect from All Computers"
+        },
+        {
+          "from": "&&Disconnect from All Computers"
+        },
+        {
+          "from": "Remote Control runs on a cloud agent, which requires data storage that your current privacy mode disables"
+        },
+        {
+          "from": "Enable Remote Control for this computer"
+        },
+        {
+          "from": "Allow agents on this computer to be controlled from your other devices"
+        },
+        {
+          "from": "Disable Remote Control on all of my computers"
+        },
+        {
+          "from": "Unregisters every computer on your account; you can register any of them again later"
+        },
+        {
+          "from": "Unregister All"
+        },
+        {
+          "from": "&&Unregister All"
+        },
+        {
+          "from": "Disable Remote Control on all of your computers?"
+        },
+        {
+          "from": "This will turn off Remote Control on every computer associated with your account."
+        },
+        {
+          "from": "Computer Name"
+        },
+        {
+          "from": "Change how this computer appears on other devices"
+        },
+        {
+          "from": "Self-Hosted Workers"
+        },
+        {
+          "from": "Enable local self-hosted workers"
+        },
+        {
+          "from": "Allow cloud agents to run in your local environment."
+        },
+        {
+          "from": "Check Clock"
+        },
+        {
+          "from": "Another Window"
+        },
+        {
+          "from": "Remote Control is running in another Cursor window"
+        },
+        {
+          "from": "Saving Remote Control settings"
+        },
+        {
+          "from": "Remote Control settings are unavailable"
+        },
+        {
+          "from": "One of your organizations does not allow Remote Control"
+        },
+        {
+          "from": "This computer cannot be registered while one of your organizations does not allow Remote Control"
+        },
+        {
+          "from": "This computer cannot be registered while Remote Control settings are unavailable"
+        },
+        {
+          "from": "This computer can be registered once Remote Control settings have loaded"
+        },
+        {
+          "from": "One of your organizations does not allow automatic registration"
+        },
+        {
+          "from": "Unregistering your computers"
+        },
+        {
+          "from": "Register eligible computers when you sign in"
+        },
+        {
+          "from": "Automatically register computers"
+        },
+        {
+          "from": "Turn on Remote Control or register this computer to keep it awake"
+        },
+        {
+          "from": "Prevent sleep when this computer is plugged in and Remote Control is enabled"
+        },
+        {
+          "from": "Keep This Computer Awake"
+        },
+        {
+          "from": "Turn on Remote Control to keep this computer awake"
+        },
+        {
+          "from": "Choose the theme used when your system is in high contrast mode"
+        },
+        {
+          "from": "Open Manage Themes"
+        },
+        {
+          "from": "Keep theme and follow-system settings matched with the IDE window"
+        },
+        {
+          "from": "Sync Theme with IDE"
+        },
+        {
+          "from": "In use now, because your system is in high contrast"
+        },
+        {
+          "from": "Updated in Slack"
+        },
+        {
+          "from": "Back to the default"
+        },
+        {
+          "from": "Your own picture"
+        },
+        {
+          "from": "Default picture"
+        },
+        {
+          "from": "Upload"
+        },
+        {
+          "from": "Profile Picture"
+        },
+        {
+          "from": "Add it to Slack again first"
+        },
+        {
+          "from": "Couldn't reach Cursor. Try again."
+        },
+        {
+          "from": "Slack workspaces"
+        },
+        {
+          "from": "Slack workspace"
+        },
+        {
+          "from": "Slack app settings"
+        },
+        {
+          "from": "Ask Every Time will disappear from this menu after you switch away from it. Allowlist auto-runs tools that are already in your allowlist, including MCP tools. If you want every shell command to keep asking for approval, keep your shell allowlist empty. With an empty shell allowlist, shell commands still ask every time and Cursor skips shell allowlist parsing."
+        },
+        {
+          "from": "Wait indefinitely; otherwise skip prompts after 30 seconds"
+        },
+        {
+          "from": "Included in"
         }
       ],
       "fragments": [
@@ -5612,11 +7271,6 @@
           "from": "`Apply .cursorignore files to all subdirectories${",
           "to": "`将 .cursorignore 文件应用到所有子目录${",
           "count": 1
-        },
-        {
-          "from": "?\" (controlled by admin)\":\"\"",
-          "to": "?\"（由管理员控制）\":\"\"",
-          "count": 8
         },
         {
           "from": "}. Changing this setting requires restarting Cursor.`",
@@ -6002,6 +7656,386 @@
           "from": "ni+=` \\xB7 Cycle ${Zn} (${Ii})`",
           "to": "ni+=` \\xB7 切换 ${Zn} (${Ii})`",
           "count": 1
+        },
+        {
+          "from": "`Paired with this computer \\xB7 ${",
+          "to": "`已与这台电脑配对 · ${",
+          "count": 1
+        },
+        {
+          "from": "`Included usage with your subscription.${",
+          "to": "`订阅包含的用量。${",
+          "count": 1
+        },
+        {
+          "from": "` Resets ${Xtc(t)}.`",
+          "to": "` 重置于 ${Xtc(t)}。`",
+          "count": 1
+        },
+        {
+          "from": "\"Data Sharing is controlled by \",y?\"the\":\"your\",\" team admin.\"",
+          "to": "\"数据共享由\",y?\"\":\"你的\",\"团队管理员控制。\"",
+          "count": 1
+        },
+        {
+          "from": "\"Sharing will activate in \",m,\" hour\",m===1?\"\":\"s\",\".\"",
+          "to": "\"数据共享将在 \",m,\" 小时后开启\",m===1?\"\":\"\",\"。\"",
+          "count": 1
+        },
+        {
+          "from": "children:[\"With your Cursor \",c,\"subscription, you do not need to use your own \",n,\" key!\"]",
+          "to": "children:[\"你的 Cursor \",c,\"订阅已包含，无需使用自己的 \",n,\" 密钥！\"]",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Turn Off \",n,\" Key\"]",
+          "to": "children:[\"关闭 \",n,\" 密钥\"]",
+          "count": 1
+        },
+        {
+          "from": "`Prevent Agent from deleting files automatically${s}`",
+          "to": "`阻止智能体自动删除文件${s}`",
+          "count": 1
+        },
+        {
+          "from": "`Prevent Agent from creating or modifying files outside of the workspace automatically${a?\" (controlled by admin)\":\"\"}`",
+          "to": "`阻止智能体自动创建或修改工作区外的文件${a?\" (controlled by admin)\":\"\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Commands that can't run automatically${r?\" (controlled by admin)\":\" - DEPRECATED\"}`",
+          "to": "`不能自动运行的命令${r?\" (controlled by admin)\":\" - DEPRECATED\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Command Denylist${r?\"\":\" (Deprecated)\"}`",
+          "to": "`命令拒绝列表${r?\"\":\" (Deprecated)\"}`",
+          "count": 1
+        },
+        {
+          "from": "`File paths and glob patterns agents can read without approval${c}`",
+          "to": "`智能体无需批准即可读取的文件路径和 glob 模式${c}`",
+          "count": 1
+        },
+        {
+          "from": "`Prevent Agent from automatically running MCP tools${r?\" (controlled by admin)\":\"\"}`",
+          "to": "`阻止智能体自动运行 MCP 工具${r?\" (controlled by admin)\":\"\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Run Mode (Enforced by ~/${t.dataFolderName??\".cursor\"}/permissions.json)`",
+          "to": "`运行模式（由 ~/${t.dataFolderName??\".cursor\"}/permissions.json 强制设定）`",
+          "count": 1
+        },
+        {
+          "from": "`Allowlist controls are set by ${Swc(u,n.dataFolderName)}. Dashboard values apply for auto-run fields omitted by that file.`",
+          "to": "`允许列表由 ${Swc(u,n.dataFolderName)} 设定。该文件未指定的自动运行字段使用控制台中的值。`",
+          "count": 1
+        },
+        {
+          "from": "`Allowlist and approval behavior are set by ${Swc(u??\"userPermissionsFile\",n.dataFolderName)}. Run Everything is disabled while that file defines allowlists or a restrictive approvalMode.`",
+          "to": "`允许列表和批准行为由 ${Swc(u??\"userPermissionsFile\",n.dataFolderName)} 设定。只要该文件定义了允许列表或限制性的 approvalMode，“全部运行”就不可用。`",
+          "count": 1
+        },
+        {
+          "from": "`Server name: ${o.error}`",
+          "to": "`服务器名称：${o.error}`",
+          "count": 1
+        },
+        {
+          "from": "`Tool name: ${o.error}`",
+          "to": "`工具名称：${o.error}`",
+          "count": 1
+        },
+        {
+          "from": "`${Sr?\"\\u2318Enter\":\"Ctrl+Enter\"} submits chat, Enter inserts a newline, and primary actions move to ${Sr?\"\\u2325\\u2318Enter\":\"Ctrl+Alt+Enter\"}`",
+          "to": "`${Sr?\"\\u2318Enter\":\"Ctrl+Enter\"} 发送消息，Enter 换行，主要操作改为 ${Sr?\"\\u2325\\u2318Enter\":\"Ctrl+Alt+Enter\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Submit with ${Sr?\"\\u2318 + \":\"Ctrl + \"}Enter`",
+          "to": "`用 ${Sr?\"\\u2318 + \":\"Ctrl + \"}Enter 发送`",
+          "count": 1
+        },
+        {
+          "from": "`Type of Agents Window is managed by the ${G8s} gate.`",
+          "to": "`智能体窗口类型由 ${G8s} 开关控制。`",
+          "count": 1
+        },
+        {
+          "from": "`Resolved to ${l.address} in ${c}ms`",
+          "to": "`已解析为 ${l.address}，用时 ${c}ms`",
+          "count": 1
+        },
+        {
+          "from": "`DNS lookup took ${c}ms`",
+          "to": "`DNS 查询用时 ${c}ms`",
+          "count": 1
+        },
+        {
+          "from": "`Unexpected protocol: ${o.protocol}`",
+          "to": "`意外的协议：${o.protocol}`",
+          "count": 1
+        },
+        {
+          "from": "`Verify extension signatures when installing and loading extensions. May require an editor restart to take effect.${r?\" (controlled by admin)\":\"\"}`",
+          "to": "`安装和加载扩展时验证扩展签名。可能需要重启编辑器才能生效。${r?\" (controlled by admin)\":\"\"}`",
+          "count": 1
+        },
+        {
+          "from": "`Please try again. Request ID: ${V}`",
+          "to": "`请重试。请求 ID：${V}`",
+          "count": 1
+        },
+        {
+          "from": "`Mark pull requests as made with Cursor${a}`",
+          "to": "`将拉取请求标记为由 Cursor 创建${a}`",
+          "count": 1
+        },
+        {
+          "from": "`Sensitive key ${t}... detected. Please enter only the model name.`",
+          "to": "`检测到敏感密钥 ${t}…，请只输入模型名称。`",
+          "count": 1
+        },
+        {
+          "from": "`Model name must be at most ${i} characters.`",
+          "to": "`模型名称最多 ${i} 个字符。`",
+          "count": 1
+        },
+        {
+          "from": "`Use ${n} API Key`",
+          "to": "`使用 ${n} API 密钥`",
+          "count": 1
+        },
+        {
+          "from": "`Included in ${o}`",
+          "to": "`包含在 ${o} 中`",
+          "count": 1
+        },
+        {
+          "from": "`Included in ${g}`",
+          "to": "`包含在 ${g} 中`",
+          "count": 2
+        },
+        {
+          "from": "`Disconnect ${gJ_(t)} from this computer?`",
+          "to": "`要断开 ${gJ_(t)} 与这台电脑的连接吗？`",
+          "count": 1
+        },
+        {
+          "from": "`Disconnect ${gJ_(t)} from all computers?`",
+          "to": "`要断开 ${gJ_(t)} 与所有电脑的连接吗？`",
+          "count": 1
+        },
+        {
+          "from": "`Last used ${MJ(t.lastUsedAtMs,!0)}`",
+          "to": "`上次使用：${MJ(t.lastUsedAtMs,!0)}`",
+          "count": 1
+        },
+        {
+          "from": "`Your system is in high contrast, so your ${wjc(e.detectColorScheme?n:\"highContrast\")} is in use. This applies when it turns off`",
+          "to": "`系统处于高对比度模式，因此正在使用你的${wjc(e.detectColorScheme?n:\"highContrast\")}。高对比度关闭后才会应用此设置`",
+          "count": 1
+        },
+        {
+          "from": "`Waiting for approval \\xB7 code ${t.code}`",
+          "to": "`等待批准 · 验证码 ${t.code}`",
+          "count": 1
+        },
+        {
+          "from": "children:[\"Enable the \",",
+          "to": "children:[\"启用 \",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"You can also manage Privacy Mode in the\",",
+          "to": "children:[\"也可以在这里管理隐私模式：\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"We could not determine your primary enterprise team or dashboard user ID. You can still review usage in the\",",
+          "to": "children:[\"无法确定你的主要企业团队或控制台用户 ID。你仍可以前往\",",
+          "count": 1
+        },
+        {
+          "from": "children:[\"View more advanced analytics in the\",",
+          "to": "children:[\"更多高级分析请前往\",",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel\",label:\"取消\"",
+          "count": 30
+        },
+        {
+          "from": "primaryButton:{id:\"continue\",label:\"Continue\"",
+          "to": "primaryButton:{id:\"continue\",label:\"继续\"",
+          "count": 3
+        },
+        {
+          "from": "cancelButton:{id:z4l,label:\"Cancel\"",
+          "to": "cancelButton:{id:z4l,label:\"取消\"",
+          "count": 2
+        },
+        {
+          "from": "primaryButton:{id:V4l,label:\"Continue\"",
+          "to": "primaryButton:{id:V4l,label:\"继续\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{label:\"Continue\"",
+          "to": "primaryButton:{label:\"继续\"",
+          "count": 2
+        },
+        {
+          "from": "primaryButton:{id:\"loading\",label:\"Applying\"",
+          "to": "primaryButton:{id:\"loading\",label:\"正在应用\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"loading\",label:\"Importing\"",
+          "to": "primaryButton:{id:\"loading\",label:\"正在导入\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"delete\",label:\"Delete\"",
+          "to": "primaryButton:{id:\"delete\",label:\"删除\"",
+          "count": 3
+        },
+        {
+          "from": "primaryButton:{id:\"confirm\",label:\"Switch\"",
+          "to": "primaryButton:{id:\"confirm\",label:\"切换\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"remove-model\",label:\"Remove\"",
+          "to": "primaryButton:{id:\"remove-model\",label:\"移除\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel-remove-model\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel-remove-model\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"confirm\",label:\"Confirm\"",
+          "to": "primaryButton:{id:\"confirm\",label:\"确认\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"proceed\",label:\"Proceed\"",
+          "to": "primaryButton:{id:\"proceed\",label:\"继续\"",
+          "count": 1
+        },
+        {
+          "from": "extraButtons:[{id:\"retry\",label:\"Retry\"",
+          "to": "extraButtons:[{id:\"retry\",label:\"重试\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"yes\",label:\"Yes\"",
+          "to": "primaryButton:{id:\"yes\",label:\"是\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"no\",label:\"No\"",
+          "to": "cancelButton:{id:\"no\",label:\"否\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"process\",label:\"Processing\"",
+          "to": "primaryButton:{id:\"process\",label:\"处理中\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"done\",label:\"Done\"",
+          "to": "primaryButton:{id:\"done\",label:\"完成\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"resetMode\",label:\"Reset\"",
+          "to": "primaryButton:{id:\"resetMode\",label:\"重置\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancelResetMode\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancelResetMode\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "extraButtons:[{id:\"retry-background-completion\",label:\"Resume\"",
+          "to": "extraButtons:[{id:\"retry-background-completion\",label:\"继续\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"proceed\",label:\"Continue\"",
+          "to": "primaryButton:{id:\"proceed\",label:\"继续\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"cancel\",label:\"Cancel\"",
+          "to": "primaryButton:{id:\"cancel\",label:\"取消\"",
+          "count": 2
+        },
+        {
+          "from": "cancelButton:{id:o8A,label:\"Cancel\"",
+          "to": "cancelButton:{id:o8A,label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"move\",label:\"Move\"",
+          "to": "primaryButton:{id:\"move\",label:\"移动\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"remove\",label:\"Remove\"",
+          "to": "primaryButton:{id:\"remove\",label:\"移除\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:\"remove-local-plugin\",label:\"Remove\"",
+          "to": "primaryButton:{id:\"remove-local-plugin\",label:\"移除\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel-remove-local-plugin\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel-remove-local-plugin\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:\"cancel-discard-changes\",label:\"Cancel\"",
+          "to": "cancelButton:{id:\"cancel-discard-changes\",label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:M1y,label:\"Discard\"",
+          "to": "primaryButton:{id:M1y,label:\"放弃\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{id:f0y,label:\"Delete\"",
+          "to": "primaryButton:{id:f0y,label:\"删除\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{id:wnx,label:\"Cancel\"",
+          "to": "cancelButton:{id:wnx,label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "primaryButton:{label:\"Import\"",
+          "to": "primaryButton:{label:\"导入\"",
+          "count": 1
+        },
+        {
+          "from": "cancelButton:{label:\"Cancel\"",
+          "to": "cancelButton:{label:\"取消\"",
+          "count": 1
+        },
+        {
+          "from": "?\" (controlled by admin)\":\"\"",
+          "to": "?\"（由管理员控制）\":\"\"",
+          "count": 8
         }
       ]
     }
