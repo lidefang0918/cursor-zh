@@ -1,5 +1,5 @@
 {
-  "name": "cursor-zh-localizer",
+  "name": "cursor-zh",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*", "apps/*"],

@@ -33,13 +33,14 @@ await fs.mkdir(pristineDir, { recursive: true });
 for (const f of await fs.readdir(path.join(repo, 'docs'))) if (/^pristine-.*\.sha256$/.test(f)) await fs.copyFile(path.join(repo, 'docs', f), path.join(pristineDir, f));
 
 await fs.writeFile(path.join(stage, 'package.json'), JSON.stringify({
+  // name / productName / appId / 安装目录保留旧名 cursor-zh-localizer：已装的 Electron 备用版靠它们覆盖升级与卸载；只有产物文件名改成 cursor-zh-electron-*
   name: 'cursor-zh-localizer',
   productName: 'cursor-zh-localizer',
   desktopName: 'cursor-zh-localizer.desktop',
   version: desktopPkg.version,
   description: 'Cursor 一键汉化：把 Cursor 界面翻译成简体中文，可一键还原',
   author: { name: '阿三', email: 'asan@local' },
-  homepage: 'https://localhost/cursor-zh-localizer',
+  homepage: 'https://github.com/lidefang0918/cursor-zh',
   license: 'MIT',
   type: 'module',
   main: 'apps/desktop/main.js',
@@ -58,7 +59,7 @@ const config = {
   extraResources: [{ from: path.join(desktop, 'build/linux/local.cursor-zh-localizer.apply.policy'), to: 'polkit/local.cursor-zh-localizer.apply.policy' }],
   linux: {
     executableName: 'cursor-zh-localizer',
-    artifactName: 'cursor-zh-localizer-${version}-${arch}.${ext}',
+    artifactName: 'cursor-zh-electron-${version}-${arch}.${ext}',
     category: 'Utility',
     icon: path.join(desktop, 'build/icon.png'),
     syncDesktopName: true,
@@ -74,7 +75,7 @@ const config = {
   },
   win: {
     executableName: 'cursor-zh-localizer',
-    artifactName: 'cursor-zh-localizer-${version}-win-${arch}.${ext}',
+    artifactName: 'cursor-zh-electron-${version}-win-${arch}.${ext}',
     // 本工具自己不提权：需要写 Program Files 时由引擎按需弹 UAC（czl-apply.ps1）
     requestedExecutionLevel: 'asInvoker',
     icon: path.join(desktop, 'build/icon.ico'),
@@ -83,9 +84,9 @@ const config = {
     // 安装包不用 electron-builder 的 nsis 目标（Linux 上要 wine 生成卸载程序），见下面 makensis 那段
     target: [{ target: 'zip', arch: ['x64'] }, { target: 'portable', arch: ['x64'] }],
   },
-  portable: { artifactName: 'cursor-zh-localizer-${version}-win-${arch}-portable.${ext}' },
+  portable: { artifactName: 'cursor-zh-electron-${version}-win-${arch}-portable.${ext}' },
   mac: {
-    artifactName: 'cursor-zh-localizer-${version}-mac-${arch}.${ext}',
+    artifactName: 'cursor-zh-electron-${version}-mac-${arch}.${ext}',
     category: 'public.app-category.utilities',
     icon: path.join(desktop, 'build/icon.icns'),
     identity: null,
@@ -113,7 +114,7 @@ if (has('--mac')) {
     const appDir = path.join(repo, 'dist', dir, 'cursor-zh-localizer.app');
     // 不加 hardened runtime：没有 JIT 等 entitlements 时 Electron 在 runtime 下会崩
     execFileSync(rcodesign, ['sign', appDir], { stdio: 'inherit' });
-    const zip = path.join(repo, 'dist', `cursor-zh-localizer-${desktopPkg.version}-mac-${arch}.zip`);
+    const zip = path.join(repo, 'dist', `cursor-zh-electron-${desktopPkg.version}-mac-${arch}.zip`);
     await fs.rm(zip, { force: true });
     await fs.rm(`${zip}.blockmap`, { force: true });
     const zipArgs = zipTool === 'zip' ? ['-qry', zip, 'cursor-zh-localizer.app'] : ['a', '-tzip', '-snl', '-bso0', zip, 'cursor-zh-localizer.app'];
@@ -131,7 +132,7 @@ if (has('--win')) {
   const NSISDIR = process.env.NSISDIR || (inner && path.join(cache, nsisDir, inner));
   if (!NSISDIR) console.log('· 未找到 makensis（electron-builder 的 nsis 缓存），跳过安装包');
   else {
-    const out = path.join(repo, 'dist', `cursor-zh-localizer-${desktopPkg.version}-win-x64-setup.exe`);
+    const out = path.join(repo, 'dist', `cursor-zh-electron-${desktopPkg.version}-win-x64-setup.exe`);
     execFileSync(path.join(NSISDIR, 'linux/makensis'), ['-V2', `-DVERSION=${desktopPkg.version}`, `-DSRCDIR=${path.join(repo, 'dist/win-unpacked')}`, `-DOUTFILE=${out}`, `-DICON=${path.join(desktop, 'build/icon.ico')}`, path.join(desktop, 'build/win/installer.nsi')],
       { stdio: 'inherit', env: { ...process.env, NSISDIR, NSISCONFDIR: NSISDIR } });
     console.log(`· 已生成安装包 ${path.relative(repo, out)}`);

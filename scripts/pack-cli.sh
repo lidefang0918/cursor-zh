@@ -13,7 +13,7 @@ cp -r packages/engine/src packages/engine/helper packages/engine/package.json "$
 cp -r packages/dom-runtime "$S/packages/"
 cp scripts/run.mjs scripts/smoke-check.mjs "$S/scripts/"
 cp docs/mac-cli/RUN.md docs/pristine-*.sha256 "$S/"
-printf '{\n  "name": "cursor-zh-localizer",\n  "private": true,\n  "type": "module"\n}\n' > "$S/package.json"
+printf '{\n  "name": "cursor-zh",\n  "private": true,\n  "type": "module"\n}\n' > "$S/package.json"
 for v in "${CZL_VSIX:-}" "$HOME/.config/cursor-zh-localizer/cache/ms-ceintl.vscode-language-pack-zh-hans-1.128.0.vsix"; do
   [ -n "$v" ] && [ -f "$v" ] && cp "$v" "$S/vendor/" && break
 done

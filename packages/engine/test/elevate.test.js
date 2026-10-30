@@ -18,6 +18,8 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.
 const tmp = (p) => fs.mkdtemp(path.join(os.tmpdir(), p));
 const sh = (args) => new Promise((res) => execFile(args[0], args.slice(1), (e, so, se) => res({ code: e ? e.code : 0, stdout: so, stderr: se })));
 const REL = 'resources/app/out/vs/workbench/workbench.desktop.main.js';
+// pkexec / sudo / /proc 这几组模拟的是 Linux 主机，在 macOS、Windows 上跳过（各平台自己的逻辑在 platform-*.test.js 里测）
+const LINUX_ONLY = process.platform !== 'linux' && '只在 Linux 主机上运行';
 
 async function fakeInstall(js = 'a="Cursor Settings";') {
   const root = await tmp('czl-inst-');
@@ -79,7 +81,7 @@ describe('privileged helper (czl-apply.sh)', () => {
   });
 });
 
-describe('applyFiles elevation strategies', () => {
+describe('applyFiles elevation strategies', { skip: LINUX_ONLY }, () => {
   const realRun = async (bin, args) => sh(args); // 假装 pkexec/sudo 授权成功：直接以当前用户执行 helper
   it('direct write when writable', async () => {
     const root = await fakeInstall();
@@ -151,7 +153,7 @@ async function fakeProc(entries) {
   return d;
 }
 
-describe('Cursor process handling', () => {
+describe('Cursor process handling', { skip: LINUX_ONLY }, () => {
   it('finds main + child processes, ignores cli.js and other apps; closes and captures relaunch info', async () => {
     const root = '/opt/fake-cursor';
     const exe = `${root}/cursor`;

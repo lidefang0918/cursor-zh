@@ -14,7 +14,8 @@ import { detectAllCursors } from '../src/detect.js';
 import { vscodeChecksum } from '../src/patch.js';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const tmp = (p) => fs.mkdtemp(path.join(os.tmpdir(), p));
+// macOS 的 /var 是 /private/var 的符号链接，用真实路径，检测结果里的 root 才能对得上
+const tmp = async (p) => fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), p));
 const REL = 'Resources/app/out/vs/workbench/workbench.desktop.main.js';
 const KEY = 'vs/workbench/workbench.desktop.main.js';
 const JS = 'a="Cursor Settings";b="New Agent";';
@@ -191,8 +192,11 @@ describe('macOS: writing into Cursor.app', () => {
     const runHelper = () => { try { execFileSync('sh', [HELPER_PATH, m], { stdio: 'pipe' }); return 0; } catch (e) { return e.status; } };
     await fs.writeFile(m, `CZL1\t${linuxRoot}\n${sha}\t${src}\tresources/app/a.js\n!codesign-adhoc\n`);
     assert.equal(runHelper(), 2);
-    await fs.writeFile(m, `CZL1\t${root}\n${sha}\t${src}\tMacOS/Cursor\n`);
-    assert.equal(runHelper(), 2);
+    // 在 macOS 主机上 *.app/Contents 就是合法的 mac 根目录，这一条只在非 mac 主机上成立
+    if (process.platform !== 'darwin') {
+      await fs.writeFile(m, `CZL1\t${root}\n${sha}\t${src}\tMacOS/Cursor\n`);
+      assert.equal(runHelper(), 2);
+    }
     await fs.writeFile(m, `CZL1\t${linuxRoot}\n${sha}\t${src}\tresources/app/a.js\n`);
     assert.equal(runHelper(), 0);
     assert.equal(await read(path.join(linuxRoot, 'resources/app/a.js')), 'y');

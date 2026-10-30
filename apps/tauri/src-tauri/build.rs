@@ -38,7 +38,7 @@ fn main() {
     };
     for (rel, p) in &files { push(rel, &fs::read(p).unwrap()); }
     let ver = env::var("CARGO_PKG_VERSION").unwrap();
-    push("package.json", format!("{{\n  \"name\": \"cursor-zh-localizer\",\n  \"version\": \"{ver}\",\n  \"private\": true,\n  \"type\": \"module\"\n}}\n").as_bytes());
+    push("package.json", format!("{{\n  \"name\": \"cursor-zh\",\n  \"version\": \"{ver}\",\n  \"private\": true,\n  \"type\": \"module\"\n}}\n").as_bytes());
 
     // 语言包：随包带上，离线也能装；找不到就运行时由引擎下载（并缓存）
     let home = env::var("HOME").or_else(|_| env::var("USERPROFILE")).unwrap_or_default();

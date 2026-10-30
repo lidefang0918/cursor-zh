@@ -31,6 +31,7 @@ export function defaultPaths(home = os.homedir(), platform = process.platform, e
     userDataDir: path.join(home, '.config/Cursor'),
     extensionsDir: path.join(home, '.cursor/extensions'),
     argvPath: path.join(home, '.cursor/argv.json'),
+    // 数据目录（含备份、状态、日志）沿用旧名 cursor-zh-localizer，不随项目改名为 cursor-zh：已汉化的用户靠这里的备份还原
     dataDir: path.join(home, '.config/cursor-zh-localizer'),
   };
   return {

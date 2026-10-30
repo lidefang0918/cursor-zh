@@ -8,11 +8,9 @@
 
 | 文件 | 大小 | 说明 |
 |---|---|---|
-| `cursor-zh-localizer-0.1.0-tauri-win-x64-setup.exe` | 约 4 MB | **推荐**。新版安装包，装在当前用户下（`%LOCALAPPDATA%\Cursor 一键汉化`），不需要管理员权限。会创建开始菜单和桌面快捷方式「Cursor 一键汉化」，可在「设置 → 应用」里卸载。 |
-| `cursor-zh-localizer-0.1.0-tauri-win-x64-portable.exe` | 约 4.5 MB | 新版便携版，单个 exe，双击就能运行。 |
-| `cursor-zh-localizer-0.1.0-win-x64-setup.exe` | 约 80 MB | 旧版（Electron）安装包，新版有问题时再用。 |
-| `cursor-zh-localizer-0.1.0-win-x64-portable.exe` | 约 80 MB | 旧版便携版。 |
-| `cursor-zh-localizer-0.1.0-win-x64.zip` | | 旧版解压版，运行里面的 `cursor-zh-localizer.exe`。 |
+| `cursor-zh-0.1.0-win-x64-setup.exe` | 约 4 MB | **推荐**。新版安装包，装在当前用户下（`%LOCALAPPDATA%\Cursor 一键汉化`），不需要管理员权限。会创建开始菜单和桌面快捷方式「Cursor 一键汉化」，可在「设置 → 应用」里卸载。 |
+| `cursor-zh-0.1.0-win-x64-portable.exe` | 约 4.5 MB | 新版便携版，单个 exe，双击就能运行。 |
+| `cursor-zh-0.1.0-win-x64-cli.zip` | 不到 1 MB | 命令行精简版，解压后双击“一键汉化.bat”。 |
 
 新版为什么这么小：
 

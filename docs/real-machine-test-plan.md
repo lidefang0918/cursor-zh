@@ -35,7 +35,7 @@ box 是 Linux，Windows / macOS 的代码只用假安装树、模拟命令和官
 | W8 | 路径里有空格或中文 | 用户名是中文，或者把本工具放在 `D:\我的 工具\` | 正常工作（这是 fileURLToPath 修复针对的场景） |
 | W9 | 杀毒软件 / SmartScreen | Defender 开着时运行便携版 exe | 记录 SmartScreen 提示（未签名，属于预期）；Defender 不能拦截或删除 `.czl-new` 临时文件 |
 | W10 | 语言包 | 汉化后看 `%USERPROFILE%\.cursor\extensions` 和 `argv.json` | 中文语言包已安装，`"locale": "zh-cn"`；还原后语言包被卸载、locale 恢复原值 |
-| W11 | 打包产物 | 运行 `cursor-zh-localizer-0.1.0-win-x64-portable.exe` 和 zip 里的 exe | 能启动，界面完整；在 Program Files 场景下 UAC 流程同 W2 |
+| W11 | 打包产物 | 运行 `cursor-zh-0.1.0-win-x64-portable.exe` 和 `-setup.exe` | 能启动，界面完整；在 Program Files 场景下 UAC 流程同 W2 |
 
 ## macOS
 
@@ -52,7 +52,7 @@ box 是 Linux，Windows / macOS 的代码只用假安装树、模拟命令和官
 | M9 | macSign=adhoc-deep | `--mac-sign=adhoc-deep`，Cursor.app 需要直接可写 | 先在 APFS 上 clone 一份备份，再做整包 ad-hoc 签名。还原时把整个 .app 换回去，签名回到 Developer ID |
 | M10 | Intel 与 Apple Silicon | 分别在 x64 和 arm64 机器上跑 M1 / M7 | 都通过 |
 | M11 | 进程识别 / 关闭 | Cursor 开着时汉化 | `ps` 只匹配 `<root>/MacOS/Cursor` 和它的 Helper；SIGTERM 后退出，用 `open <app>` 重新打开 |
-| M12 | 打包产物 | 解压 `cursor-zh-localizer-0.1.0-mac-<arch>.zip`，右键 → 打开 | 能启动（已 ad-hoc 签名，未公证，首次打开 Gatekeeper 会提示）；arm64 版在 Apple Silicon 上不能提示“已损坏” |
+| M12 | 打包产物 | 打开 `cursor-zh-0.1.0-mac-universal.dmg`，拖到“应用程序”，右键 → 打开 | 能启动（已 ad-hoc 签名，未公证，首次打开 Gatekeeper 会提示）；在 Apple Silicon 上不能提示“已损坏” |
 
 ## 结果记录模板
 

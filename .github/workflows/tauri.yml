@@ -1,4 +1,4 @@
-# 草稿（未推送、未在 GitHub 上跑过）。Tauri 版桌面程序的三平台构建；macOS 只能在 macOS 上构建（需要 Xcode 的 SDK / codesign / hdiutil）。
+#Tauri 版桌面程序的三平台构建；macOS 只能在 macOS 上构建（需要 Xcode 的 SDK / codesign / hdiutil）。
 # 产物：mac 通用（arm64+x86_64）.app.zip + .dmg（ad-hoc 签名、未公证）；Windows NSIS 安装包 + 单文件便携 exe；Linux deb + AppImage。
 # 手动触发（workflow_dispatch）或打 tauri-v* 标签时运行；只上传为 Actions 产物，不发布 Release。
 name: tauri
@@ -33,7 +33,9 @@ jobs:
         shell: bash
         run: mkdir -p vendor && curl -fsSL -o "vendor/$VSIX" "https://open-vsx.org/api/MS-CEINTL/vscode-language-pack-zh-hans/1.128.0/file/MS-CEINTL.vscode-language-pack-zh-hans-1.128.0.vsix" || true
       - run: npm ci
+      # 单元测试用 POSIX 工具模拟安装树（sh 助手、/proc、pkexec），Windows runner 上跑不了；ci.yml 已在 ubuntu 上跑全量，macOS 会跳过 Linux 专属用例
       - run: npm test
+        if: runner.os != 'Windows'
       - name: 构建
         working-directory: apps/tauri
         run: npx tauri build ${{ matrix.args }}
@@ -45,14 +47,14 @@ jobs:
           if [ "$RUNNER_OS" = macOS ]; then
             M=$B/universal-apple-darwin/release/bundle
             codesign --verify --deep --verbose=2 "$M"/macos/*.app || true
-            (cd "$M/macos" && ditto -c -k --sequesterRsrc --keepParent *.app "$GITHUB_WORKSPACE/out/cursor-zh-localizer-0.1.0-tauri-mac-universal.app.zip")
-            cp "$M"/dmg/*.dmg out/cursor-zh-localizer-0.1.0-tauri-mac-universal.dmg
+            (cd "$M/macos" && ditto -c -k --sequesterRsrc --keepParent *.app "$GITHUB_WORKSPACE/out/cursor-zh-0.1.0-mac-universal.app.zip")
+            cp "$M"/dmg/*.dmg out/cursor-zh-0.1.0-mac-universal.dmg
           elif [ "$RUNNER_OS" = Windows ]; then
-            cp $B/release/bundle/nsis/*-setup.exe out/cursor-zh-localizer-0.1.0-tauri-win-x64-setup.exe
-            cp $B/release/cursor-zh.exe out/cursor-zh-localizer-0.1.0-tauri-win-x64-portable.exe
+            cp $B/release/bundle/nsis/*-setup.exe out/cursor-zh-0.1.0-win-x64-setup.exe
+            cp $B/release/cursor-zh.exe out/cursor-zh-0.1.0-win-x64-portable.exe
           else
-            cp $B/release/bundle/deb/*.deb out/cursor-zh-localizer-0.1.0-tauri-amd64.deb
-            cp $B/release/bundle/appimage/*.AppImage out/cursor-zh-localizer-0.1.0-tauri-x86_64.AppImage
+            cp $B/release/bundle/deb/*.deb out/cursor-zh-0.1.0-linux-amd64.deb
+            cp $B/release/bundle/appimage/*.AppImage out/cursor-zh-0.1.0-linux-x86_64.AppImage
           fi
           (cd out && shasum -a 256 * | tee SHA256SUMS-${{ runner.os }}.txt)
       - uses: actions/upload-artifact@v4

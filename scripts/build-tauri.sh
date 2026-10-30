@@ -8,7 +8,7 @@ set -eu
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 COPY_TO=${CZL_COPY_TO-/workspace/dist}
 VER=$(node -p "require('$REPO/apps/tauri/src-tauri/tauri.conf.json').version")
-PRE="cursor-zh-localizer-$VER-tauri"
+PRE="cursor-zh-$VER"
 WHAT=${*:-linux win}
 export PATH="$HOME/.cargo/bin:$PATH"
 [ -d /usr/lib/llvm-19/bin ] && export PATH="$PATH:/usr/lib/llvm-19/bin"   # clang-cl
@@ -23,9 +23,9 @@ for w in $WHAT; do
   case $w in
     linux)
       npx tauri build --bundles deb,appimage
-      cp "$T/release/bundle/deb/CursorZh_${VER}_amd64.deb" "$OUT/$PRE-amd64.deb"
-      cp "$T/release/bundle/appimage/CursorZh_${VER}_amd64.AppImage" "$OUT/$PRE-x86_64.AppImage"
-      made="$made $PRE-amd64.deb $PRE-x86_64.AppImage" ;;
+      cp "$T/release/bundle/deb/CursorZh_${VER}_amd64.deb" "$OUT/$PRE-linux-amd64.deb"
+      cp "$T/release/bundle/appimage/CursorZh_${VER}_amd64.AppImage" "$OUT/$PRE-linux-x86_64.AppImage"
+      made="$made $PRE-linux-amd64.deb $PRE-linux-x86_64.AppImage" ;;
     win)
       npx tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc --bundles nsis
       # Windows 上的产品名是中文（tauri.windows.conf.json）：开始菜单/桌面快捷方式、安装目录都叫“Cursor 一键汉化”

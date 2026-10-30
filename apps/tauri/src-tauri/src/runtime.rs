@@ -191,5 +191,6 @@ pub fn default_log_file() -> PathBuf {
     } else {
         home().join(".config")
     };
+    // 日志与引擎共用旧数据目录名 cursor-zh-localizer（兼容已汉化用户的备份），不随项目改名
     base.join("cursor-zh-localizer").join("gui.log")
 }
