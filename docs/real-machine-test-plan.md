@@ -15,7 +15,7 @@ box 是 Linux，Windows / macOS 的代码只用假安装树、模拟命令和官
 |---|---|---|---|
 | G1 | 检测 | 打开 GUI，或执行 `node scripts/run.mjs status` | 识别出安装目录、版本 3.27.22、`supported: true`，`kind` 对应正确 |
 | G2 | 汉化 | Cursor 已关闭时点“一键汉化” | 成功。重新打开 Cursor 后菜单、设置、Agent 面板都是中文，**没有“安装似乎已损坏”提示** |
-| G3 | Cursor 正在运行 | Cursor 开着时点汉化 → “关闭 Cursor 并继续” | Cursor 正常退出（未保存的内容会被 hot-exit 保留），写完后自动重新打开，原来的窗口和工作区都恢复 |
+| G3 | Cursor 正在运行 | Cursor 开着时点汉化 → “关闭 Cursor 并继续” | Cursor 正常退出（macOS 不弹出「意外退出」崩溃报告；未保存的内容会被 hot-exit 保留），写完后自动重新打开，原来的窗口和工作区都恢复 |
 | G4 | 还原 | 点“一键还原” | 界面回到英文；`smoke-check pristine` 通过；Windows 上 product.json 的 `target` 字段保持不变 |
 | G5 | 再次汉化 / 更新 | 用 Cursor 自带的更新升级到新版本 | 新版本没有锚点时显示“不支持的版本”，不会去改文件；状态显示“汉化已失效” |
 | G6 | 登录态 | 已登录的 Cursor 汉化后再还原 | 账号仍是登录状态（本工具不碰 user-data 里的认证数据） |
@@ -51,7 +51,7 @@ box 是 Linux，Windows / macOS 的代码只用假安装树、模拟命令和官
 | M8 | macSign=none | `--mac-sign=none` | 不重签名。记录 Cursor 是否还能启动（Apple Silicon 上预期能启动，因为只改了资源文件，可执行文件签名没动；但 `codesign --verify` 会失败） |
 | M9 | macSign=adhoc-deep | `--mac-sign=adhoc-deep`，Cursor.app 需要直接可写 | 先在 APFS 上 clone 一份备份，再做整包 ad-hoc 签名。还原时把整个 .app 换回去，签名回到 Developer ID |
 | M10 | Intel 与 Apple Silicon | 分别在 x64 和 arm64 机器上跑 M1 / M7 | 都通过 |
-| M11 | 进程识别 / 关闭 | Cursor 开着时汉化 | `ps` 只匹配 `<root>/MacOS/Cursor` 和它的 Helper；SIGTERM 后退出，用 `open <app>` 重新打开 |
+| M11 | 进程识别 / 关闭 | Cursor 开着时汉化 | `ps` 只匹配 `<root>/MacOS/Cursor` 和它的 Helper（忽略 engine-ipc）；osascript AppleEvent 退出（等同 ⌘Q，不 SIGTERM），进程全部消失后再写入/重签，用 `open <app>` 重新打开；不应出现「Cursor 意外退出」 |
 | M12 | 打包产物 | 打开 `cursor-zh-0.1.0-mac-universal.dmg`，拖到“应用程序”，右键 → 打开 | 能启动（已 ad-hoc 签名，未公证，首次打开 Gatekeeper 会提示）；在 Apple Silicon 上不能提示“已损坏” |
 
 ## 结果记录模板

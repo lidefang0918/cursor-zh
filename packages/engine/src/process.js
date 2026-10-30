@@ -54,11 +54,11 @@ async function procInfo(procDir, pid) {
   return { cwd, env };
 }
 
-// Cursor/VS Code 收到 SIGTERM 会正常退出（未保存内容由热退出机制保存，下次启动恢复）
-// Windows：taskkill 优雅关闭，超时再强制；macOS：SIGTERM
-export async function closeCursor(root, { procDir = '/proc', timeoutMs = 20000, kill = process.kill.bind(process), log = () => {}, platform = process.platform, runner } = {}) {
-  if (platform === 'win32') return win.closeWin(root, { runner, timeoutMs, log });
-  if (platform === 'darwin') return mac.closeMac(root, { runner, kill, timeoutMs, log });
+// Cursor/VS Code 正常退出时未保存内容由热退出机制保存，下次启动恢复。
+// Windows：taskkill 优雅关闭，超时再强制；macOS：AppleEvent（⌘Q），不用 SIGTERM（会触发「意外退出」）
+export async function closeCursor(root, { procDir = '/proc', timeoutMs = 20000, kill = process.kill.bind(process), log = () => {}, platform = process.platform, runner, sleep, settleMs } = {}) {
+  if (platform === 'win32') return win.closeWin(root, { runner, timeoutMs, log, sleep });
+  if (platform === 'darwin') return mac.closeMac(root, { runner, timeoutMs, log, sleep, settleMs });
   const procs = await listCursorProcesses(root, { procDir });
   const mains = procs.filter((p) => p.main);
   if (!procs.length) return { ok: true, closed: false };

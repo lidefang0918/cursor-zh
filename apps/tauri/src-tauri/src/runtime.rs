@@ -4,6 +4,8 @@
 //   macOS ：汉化会对 Cursor.app 做 ad-hoc 重签名，要改写 Contents/MacOS/Cursor 本身；正在执行的二进制被改写，
 //            内核在缺页时校验签名失败会直接杀掉进程。所以写操作前先把 Cursor.app 用 APFS 克隆（cp -Rc，写时复制，
 //            几乎不占空间、一两秒）到临时目录，运行克隆里的主程序；原 Cursor.app 不被占用。只读的“检测状态”直接用原程序。
+//            克隆是写时复制，不改原包。原包的写入/重签名由引擎在 AppleEvent 退出（⌘Q）并等进程消失之后才做，
+//            避免把还在退出的 GUI 进程杀掉（看起来像崩溃）。
 //   Linux ：只改 resources/app 下的文件，直接运行 <安装根>/cursor。
 use std::path::{Path, PathBuf};
 use std::process::Command;

@@ -32,6 +32,13 @@ describe('tauri ui', () => {
     const rs = read('apps/tauri/src-tauri/src/main.rs').match(/matches!\(op\.as_str\(\), ([^)]*)\)/)[1];
     assert.deepEqual([...rs.matchAll(/"(\w+)"/g)].map((m) => m[1]).sort(), ops);
   });
+  it('macOS 未找到 Cursor 时提示 /Applications，关闭说明是 ⌘Q 而不是强制结束', () => {
+    const src = read('apps/desktop/renderer.js');
+    assert.match(src, /\/Applications\/Cursor\.app 或 ~\/Applications\/Cursor\.app/);
+    assert.match(src, /⌘Q 一样的方式请 Cursor 退出/);
+    assert.match(src, /不要把已经检测到的安装刷成「未找到 Cursor」/);
+  });
+
   it('构建时嵌入的文件都存在', () => {
     const rs = read('apps/tauri/src-tauri/build.rs');
     const list = rs.match(/for rel in \[([^\]]*)\]/)[1];
