@@ -1,11 +1,10 @@
 // 找一个能跑 JS 引擎的运行环境：优先借用已安装 Cursor 的主程序（ELECTRON_RUN_AS_NODE=1），找不到再用系统 Node（≥18）。
 //   Windows：直接运行 <安装根>\Cursor.exe。引擎从不修改 Cursor.exe（只改 resources\app 下的文件），
 //            运行期间 Cursor.exe 被系统占用（不可删除/覆盖）也不影响——我们不写它。
-//   macOS ：汉化会对 Cursor.app 做 ad-hoc 重签名，要改写 Contents/MacOS/Cursor 本身；正在执行的二进制被改写，
-//            内核在缺页时校验签名失败会直接杀掉进程。所以写操作前先把 Cursor.app 用 APFS 克隆（cp -Rc，写时复制，
-//            几乎不占空间、一两秒）到临时目录，运行克隆里的主程序；原 Cursor.app 不被占用。只读的“检测状态”直接用原程序。
-//            克隆是写时复制，不改原包。原包的写入/重签名由引擎在 AppleEvent 退出（⌘Q）并等进程消失之后才做，
-//            避免把还在退出的 GUI 进程杀掉（看起来像崩溃）。
+//   macOS ：汉化会对 Cursor.app 做 ad-hoc 重签名；任何仍映射原版 Contents/MacOS/Cursor 的进程都会被
+//            内核以 Code Signature Invalid SIGKILL，系统弹出「意外退出」。所以：有系统 Node 就优先用 Node；
+//            否则无论 status 还是写入都 APFS 克隆后再跑引擎，原包不被占用。写入/重签名前还要等原包上
+//            的 GUI 与 engine-ipc 进程都消失（含并发 status）。
 //   Linux ：只改 resources/app 下的文件，直接运行 <安装根>/cursor。
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -116,19 +115,23 @@ pub fn hide(_cmd: &mut Command) {
 
 impl Cache {
     /// install_root：界面里选中的安装（优先借用它自己的主程序）；write：本次操作会改安装文件
+    /// macOS：优先系统 Node；否则无论 status 还是写入都用 APFS 克隆里的主程序。
+    /// 绝不能在「正在改签名的原版 Cursor.app」上跑 ELECTRON_RUN_AS_NODE，否则内核 SIGKILL（Code Signature Invalid）会弹出「意外退出」。
     pub fn get(&mut self, install_root: Option<&Path>, write: bool) -> Result<Option<Runtime>, String> {
+        let _ = write; // macOS 一律克隆，不再区分
         if let Some(n) = std::env::var_os("CZL_NODE") { return Ok(Some(Runtime { exe: n.into(), electron: false, source: None })); }
+        // macOS 有 Node 就用 Node：引擎完全不碰 Cursor 主程序，重签名时最安全
+        if cfg!(target_os = "macos") {
+            if let Some(n) = system_node() { return Ok(Some(Runtime { exe: n, electron: false, source: None })); }
+        }
         let mut roots: Vec<PathBuf> = install_root.map(|r| vec![r.to_path_buf()]).unwrap_or_default();
         roots.extend(default_roots());
         let exe = roots.iter().map(|r| exe_in_root(r)).find(|e| e.is_file());
         if let Some(exe) = exe {
-            if cfg!(target_os = "macos") && write {
+            if cfg!(target_os = "macos") {
                 match self.mac_clone(&exe) {
                     Ok(c) => return Ok(Some(Runtime { exe: c, electron: true, source: Some(exe) })),
-                    Err(e) => {
-                        if let Some(n) = system_node() { return Ok(Some(Runtime { exe: n, electron: false, source: None })); }
-                        return Err(format!("准备运行环境失败（克隆 Cursor.app 到临时目录）：{e}"));
-                    }
+                    Err(e) => return Err(format!("准备运行环境失败（克隆 Cursor.app 到临时目录）：{e}")),
                 }
             }
             return Ok(Some(Runtime { exe, electron: true, source: None }));

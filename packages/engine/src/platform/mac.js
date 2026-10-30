@@ -52,7 +52,7 @@ export const APP_MANAGEMENT_HINT = 'macOS 阻止了修改 Cursor.app（“App �
 export const APP_MANAGEMENT_SETTINGS_URL = 'x-apple.systempreferences:com.apple.preference.security?Privacy_AppBundles';
 
 // 进程：ps 给出完整命令行。主进程 = <root>/MacOS/Cursor 且没有 --type=；Helper 进程在 Frameworks 里，一并等待退出
-export async function listMacProcesses(root, { runner = defaultRun, selfPid = process.pid } = {}) {
+export async function listMacProcesses(root, { runner = defaultRun, selfPid = process.pid, includeEngine = false } = {}) {
   const r = await runner('ps', ['-axww', '-o', 'pid=,ppid=,command=']);
   if (r.code !== 0) return [];
   const exe = path.join(root, 'MacOS', 'Cursor');
@@ -66,8 +66,9 @@ export async function listMacProcesses(root, { runner = defaultRun, selfPid = pr
     const isMain = cmd === exe || cmd.startsWith(exe + ' ');
     if (!isMain && !cmd.startsWith(fw)) continue;
     if (/\/out\/cli\.js(\s|$)/.test(cmd)) continue;
-    // 本工具借用 Cursor 主程序跑引擎（ELECTRON_RUN_AS_NODE）时，ps 里也会出现这条命令行，不能当成 GUI 进程去退出
-    if (/engine-ipc\.mjs(\s|$)/.test(cmd)) continue;
+    // 本工具借用 Cursor 主程序跑引擎（ELECTRON_RUN_AS_NODE）时，ps 里也会出现这条命令行，不能当成 GUI 进程去退出；
+    // 重签名前要等它们也退出（includeEngine），否则内核会 SIGKILL 并弹出「意外退出」
+    if (!includeEngine && /engine-ipc\.mjs(\s|$)/.test(cmd)) continue;
     out.push({ pid, ppid, command: cmd, argv: [isMain ? exe : cmd], main: isMain && !/\s--type=/.test(cmd) });
   }
   return out;
@@ -144,7 +145,19 @@ export function postWriteActions(mode) {
   return [];
 }
 
-export async function signAdhoc(app, { deep = false, runner = defaultRun } = {}) {
+export async function signAdhoc(app, { deep = false, runner = defaultRun, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), timeoutMs = 15000 } = {}) {
+  // 任何仍映射 Contents/MacOS/Cursor 的进程（含本工具的 engine-ipc）在重签名时都会被 SIGKILL → 系统弹「意外退出」
+  const root = path.join(app, 'Contents');
+  const end = Date.now() + timeoutMs;
+  while (Date.now() < end) {
+    const still = await listMacProcesses(root, { runner, includeEngine: true });
+    if (!still.length) break;
+    await sleep(200);
+  }
+  const leftover = await listMacProcesses(root, { runner, includeEngine: true });
+  if (leftover.length) {
+    throw new Error(`重签名前仍有 ${leftover.length} 个进程占用 Cursor.app，请完全退出 Cursor 后重试`);
+  }
   const args = ['--force', ...(deep ? ['--deep'] : []), '--sign', '-', '--preserve-metadata=entitlements', app];
   const r = await runner('/usr/bin/codesign', args);
   if (r.code !== 0) throw new Error(`ad-hoc 重签名失败：${(r.stderr || r.stdout).trim()}`);

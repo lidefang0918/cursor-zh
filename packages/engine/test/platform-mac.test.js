@@ -308,3 +308,53 @@ describe('macOS: localize/revert with re-signing', () => {
     assert.equal((await localize(ok.opts)).ok, true);
   });
 });
+
+describe('macOS: codesign must not race live Cursor processes', () => {
+  it('listMacProcesses skips engine-ipc by default but includeEngine keeps them', async () => {
+    const root = '/tmp/Cursor.app/Contents';
+    const exe = path.join(root, 'MacOS/Cursor');
+    const fw = path.join(root, 'Frameworks/Cursor Helper.app/Contents/MacOS/Cursor Helper');
+    const runner = async (cmd, args) => {
+      assert.equal(cmd, 'ps');
+      return {
+        code: 0, stderr: '',
+        stdout: [
+          `  101  1 ${exe}`,
+          `  102 101 ${fw} --type=gpu-process`,
+          `  201  1 ${exe} /x/engine-ipc.mjs status`,
+        ].join('\n'),
+      };
+    };
+    const gui = await mac.listMacProcesses(root, { runner });
+    assert.equal(gui.length, 2);
+    assert.ok(gui.every((p) => !/engine-ipc/.test(p.command)));
+    const all = await mac.listMacProcesses(root, { runner, includeEngine: true });
+    assert.equal(all.length, 3);
+    assert.ok(all.some((p) => /engine-ipc/.test(p.command)));
+  });
+
+  it('signAdhoc waits until includeEngine list is empty, then codesigns', async () => {
+    const home = await tmp('signwait-');
+    const root = await fakeApp(home);
+    const app = path.dirname(root);
+    const exe = path.join(root, 'MacOS/Cursor');
+    let rounds = 0;
+    const runner = async (cmd, args) => {
+      if (cmd === 'ps') {
+        rounds++;
+        const lines = rounds < 3 ? [`  201  1 ${exe} /x/engine-ipc.mjs status`] : [];
+        return { code: 0, stdout: lines.join('\n'), stderr: '' };
+      }
+      if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
+        await fs.writeFile(path.join(app, 'Contents/MacOS/Cursor'), 'MACHO-adhoc');
+        await fs.writeFile(path.join(app, 'Contents/_CodeSignature/CodeResources'), '<plist>adhoc</plist>');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
+      return { code: 0, stdout: '', stderr: '' };
+    };
+    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000 });
+    assert.ok(rounds >= 3);
+    assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
+  });
+});

@@ -115,6 +115,11 @@ fn run_engine(app: &AppHandle, sh: &Shared, op: &str, opts: &Value) -> Value {
 async fn engine(app: AppHandle, op: String, opts: Value) -> Value {
     if !matches!(op.as_str(), "status" | "localize" | "revert" | "extractAppImage") { return fail("USAGE", format!("未知操作 {op}"), ""); }
     let sh = app.state::<Shared>();
+    // 汉化/还原进行中禁止再跑 status：否则会再起一个借用 Cursor 主程序的进程，
+    // macOS 重签名时会被内核 SIGKILL，弹出「Cursor 意外退出」。
+    if op == "status" && sh.busy.load(Ordering::SeqCst) {
+        return json!({ "ok": false, "code": "BUSY", "error": "汉化进行中" });
+    }
     let exclusive = op != "status";
     if exclusive && sh.busy.swap(true, Ordering::SeqCst) { return json!({ "ok": false, "code": "BUSY", "error": "已有操作在进行中" }); }
     let app2 = app.clone();
