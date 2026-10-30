@@ -25,6 +25,8 @@ async function registryRoots(platform, runner) {
 }
 
 const APP_SUBDIRS = ['', 'resources/app', 'Resources/app'];
+// macOS 默认文件系统不区分大小写，'resources/app' 也能读到；*.app/Contents 先试 'Resources/app'，返回的路径大小写才和磁盘上一致
+const MAC_APP_SUBDIRS = ['Resources/app', '', 'resources/app'];
 
 // `cursor` 在 PATH 里通常是 <root>/bin/cursor 的软链；向上两级当安装根
 async function rootFromWhich(whichPath) {
@@ -38,7 +40,7 @@ async function rootFromWhich(whichPath) {
 }
 
 async function probe(root) {
-  for (const sub of APP_SUBDIRS) {
+  for (const sub of /\.app[\\/]Contents[\\/]?$/.test(root) ? MAC_APP_SUBDIRS : APP_SUBDIRS) {
     const appDir = path.join(root, sub);
     const productPath = path.join(appDir, 'product.json');
     try {
