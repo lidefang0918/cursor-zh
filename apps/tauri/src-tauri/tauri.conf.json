@@ -27,7 +27,8 @@
     "category": "Utility",
     "shortDescription": "Cursor 一键汉化",
     "longDescription": "把 Cursor 界面翻译成简体中文；修改前自动备份，可一键还原。与 Cursor 官方无关。",
-    "copyright": "cursor-zh contributors (https://github.com/lidefang0918/cursor-zh)",
+    "copyright": "Copyright (c) 2026 Defang Li",
+    "license": "MIT",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

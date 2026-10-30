@@ -81,7 +81,7 @@
 | agents-dropdowns | 测试版 / 下拉列表（1 个） | 19 | 4 | 1 | 82.6% |
 | agents-dropdowns | 下拉：自定义侧边栏 | 16 | 10 | 4 | 61.5% |
 | agents-dropdowns | 下拉：打开工作区 | 19 | 6 | 5 | 76% |
-| agents-dropdowns | 下拉：你的名字 | 20 | 3 | 4 | 87% |
+| agents-dropdowns | 下拉：账号菜单 | 20 | 3 | 4 | 87% |
 | agents-dropdowns | 下拉：对话操作 | 14 | 4 | 3 | 77.8% |
 | agents-dropdowns | 下拉：从零开始, select project | 13 | 2 | 3 | 86.7% |
 | agents-dropdowns | 下拉：本机, select environment | 13 | 2 | 3 | 86.7% |
@@ -614,7 +614,7 @@
 - Remove demo from recents
 - New Folder
 
-### agents-dropdowns / 下拉：你的名字
+### agents-dropdowns / 下拉：账号菜单
 - Sidebar
 - Skip step 1 of 3
 - Account menu

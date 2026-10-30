@@ -229,7 +229,7 @@ if (agents && ONLY.includes('menus')) {
 // 右键菜单：Agents 窗口侧边栏条目 + 经典窗口资源管理器/侧边栏面板标题。只打开菜单再 Escape 关闭，不点选任何菜单项。
 const MENU_SEL = '[role=menu], .context-view .monaco-menu';
 async function contextMenus(win, section, targetSel) {
-  const targets = await win.evaluate(`(() => { const seen = new Set(); return [...document.querySelectorAll(${JSON.stringify(targetSel)})].map(e => { const r = e.getBoundingClientRect(); return { t: (e.getAttribute('aria-label') || e.textContent).trim().slice(0, 30), x: r.x + Math.min(r.width / 2, 120), y: r.y + r.height / 2, w: r.width }; }).filter(o => o.t && o.w > 0 && o.y > 40 && !/GitHub|你的名字|跳过|Skip/.test(o.t) && !seen.has(o.t) && seen.add(o.t)).slice(0, 12); })()`);
+  const targets = await win.evaluate(`(() => { const seen = new Set(); return [...document.querySelectorAll(${JSON.stringify(targetSel)})].map(e => { const r = e.getBoundingClientRect(); return { t: (e.getAttribute('aria-label') || e.textContent).trim().slice(0, 30), x: r.x + Math.min(r.width / 2, 120), y: r.y + r.height / 2, w: r.width }; }).filter(o => o.t && o.w > 0 && o.y > 40 && !/GitHub|跳过|Skip/.test(o.t) && !seen.has(o.t) && seen.add(o.t)).slice(0, 12); })()`);
   for (const t of targets) {
     await win.rightClick(t.x, t.y); await sleep(700);
     const texts = await win.evaluate(`(${COLLECT})(${JSON.stringify(MENU_SEL)})`);

@@ -118,7 +118,7 @@ after 扫描之后又补了 13 条 Agents 窗口标题栏/浏览器面板的 ari
 | agents-dropdowns | 测试版 / 下拉列表（1 个） | 23 | 0 | 1 | 100% |
 | agents-dropdowns | 下拉：自定义侧边栏 | 26 | 0 | 4 | 100% |
 | agents-dropdowns | 下拉：打开工作区 | 25 | 0 | 5 | 100% |
-| agents-dropdowns | 下拉：你的名字 | 23 | 0 | 4 | 100% |
+| agents-dropdowns | 下拉：账号菜单 | 23 | 0 | 4 | 100% |
 | agents-dropdowns | 下拉：对话操作 | 18 | 0 | 3 | 100% |
 | agents-dropdowns | 下拉：从零开始，选择项目 | 15 | 0 | 3 | 100% |
 | agents-dropdowns | 下拉：本机，选择环境 | 15 | 0 | 3 | 100% |

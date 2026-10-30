@@ -1,5 +1,6 @@
 {
   "name": "cursor-zh",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*", "apps/*"],
