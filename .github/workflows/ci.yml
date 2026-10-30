@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
+      - run: npm ci --ignore-scripts
       - run: npm test
       - run: node scripts/check-glossary.mjs
 
@@ -27,7 +28,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     permissions: { contents: read, issues: write }
-    env: { GH_TOKEN: '${{ github.token }}', CZL_CACHE: '${{ runner.temp }}/cursor' }
+    env: { GH_TOKEN: '${{ github.token }}' }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,10 +39,11 @@ jobs:
           v=$(curl -fsL 'https://cursor.com/api/download?platform=linux-x64&releaseTrack=stable' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).version))')
           echo "version=$v" >> "$GITHUB_OUTPUT"
           if [ -f "anchors/$v.json" ]; then echo "known=1" >> "$GITHUB_OUTPUT"; echo "Cursor $v 已适配"; else echo "known=0" >> "$GITHUB_OUTPUT"; echo "Cursor $v 尚未适配"; fi
-      - run: npm ci
+      - run: npm ci --ignore-scripts
         if: steps.v.outputs.known == '0'
       - name: 兼容性报告（现有词典在新版上能匹配多少）
         if: steps.v.outputs.known == '0'
+        env: { CZL_CACHE: '${{ runner.temp }}/cursor' }
         run: |
           v=${{ steps.v.outputs.version }}; d="$CZL_CACHE/$v"; mkdir -p "$d"
           curl -fL --retry 3 -o "$d/cursor.deb" "https://downloads.cursor.com/aptrepo/pool/stable/c/cu/cursor_${v}_amd64.deb"
@@ -62,6 +64,7 @@ jobs:
       - name: 生成锚点并校验
         if: steps.v.outputs.known == '0'
         continue-on-error: true
+        env: { CZL_CACHE: '${{ runner.temp }}/cursor' }
         run: sh scripts/new-version.sh "${{ steps.v.outputs.version }}" --all-platforms
       - uses: actions/upload-artifact@v4
         if: always() && steps.v.outputs.known == '0'
