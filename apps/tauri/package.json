@@ -1,0 +1,13 @@
+{
+  "name": "@cursor-zh/tauri",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri",
+    "sync-ui": "node ../../scripts/sync-tauri-ui.mjs"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

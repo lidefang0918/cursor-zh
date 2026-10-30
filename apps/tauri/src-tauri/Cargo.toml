@@ -1,0 +1,29 @@
+[package]
+name = "cursor-zh-tauri"
+version = "0.1.0"
+description = "Cursor 一键汉化（Tauri 外壳）"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "cursor-zh"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+miniz_oxide = "0.8"
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-clipboard-manager = "2"
+serde_json = "1"
+miniz_oxide = "0.8"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

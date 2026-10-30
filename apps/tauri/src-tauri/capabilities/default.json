@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "主窗口：只需要事件监听；引擎、日志、剪贴板、选目录都是本程序自己的命令",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

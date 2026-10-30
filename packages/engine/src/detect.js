@@ -69,7 +69,7 @@ export async function detectAllCursors({ platform = process.platform, env = proc
   return out;
 }
 
-const run = (cmd, args) => new Promise((res) => execFile(cmd, args, (e, so) => res(e ? null : String(so).trim())));
+const run = (cmd, args) => new Promise((res) => execFile(cmd, args, { windowsHide: true }, (e, so) => res(e ? null : String(so).trim())));
 
 // 安装方式：deb / rpm（/usr/share/cursor，归 root，升级会覆盖汉化）、appimage-extracted（本工具解包，用户可写）、
 // appimage-mounted（运行中的 AppImage 只读挂载，不能改）、manual（手动解压的 tar 等）

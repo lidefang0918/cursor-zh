@@ -64,6 +64,7 @@ const cliArgs = ({ extensionsDir, userDataDir }) => [
 
 // cliPath：Linux 是 <root>/bin/cursor；Windows/macOS 是 {cmd: Cursor 主程序, args: [out/cli.js], env: {ELECTRON_RUN_AS_NODE: '1'}}
 function runCli(cliPath, args, opts) {
+  opts = { windowsHide: true, ...opts }; // GUI 外壳没有控制台，避免 Windows 上闪黑框
   if (typeof cliPath === 'string') return run(cliPath, args, opts);
   return run(cliPath.cmd, [...(cliPath.args ?? []), ...args], { ...opts, env: { ...process.env, ...(cliPath.env ?? {}) } });
 }

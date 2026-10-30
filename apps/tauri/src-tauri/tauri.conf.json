@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "CursorZh",
+  "mainBinaryName": "cursor-zh",
+  "version": "0.1.0",
+  "identifier": "local.cursor-zh-localizer.tauri",
+  "build": {
+    "frontendDist": "../ui",
+    "beforeBuildCommand": "node ../../scripts/sync-tauri-ui.mjs"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [],
+    "security": {
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; connect-src ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "deb",
+      "appimage",
+      "nsis",
+      "app",
+      "dmg"
+    ],
+    "category": "Utility",
+    "shortDescription": "Cursor 一键汉化",
+    "longDescription": "把 Cursor 界面翻译成简体中文；修改前自动备份，可一键还原。与 Cursor 官方无关。",
+    "copyright": "cursor-zh-localizer",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "linux": {
+      "deb": {
+        "depends": [],
+        "files": {
+          "/usr/lib/cursor-zh-localizer/czl-apply": "../../../packages/engine/helper/czl-apply.sh",
+          "/usr/share/polkit-1/actions/local.cursor-zh-localizer.apply.policy": "../../desktop/build/linux/local.cursor-zh-localizer.apply.policy"
+        }
+      },
+      "appimage": {
+        "bundleMediaFramework": false
+      }
+    },
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": [
+          "SimpChinese"
+        ],
+        "displayLanguageSelector": false
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "signingIdentity": "-"
+    }
+  }
+}

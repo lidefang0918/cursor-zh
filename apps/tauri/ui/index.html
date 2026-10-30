@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Cursor 一键汉化</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: system-ui, "Noto Sans CJK SC", "WenQuanYi Micro Hei", sans-serif; margin: 0; padding: 18px 22px; background: #f6f7f9; color: #1d2129; font-size: 14px; }
+    h2 { margin: 0 0 12px; font-size: 20px; }
+    .card { background: #fff; border: 1px solid #e3e6eb; border-radius: 8px; padding: 10px 14px; }
+    dl { display: grid; grid-template-columns: 6em 1fr; gap: 6px 10px; margin: 0; }
+    dt { color: #6b7280; } dd { margin: 0; word-break: break-all; }
+    dd.mono { font-family: ui-monospace, monospace; font-size: 13px; }
+    .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; background: #eef0f3; margin-left: 6px; }
+    .t-ok { color: #137333; } .t-warn { color: #b45309; } .t-bad { color: #c5221f; }
+    .notice button.primary { background: #1a73e8; border: 1px solid #1a73e8; color: #fff; border-radius: 4px; }
+    #notice { margin: 12px 0; }
+    .notice { border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; line-height: 1.6; }
+    .notice.info { background: #e8f0fe; border: 1px solid #c6dafc; }
+    .notice.warn { background: #fef7e0; border: 1px solid #f9e2a6; }
+    .notice.error { background: #fce8e6; border: 1px solid #f6c7c2; }
+    .notice .title { font-weight: 600; }
+    .notice code, .cmd { font-family: ui-monospace, monospace; font-size: 12px; }
+    .cmd { display: block; background: #1f2329; color: #e6e6e6; padding: 8px; border-radius: 6px; margin: 6px 0; word-break: break-all; user-select: all; }
+    .notice button { margin: 6px 8px 0 0; font-size: 13px; padding: 4px 12px; }
+    .actions { margin: 12px 0; }
+    .actions button { font-size: 16px; padding: 8px 22px; margin-right: 12px; border-radius: 6px; border: 1px solid #c9ced6; background: #fff; cursor: pointer; }
+    .actions button.primary { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+    .actions button#localize { font-size: 20px; padding: 14px 44px; font-weight: 600; }
+    #progress { margin: 4px 0 12px; }
+    #progress .bar { height: 6px; border-radius: 3px; background: #e3e6eb; overflow: hidden; position: relative; }
+    #progress .bar::after { content: ""; position: absolute; left: -40%; width: 40%; height: 100%; background: #1a73e8; border-radius: 3px; animation: slide 1.2s ease-in-out infinite; }
+    @keyframes slide { to { left: 100%; } }
+    #progress .step { color: #4b5563; font-size: 13px; margin-top: 6px; }
+    .next { margin-top: 4px; }
+    button:disabled { opacity: .45; cursor: default; }
+    select { font-size: 13px; }
+    pre { background: #1f2329; color: #d8d8d8; height: 170px; overflow: auto; padding: 8px 10px; border-radius: 8px; margin: 0; font-size: 12px; white-space: pre-wrap; }
+    .err { color: #ff7b72; } .done { color: #7ee787; } .note { color: #8a8f98; font-size: 12px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Cursor 一键汉化</h2>
+  <div class="card">
+    <dl>
+      <dt>安装</dt><dd><select id="installs" hidden></select><span id="root" class="mono">检测中…</span></dd>
+      <dt>安装方式</dt><dd id="kind">-</dd>
+      <dt>版本</dt><dd id="version">-</dd>
+      <dt>写入权限</dt><dd id="perm">-</dd>
+      <dt>状态</dt><dd id="state">-</dd>
+    </dl>
+  </div>
+  <div id="notice"></div>
+  <div class="actions">
+    <button id="localize" class="primary">一键汉化</button>
+    <button id="revert">一键还原</button>
+    <button id="refresh" style="font-size:13px;padding:6px 12px">刷新</button>
+    <button id="showlog" style="font-size:13px;padding:6px 12px">打开日志</button>
+  </div>
+  <div id="progress" hidden><div class="bar"></div><div class="step" id="step">准备中…</div></div>
+  <pre id="log"></pre>
+  <p class="note">本工具会修改 Cursor 安装文件，修改前自动备份，可一键还原；与 Cursor 官方无关。只有“写入安装目录”这一步需要管理员权限，界面本身始终以普通用户运行。</p>
+  <script src="tauri-bridge.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

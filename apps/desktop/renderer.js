@@ -75,7 +75,9 @@ function describeState(s) {
     } else {
       notice('error', '未找到 Cursor', [WIN
         ? '支持的安装位置：%LOCALAPPDATA%\\Programs\\cursor（用户版安装包）、C:\\Program Files\\cursor（系统版安装包）。装好 Cursor 后点“刷新”。'
-        : '支持的安装位置：/usr/share/cursor（deb/rpm）、/opt/cursor、~/.local/share/cursor；AppImage 版放在 ~/Applications 或 ~/Downloads 后点“刷新”。']);
+        : '支持的安装位置：/usr/share/cursor（deb/rpm）、/opt/cursor、~/.local/share/cursor；AppImage 版放在 ~/Applications 或 ~/Downloads 后点“刷新”。',
+      s.noRuntime ? '本工具借用 Cursor 自带的运行环境来执行汉化，所以需要先找到 Cursor。' : null].filter(Boolean),
+      E.pickRoot ? [['手动选择 Cursor 安装位置…', pickRoot, true]] : []);
     }
     return;
   }
@@ -207,6 +209,15 @@ async function run(action, opt = {}) {
   }
   busy = false;
   $('progress').hidden = true;
+  await refresh();
+}
+
+// 只有 Tauri 版提供：手动选择安装目录（Windows/Linux 选文件夹，macOS 选 Cursor.app）
+async function pickRoot() {
+  const p = await E.pickRoot();
+  if (!p) return;
+  target = p;
+  log(`已选择：${p}`);
   await refresh();
 }
 
