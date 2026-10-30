@@ -91,13 +91,13 @@
 
 | 系统 | 下载 | 说明 |
 |---|---|---|
-| **Windows** 10/11 x64 | [安装版 setup.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.0-win-x64-setup.exe)（推荐，约 4 MB） | 安装后在开始菜单或桌面打开“Cursor 一键汉化” |
-| | [免安装版 portable.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.0-win-x64-portable.exe) | 双击就能用 |
-| | [命令行精简版 cli.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.0-win-x64-cli.zip)（不到 1 MB） | 解压后双击“一键汉化.bat” |
-| **macOS** | [dmg 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.0-mac-universal.dmg)（推荐） | Apple 芯片和 Intel 通用，拖进“应用程序”即可 |
-| | [app.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.0-mac-universal.app.zip) | 解压后拖进“应用程序” |
-| **Linux** x86_64 | [deb 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.0-linux-amd64.deb) | `sudo apt install ./cursor-zh-0.2.0-linux-amd64.deb`，之后在应用菜单打开或运行 `cursor-zh` |
-| | [AppImage](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.0-linux-x86_64.AppImage) | `chmod +x` 后双击运行 |
+| **Windows** 10/11 x64 | [安装版 setup.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.1-win-x64-setup.exe)（推荐，约 4 MB） | 安装后在开始菜单或桌面打开“Cursor 一键汉化” |
+| | [免安装版 portable.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.1-win-x64-portable.exe) | 双击就能用 |
+| | [命令行精简版 cli.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.1-win-x64-cli.zip)（不到 1 MB） | 解压后双击“一键汉化.bat” |
+| **macOS** | [dmg 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.1-mac-universal.dmg)（推荐） | Apple 芯片和 Intel 通用，拖进“应用程序”即可 |
+| | [app.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.1-mac-universal.app.zip) | 解压后拖进“应用程序” |
+| **Linux** x86_64 | [deb 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.1-linux-amd64.deb) | `sudo apt install ./cursor-zh-0.2.1-linux-amd64.deb`，之后在应用菜单打开或运行 `cursor-zh` |
+| | [AppImage](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.1-linux-x86_64.AppImage) | `chmod +x` 后双击运行 |
 
 想确认文件完整，可以用 [SHA256SUMS.txt](https://github.com/lidefang0918/cursor-zh/releases/latest/download/SHA256SUMS.txt) 核对。
 
