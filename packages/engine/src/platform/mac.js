@@ -8,6 +8,7 @@ import { run as defaultRun } from './exec.js';
 // 改了 JS 后封存失效：带隔离属性时 Gatekeeper 报“已损坏”，Ventura 起 Gatekeeper 首次启动也会校验公证应用的完整性。
 // 所以默认（macSign='adhoc'）在写入后对外层 Cursor.app 做 ad-hoc 重签名（只改 MacOS/Cursor 和 _CodeSignature/CodeResources，
 // 内嵌的 Frameworks/Helpers 未改动、保留原 Developer ID 签名），并去掉 com.apple.quarantine。
+// 重签后必须把 .app 挪开再挪回：否则 syspolicy 按路径缓存会让随后的 ELECTRON_RUN_AS_NODE/子进程被 SIGKILL。
 // 重签名不加 --options runtime：主程序的权限声明里没有 disable-library-validation，ad-hoc（无团队 ID）的主程序若开着
 // 加固运行时就无法加载 Cursor 团队签名的 Electron Framework。
 // 'adhoc-deep' 按 `codesign --force --deep --sign -` 把所有内嵌代码也重签（备份整个 .app 的 APFS 克隆，还原时整体换回）。
@@ -186,7 +187,17 @@ export async function signAdhoc(app, {
   const args = ['--force', ...(deep ? ['--deep'] : []), '--sign', '-', '--preserve-metadata=entitlements', app];
   const r = await runner('/usr/bin/codesign', args);
   if (r.code !== 0) throw new Error(`ad-hoc 重签名失败：${(r.stderr || r.stdout).trim()}`);
-  // macOS（尤其新系统）在 codesign 刚写完时立刻 exec 同路径，子进程可能被 taskgated 以 Invalid Signature SIGKILL
+  // 原地 ad-hoc 后，syspolicy 会按路径记住旧策略：同路径再 ELECTRON_RUN_AS_NODE/拉起子进程会被 SIGKILL。
+  // 挪开再挪回可清掉该路径缓存（副本在别的路径上同签名则正常）。
+  const aside = `${app}.czl-resign-${process.pid}`;
+  try {
+    await fs.rename(app, aside);
+    await fs.rename(aside, app);
+  } catch (e) {
+    try { await fs.rename(aside, app); } catch { /* 尽量归位 */ }
+    throw new Error(`重签名后刷新应用路径失败：${e.message}`);
+  }
+  // codesign 刚写完立刻 exec 仍可能被 taskgated SIGKILL
   await sleep(1500);
   const v = await verifySignature(app, { runner });
   if (!v.ok) throw new Error(`重签名后校验失败：${v.detail}`);

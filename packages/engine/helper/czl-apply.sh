@@ -88,6 +88,9 @@ done < "$LIST"
 while read -r ACT; do
   case "$ACT" in
     '!codesign-adhoc') /usr/bin/codesign --force --sign - --preserve-metadata=entitlements "$APP" >&2 || die 6 "重签名失败：$APP"
+      # 清掉按路径缓存的签名策略，否则同路径 ELECTRON_RUN_AS_NODE/子进程会被 SIGKILL
+      ASIDE="$APP.czl-resign-$$"
+      mv "$APP" "$ASIDE" && mv "$ASIDE" "$APP" || { mv "$ASIDE" "$APP" 2>/dev/null; die 6 "重签名后刷新路径失败：$APP"; }
       /usr/bin/codesign --verify --deep --strict "$APP" >&2 || die 6 "重签名后校验失败：$APP"; echo "SIGNED $APP" ;;
     '!unquarantine') /usr/bin/xattr -dr com.apple.quarantine "$APP" 2>/dev/null || true; echo "UNQUARANTINED $APP" ;;
   esac

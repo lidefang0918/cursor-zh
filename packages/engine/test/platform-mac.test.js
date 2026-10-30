@@ -360,6 +360,26 @@ describe('macOS: codesign must not race live Cursor processes', () => {
     assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
   });
 
+  it('signAdhoc renames the .app aside and back after codesign', async () => {
+    const home = await tmp('signrename-');
+    const root = await fakeApp(home);
+    const app = path.dirname(root);
+    const runner = async (cmd, args) => {
+      if (cmd === 'ps') return { code: 0, stdout: '', stderr: '' };
+      if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
+        await fs.writeFile(path.join(app, 'Contents/MacOS/Cursor'), 'MACHO-adhoc');
+        await fs.writeFile(path.join(app, 'Contents/_CodeSignature/CodeResources'), '<plist>adhoc</plist>');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
+      return { code: 0, stdout: '', stderr: '' };
+    };
+    await mac.signAdhoc(app, { runner, sleep: async () => {} });
+    assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
+    assert.equal(await fs.access(app).then(() => true, () => false), true);
+    assert.equal(await fs.access(`${app}.czl-resign-${process.pid}`).then(() => true, () => false), false);
+  });
+
   it('signAdhoc SIGTERMs engine-like -e leftovers then codesigns', async () => {
     const home = await tmp('signkill-');
     const root = await fakeApp(home);
