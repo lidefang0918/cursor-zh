@@ -94,7 +94,18 @@ fn appimages() -> Vec<PathBuf> {
 fn system_node() -> Option<PathBuf> {
     let name = if cfg!(windows) { "node.exe" } else { "node" };
     let mut cands: Vec<PathBuf> = std::env::var_os("PATH").map(|p| std::env::split_paths(&p).map(|d| d.join(name)).collect()).unwrap_or_default();
-    if cfg!(target_os = "macos") { cands.push("/opt/homebrew/bin/node".into()); cands.push("/usr/local/bin/node".into()); }
+    if cfg!(target_os = "macos") {
+        cands.push("/opt/homebrew/bin/node".into());
+        cands.push("/usr/local/bin/node".into());
+        // GUI 从 Finder 启动时常没有 nvm 的 PATH，主动扫 ~/.nvm
+        if let Ok(rd) = std::fs::read_dir(home().join(".nvm/versions/node")) {
+            let mut vers: Vec<_> = rd.flatten().map(|e| e.path()).filter(|p| p.is_dir()).collect();
+            vers.sort();
+            for v in vers.into_iter().rev() { cands.push(v.join("bin").join(name)); }
+        }
+        cands.push(home().join(".local/bin").join(name));
+        cands.push(home().join(".fnm/current/bin").join(name));
+    }
     for c in cands {
         if !c.is_file() { continue; }
         let mut cmd = Command::new(&c);

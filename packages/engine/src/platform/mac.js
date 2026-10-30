@@ -145,18 +145,43 @@ export function postWriteActions(mode) {
   return [];
 }
 
-export async function signAdhoc(app, { deep = false, runner = defaultRun, sleep = (ms) => new Promise((r) => setTimeout(r, ms)), timeoutMs = 15000 } = {}) {
+function isEngineLikeMacProcess(cmd) {
+  // 借用主程序跑 Node 时，ps 看不到 ELECTRON_RUN_AS_NODE，只能靠命令行特征区分；杀这些不会弹「意外退出」
+  return /engine-ipc\.mjs(\s|$)/.test(cmd) || /\s-e(\s|$)/.test(cmd) || /\s-p(\s|$)/.test(cmd);
+}
+
+export async function signAdhoc(app, {
+  deep = false,
+  runner = defaultRun,
+  sleep = (ms) => new Promise((r) => setTimeout(r, ms)),
+  timeoutMs = 15000,
+  kill = (pid, sig) => process.kill(pid, sig),
+} = {}) {
   // 任何仍映射 Contents/MacOS/Cursor 的进程（含本工具的 engine-ipc）在重签名时都会被 SIGKILL → 系统弹「意外退出」
   const root = path.join(app, 'Contents');
   const end = Date.now() + timeoutMs;
+  const tryKill = (pid, sig) => { try { kill(pid, sig); } catch { /* 已退出 */ } };
   while (Date.now() < end) {
     const still = await listMacProcesses(root, { runner, includeEngine: true });
     if (!still.length) break;
+    // 主动结束引擎类进程，避免等待窗口里又被并发 status 拉起后撞上 codesign
+    for (const p of still) {
+      if (isEngineLikeMacProcess(p.command)) tryKill(p.pid, 'SIGTERM');
+    }
     await sleep(200);
   }
   const leftover = await listMacProcesses(root, { runner, includeEngine: true });
-  if (leftover.length) {
-    throw new Error(`重签名前仍有 ${leftover.length} 个进程占用 Cursor.app，请完全退出 Cursor 后重试`);
+  const guiLeft = leftover.filter((p) => !isEngineLikeMacProcess(p.command));
+  if (guiLeft.length) {
+    throw new Error(`重签名前仍有 ${guiLeft.length} 个 Cursor 进程在运行，请完全退出 Cursor 后重试`);
+  }
+  for (const p of leftover) tryKill(p.pid, 'SIGKILL');
+  if (leftover.length) await sleep(100);
+  // 再扫一次，尽量缩窄 TOCTOU；随后立刻 codesign
+  const again = await listMacProcesses(root, { runner, includeEngine: true });
+  for (const p of again) {
+    if (isEngineLikeMacProcess(p.command)) tryKill(p.pid, 'SIGKILL');
+    else throw new Error(`重签名前仍有 Cursor 进程在运行，请完全退出 Cursor 后重试`);
   }
   const args = ['--force', ...(deep ? ['--deep'] : []), '--sign', '-', '--preserve-metadata=entitlements', app];
   const r = await runner('/usr/bin/codesign', args);

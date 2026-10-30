@@ -339,6 +339,7 @@ describe('macOS: codesign must not race live Cursor processes', () => {
     const app = path.dirname(root);
     const exe = path.join(root, 'MacOS/Cursor');
     let rounds = 0;
+    const kills = [];
     const runner = async (cmd, args) => {
       if (cmd === 'ps') {
         rounds++;
@@ -353,8 +354,35 @@ describe('macOS: codesign must not race live Cursor processes', () => {
       if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
       return { code: 0, stdout: '', stderr: '' };
     };
-    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000 });
+    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000, kill: (pid, sig) => kills.push([pid, sig]) });
     assert.ok(rounds >= 3);
+    assert.ok(kills.some(([pid, sig]) => pid === 201 && sig === 'SIGTERM'));
+    assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
+  });
+
+  it('signAdhoc SIGTERMs engine-like -e leftovers then codesigns', async () => {
+    const home = await tmp('signkill-');
+    const root = await fakeApp(home);
+    const app = path.dirname(root);
+    const exe = path.join(root, 'MacOS/Cursor');
+    let rounds = 0;
+    const kills = [];
+    const runner = async (cmd, args) => {
+      if (cmd === 'ps') {
+        rounds++;
+        const lines = rounds < 2 ? [`  303  1 ${exe} -e process.stdout.write(1)`] : [];
+        return { code: 0, stdout: lines.join('\n'), stderr: '' };
+      }
+      if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
+        await fs.writeFile(path.join(app, 'Contents/MacOS/Cursor'), 'MACHO-adhoc');
+        await fs.writeFile(path.join(app, 'Contents/_CodeSignature/CodeResources'), '<plist>adhoc</plist>');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
+      return { code: 0, stdout: '', stderr: '' };
+    };
+    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000, kill: (pid, sig) => kills.push([pid, sig]) });
+    assert.ok(kills.some(([pid, sig]) => pid === 303 && sig === 'SIGTERM'));
     assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
   });
 });
