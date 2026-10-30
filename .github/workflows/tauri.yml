@@ -47,14 +47,14 @@ jobs:
           if [ "$RUNNER_OS" = macOS ]; then
             M=$B/universal-apple-darwin/release/bundle
             codesign --verify --deep --verbose=2 "$M"/macos/*.app || true
-            (cd "$M/macos" && ditto -c -k --sequesterRsrc --keepParent *.app "$GITHUB_WORKSPACE/out/cursor-zh-0.2.2-mac-universal.app.zip")
-            cp "$M"/dmg/*.dmg out/cursor-zh-0.2.2-mac-universal.dmg
+            (cd "$M/macos" && ditto -c -k --sequesterRsrc --keepParent *.app "$GITHUB_WORKSPACE/out/cursor-zh-0.2.3-mac-universal.app.zip")
+            cp "$M"/dmg/*.dmg out/cursor-zh-0.2.3-mac-universal.dmg
           elif [ "$RUNNER_OS" = Windows ]; then
-            cp $B/release/bundle/nsis/*-setup.exe out/cursor-zh-0.2.2-win-x64-setup.exe
-            cp $B/release/cursor-zh.exe out/cursor-zh-0.2.2-win-x64-portable.exe
+            cp $B/release/bundle/nsis/*-setup.exe out/cursor-zh-0.2.3-win-x64-setup.exe
+            cp $B/release/cursor-zh.exe out/cursor-zh-0.2.3-win-x64-portable.exe
           else
-            cp $B/release/bundle/deb/*.deb out/cursor-zh-0.2.2-linux-amd64.deb
-            cp $B/release/bundle/appimage/*.AppImage out/cursor-zh-0.2.2-linux-x86_64.AppImage
+            cp $B/release/bundle/deb/*.deb out/cursor-zh-0.2.3-linux-amd64.deb
+            cp $B/release/bundle/appimage/*.AppImage out/cursor-zh-0.2.3-linux-x86_64.AppImage
           fi
           # Windows 的 Git Bash 没有 shasum，优先用 sha256sum
           (cd out && if command -v sha256sum >/dev/null; then sha256sum *; else shasum -a 256 *; fi | tee SHA256SUMS-${{ runner.os }}.txt)
