@@ -1,12 +1,17 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import dns from 'node:dns';
+
+// GitHub AAAA 在部分网络不可达；优先 A 记录，避免 undici 偶发 fetch failed。
+try { dns.setDefaultResultOrder('ipv4first'); } catch { /* 旧 Node */ }
 
 // 在线词典：词典和锚点就是 GitHub 仓库里的 JSON 文件，不用服务器。
-// 顺序：GitHub 原始文件 → jsDelivr 镜像 → 上次下载的缓存 → 安装包自带。每个文件都按 dicts/manifest.json 里的 sha256 校验；
-// manifest 的 schema / minTool 不兼容（新格式、需要新版工具）就不用，绝不加载看不懂的词典。
+// 顺序：GitHub → jsDelivr Fastly → jsDelivr → 缓存 → 安装包自带。按 dicts/manifest.json 的 sha256 校验；
+// manifest 的 schema / minTool 不兼容就不用。
 export const SOURCES = [
   ['GitHub', 'https://raw.githubusercontent.com/lidefang0918/cursor-zh/main/'],
+  ['jsDelivr Fastly', 'https://fastly.jsdelivr.net/gh/lidefang0918/cursor-zh@main/'],
   ['jsDelivr', 'https://cdn.jsdelivr.net/gh/lidefang0918/cursor-zh@main/'],
 ];
 export const SCHEMA = 1;
@@ -37,7 +42,7 @@ async function get(url, fetchImpl, timeout) {
 }
 
 // 返回 { dir, source, updated }：dir 下是和仓库一样的 dicts/、anchors/ 布局。network=false 只看缓存和自带
-export async function syncData({ bundledDir, cacheDir, toolVersion, version, platform, network = true, sources = SOURCES, fetchImpl = globalThis.fetch, timeout = 5000, log = () => {} }) {
+export async function syncData({ bundledDir, cacheDir, toolVersion, version, platform, network = true, sources = SOURCES, fetchImpl = globalThis.fetch, timeout = 12000, log = () => {} }) {
   const bundled = await readJson(path.join(bundledDir, MANIFEST));
   const floor = bundled?.updated ?? '';
   const fail = [];
@@ -65,7 +70,7 @@ export async function syncData({ bundledDir, cacheDir, toolVersion, version, pla
       await fs.writeFile(path.join(cacheDir, MANIFEST), raw);
       if (fail.length) log(`已改用 ${name}（${fail.join('；')}）`);
       return { dir: cacheDir, source: name, updated: m.updated };
-    } catch (e) { fail.push(`${name}：${e.message}`); }
+    } catch (e) { fail.push(`${name}：${e.message}${e.cause?.code ? ` (${e.cause.code})` : ''}`); }
   }
   if (fail.length) log(`在线词典不可用（${fail.join('；')}）`);
   const c = await readJson(path.join(cacheDir, MANIFEST));

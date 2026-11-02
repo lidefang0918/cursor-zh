@@ -76,8 +76,8 @@ describe('online dictionaries', () => {
     assert.equal((await syncData({ ...c2, fetchImpl: fakeFetch({ 'https://a/': remote({ updated: '2020-01-01T00:00:00.000Z' }) }) })).source, '内置');
   });
 
-  it('uses GitHub raw first and jsDelivr second for this repo', () => {
-    assert.deepEqual(SOURCES.map(([, u]) => new URL(u).host), ['raw.githubusercontent.com', 'cdn.jsdelivr.net']);
+  it('uses GitHub raw first, then jsDelivr Fastly / cdn for this repo', () => {
+    assert.deepEqual(SOURCES.map(([, u]) => new URL(u).host), ['raw.githubusercontent.com', 'fastly.jsdelivr.net', 'cdn.jsdelivr.net']);
     assert.equal(usable({ schema: 1, minTool: '0.2.0', files: Object.fromEntries(DICT_FILES.map((f) => [f, 'x'])) }, '0.10.0'), true);
   });
 
