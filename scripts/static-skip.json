@@ -33,7 +33,10 @@
     "Select your preferred embedding model. Delete your index and reload to use it.",
     "Cpp Control Token",
     "Control tokens control how likely the model is to produce no-ops. Will be replaced with auto-selection",
-    "Dev login failed. Try dev start backend."
+    "Dev login failed. Try dev start backend.",
+    "Manual Override - ${1}",
+    "Statsig Controlled - ${1}",
+    "Override the ${1} gate, or let it pick. Switching apps restarts Cursor."
   ],
   "regex": [
     "^Invalid allowedExtensions format",

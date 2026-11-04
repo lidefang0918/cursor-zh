@@ -1656,5 +1656,22 @@
   "Slack app settings": "Slack 应用设置",
   "Ask Every Time will disappear from this menu after you switch away from it. Allowlist auto-runs tools that are already in your allowlist, including MCP tools. If you want every shell command to keep asking for approval, keep your shell allowlist empty. With an empty shell allowlist, shell commands still ask every time and Cursor skips shell allowlist parsing.": "切换离开后，“每次询问”将不再出现在此菜单中。允许列表模式会自动运行已在允许列表中的工具（包括 MCP 工具）。如果希望每条 Shell 命令都继续请求批准，请让 Shell 允许列表保持为空：Shell 允许列表为空时，Shell 命令仍会每次询问，Cursor 也会跳过 Shell 允许列表解析。",
   "Wait indefinitely; otherwise skip prompts after 30 seconds": "无限期等待；关闭时 30 秒后跳过提示",
-  "Included in": "套餐内含"
+  "Included in": "套餐内含",
+  "Show the Add to Chat button when selecting code": "选中代码时显示“添加到聊天”按钮",
+  "Show an Open worktree link in the Terminal when the Agent works in a worktree": "智能体在工作树中工作时，在终端显示“打开工作树”链接",
+  "Updates will apply automatically on quit": "退出时自动应用更新",
+  "This track will download and install updates automatically whenever Cursor is closed.": "此通道会在 Cursor 关闭时自动下载并安装更新。",
+  "Show the Add to Chat button": "显示“添加到聊天”按钮",
+  "Show the Open worktree link in Terminal": "在终端显示“打开工作树”链接",
+  "Same as coordinator": "与协调者相同",
+  "Default Project coordinator model": "默认项目协调者模型",
+  "The model a new Project's coordinator starts on": "新项目协调者启动时使用的模型",
+  "Default Project worker model": "默认项目 Worker 模型",
+  "The model a coordinator's workers start on when it names none": "协调者未指定时，其 Worker 启动使用的模型",
+  "Loading usage chart": "正在加载用量图表",
+  "Projects credit remaining": "剩余项目额度",
+  "Projects Credit": "项目额度",
+  "Upload Avatar": "上传头像",
+  "Avatar": "头像",
+  "Remaining": "剩余"
 }

@@ -50,6 +50,18 @@
     "Disconnect ${1} from all computers?": "要断开 ${1} 与所有电脑的连接吗？",
     "Last used ${1}": "上次使用：${1}",
     "Your system is in high contrast, so your ${1} is in use. This applies when it turns off": "系统处于高对比度模式，因此正在使用你的${1}。高对比度关闭后才会应用此设置",
-    "Waiting for approval \\xB7 code ${1}": "等待批准 · 验证码 ${1}"
+    "Waiting for approval \\xB7 code ${1}": "等待批准 · 验证码 ${1}",
+    "Couldn't save the ${1}: ${2}": "无法保存 ${1}：${2}",
+    "Spent only on Projects. Expires ${1}.": "仅用于项目。将于 ${1} 到期。",
+    "Paired with this computer · ${1}": "已与这台电脑配对 · ${1}",
+    "Included usage with your subscription.${1}${2}": "订阅包含的用量。${1}${2}",
+    "Control whether agents can read files outside the workspace without approval${1}": "控制智能体能否不经审批读取工作区外的文件${1}",
+    "Mark Agent commits as 'Made with Cursor'${1}": "将智能体提交标记为“Made with Cursor”${1}",
+    "Automatically import necessary modules for ${1}": "自动为 ${1} 导入所需模块",
+    "Automatically jump to the next diff when accepting changes with ${1}Y": "使用 ${1}Y 接受更改时自动跳到下一处差异",
+    "Accept the next word of a suggestion via ${1}": "通过 ${1} 接受建议中的下一个单词",
+    "Automatically index repositories to speed up Grep searches. All data is stored locally.${1}": "自动为仓库建立索引以加快 Grep 搜索。所有数据均存储在本地。${1}",
+    "Apply .cursorignore files to all subdirectories${1}. Changing this setting requires restarting Cursor.": "将 .cursorignore 应用到所有子目录${1}。更改此设置需要重启 Cursor。",
+    "Use with caution. Skip symlinks during .cursorignore file discovery. Enable only when all .cursorignore files are reachable without symlinks${1}. Changing this setting requires restarting Cursor.": "谨慎使用。查找 .cursorignore 文件时跳过符号链接。仅当所有 .cursorignore 文件无需经过符号链接即可访问时才启用${1}。更改此设置需要重启 Cursor。"
   }
 }
