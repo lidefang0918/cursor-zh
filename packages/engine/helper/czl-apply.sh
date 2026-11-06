@@ -7,7 +7,7 @@
 # 清单（制表符分隔，UTF-8）：
 #   第 1 行：CZL1<TAB><安装根目录，绝对路径>
 #   其余行：<sha256><TAB><源文件绝对路径><TAB><相对安装根的目标路径>
-#   以 ! 开头的行是写入后动作（只在 macOS 有效）：!codesign-adhoc（对 Cursor.app 做 ad-hoc 重签名）、!unquarantine（去掉隔离属性）
+#   以 ! 开头的行是写入后动作（只在 macOS 有效）：!codesign-adhoc（对 Cursor.app 重签名，优先 cursor-zh-local）、!unquarantine（去掉隔离属性）
 # 退出码：0 成功；2 清单/参数不合法；3 源文件校验失败；4 写入失败（已尽量还原）；5 写入后校验失败；6 重签名失败
 # 兼容 Linux（GNU coreutils）和 macOS（BSD 工具）。
 set -eu
@@ -84,14 +84,27 @@ while IFS="$TAB" read -r SHA SRC REAL; do
   [ "$GOT" = "$SHA" ] || die 5 "写入后校验失败：$REAL"
   echo "OK $REAL"
 done < "$LIST"
-# 第四步（macOS）：改过 Resources 后原签名失效，按清单做 ad-hoc 重签名 / 去隔离属性
+# 第四步（macOS）：改过 Resources 后原签名失效，按清单重签名 / 去隔离属性
 while read -r ACT; do
   case "$ACT" in
-    '!codesign-adhoc') /usr/bin/codesign --force --sign - --preserve-metadata=entitlements "$APP" >&2 || die 6 "重签名失败：$APP"
+    '!codesign-adhoc')
+      # 优先固定自签证书（TCC DR 稳定）；找不到则回退 ad-hoc。特权进程未必看得到用户 login keychain。
+      SIGN_ID="-"
+      if /usr/bin/security find-identity -v -p codesigning 2>/dev/null | grep -F 'cursor-zh-local' >/dev/null 2>&1; then
+        SIGN_ID="cursor-zh-local"
+      fi
+      if ! /usr/bin/codesign --force --sign "$SIGN_ID" --preserve-metadata=entitlements "$APP" >&2; then
+        if [ "$SIGN_ID" != "-" ]; then
+          echo "czl-apply: 自签证书重签名失败，回退 ad-hoc" >&2
+          /usr/bin/codesign --force --sign - --preserve-metadata=entitlements "$APP" >&2 || die 6 "重签名失败：$APP"
+        else
+          die 6 "重签名失败：$APP"
+        fi
+      fi
       # 清掉按路径缓存的签名策略，否则同路径 ELECTRON_RUN_AS_NODE/子进程会被 SIGKILL
       ASIDE="$APP.czl-resign-$$"
       mv "$APP" "$ASIDE" && mv "$ASIDE" "$APP" || { mv "$ASIDE" "$APP" 2>/dev/null; die 6 "重签名后刷新路径失败：$APP"; }
-      /usr/bin/codesign --verify --deep --strict "$APP" >&2 || die 6 "重签名后校验失败：$APP"; echo "SIGNED $APP" ;;
+      /usr/bin/codesign --verify --deep --strict "$APP" >&2 || die 6 "重签名后校验失败：$APP"; echo "SIGNED $APP identity=$SIGN_ID" ;;
     '!unquarantine') /usr/bin/xattr -dr com.apple.quarantine "$APP" 2>/dev/null || true; echo "UNQUARANTINED $APP" ;;
   esac
 done < "$ACTIONS"

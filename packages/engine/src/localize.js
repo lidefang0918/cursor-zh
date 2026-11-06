@@ -448,8 +448,8 @@ async function macAfterWrite(o, method) {
   const runner = runnerOf(o);
   if (method === 'direct') {
     if (o.macSign === 'adhoc' || o.macSign === 'adhoc-deep') {
-      await mac.signAdhoc(app, { deep: o.macSign === 'adhoc-deep', runner });
-      o.onLog(`已对 Cursor.app 做 ad-hoc 重签名（${o.macSign === 'adhoc-deep' ? '含内嵌代码 --deep' : '外层'}）`);
+      await mac.signAdhoc(app, { deep: o.macSign === 'adhoc-deep', runner, onLog: o.onLog });
+      o.onLog(`已对 Cursor.app 做重签名（${o.macSign === 'adhoc-deep' ? '含内嵌代码 --deep' : '外层'}；优先本地证书 cursor-zh-local）`);
     }
     await mac.removeQuarantine(app, { runner });
   } else if (o.macSign !== 'none') {

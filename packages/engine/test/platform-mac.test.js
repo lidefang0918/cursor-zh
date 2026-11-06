@@ -35,10 +35,16 @@ async function fakeApp(dir, { js = JS, version = 'test-shared' } = {}) {
   return root;
 }
 
-// 假的 codesign / xattr / ps / cp：签名 = 改写主程序与 CodeResources（和真 codesign 改的文件一致）
-function fakeTools(calls = []) {
+// 假的 codesign / xattr / ps / cp / security：签名 = 改写主程序与 CodeResources（和真 codesign 改的文件一致）
+function fakeTools(calls = [], { hasLocalIdentity = true } = {}) {
   return async (cmd, args) => {
     calls.push([cmd, ...args]);
+    if (cmd === '/usr/bin/security' && args[0] === 'find-identity') {
+      const line = hasLocalIdentity
+        ? '  1) AABBCCDDEEFF00112233445566778899AABBCCDD "cursor-zh-local"\n'
+        : '     0 valid identities found\n';
+      return { code: 0, stdout: line, stderr: '' };
+    }
     if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
       const app = args.at(-1);
       await fs.writeFile(path.join(app, 'Contents/MacOS/Cursor'), 'MACHO-adhoc');
@@ -258,7 +264,8 @@ describe('macOS: localize/revert with re-signing', () => {
     const product = JSON.parse(await read(path.join(root, 'Resources/app/product.json')));
     assert.equal(product.checksums[KEY], vscodeChecksum(await fs.readFile(path.join(root, REL))));
     const sign = calls.find((c) => c[0] === '/usr/bin/codesign' && c.includes('--force'));
-    assert.deepEqual(sign, ['/usr/bin/codesign', '--force', '--sign', '-', '--preserve-metadata=entitlements', app]);
+    assert.deepEqual(sign, ['/usr/bin/codesign', '--force', '--sign', 'cursor-zh-local', '--preserve-metadata=entitlements', app]);
+    assert.notEqual(sign[sign.indexOf('--sign') + 1], '-');
     assert.ok(calls.some((c) => c.join(' ') === `/usr/bin/codesign --verify --deep --strict --verbose=2 ${app}`));
     assert.ok(calls.some((c) => c.join(' ') === `/usr/bin/xattr -dr com.apple.quarantine ${app}`));
     assert.equal(await read(path.join(root, 'MacOS/Cursor')), 'MACHO-adhoc');
@@ -354,7 +361,7 @@ describe('macOS: codesign must not race live Cursor processes', () => {
       if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
       return { code: 0, stdout: '', stderr: '' };
     };
-    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000, kill: (pid, sig) => kills.push([pid, sig]) });
+    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000, kill: (pid, sig) => kills.push([pid, sig]), identity: 'cursor-zh-local' });
     assert.ok(rounds >= 3);
     assert.ok(kills.some(([pid, sig]) => pid === 201 && sig === 'SIGTERM'));
     assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
@@ -374,10 +381,18 @@ describe('macOS: codesign must not race live Cursor processes', () => {
       if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
       return { code: 0, stdout: '', stderr: '' };
     };
-    await mac.signAdhoc(app, { runner, sleep: async () => {} });
+    const signCalls = [];
+    const wrapped = async (cmd, args) => {
+      const r = await runner(cmd, args);
+      if (cmd === '/usr/bin/codesign' && args.includes('--force')) signCalls.push([cmd, ...args]);
+      return r;
+    };
+    await mac.signAdhoc(app, { runner: wrapped, sleep: async () => {}, identity: 'cursor-zh-local' });
     assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
     assert.equal(await fs.access(app).then(() => true, () => false), true);
     assert.equal(await fs.access(`${app}.czl-resign-${process.pid}`).then(() => true, () => false), false);
+    assert.equal(signCalls[0][signCalls[0].indexOf('--sign') + 1], 'cursor-zh-local');
+    assert.notEqual(signCalls[0][signCalls[0].indexOf('--sign') + 1], '-');
   });
 
   it('signAdhoc SIGTERMs engine-like -e leftovers then codesigns', async () => {
@@ -401,8 +416,101 @@ describe('macOS: codesign must not race live Cursor processes', () => {
       if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
       return { code: 0, stdout: '', stderr: '' };
     };
-    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000, kill: (pid, sig) => kills.push([pid, sig]) });
+    await mac.signAdhoc(app, { runner, sleep: async () => {}, timeoutMs: 5000, kill: (pid, sig) => kills.push([pid, sig]), identity: 'cursor-zh-local' });
     assert.ok(kills.some(([pid, sig]) => pid === 303 && sig === 'SIGTERM'));
     assert.equal(await read(path.join(app, 'Contents/MacOS/Cursor')), 'MACHO-adhoc');
+  });
+
+  it('signAdhoc falls back to ad-hoc when local identity codesign fails', async () => {
+    const home = await tmp('signfallback-');
+    const root = await fakeApp(home);
+    const app = path.dirname(root);
+    const forceSigns = [];
+    const logs = [];
+    const runner = async (cmd, args) => {
+      if (cmd === 'ps') return { code: 0, stdout: '', stderr: '' };
+      if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
+        forceSigns.push([...args]);
+        if (args.includes('cursor-zh-local')) return { code: 1, stdout: '', stderr: 'CSSMERR_TP_NOT_TRUSTED' };
+        await fs.writeFile(path.join(app, 'Contents/MacOS/Cursor'), 'MACHO-adhoc');
+        await fs.writeFile(path.join(app, 'Contents/_CodeSignature/CodeResources'), '<plist>adhoc</plist>');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/usr/bin/codesign') return { code: 0, stdout: '', stderr: 'Signature=adhoc\n' };
+      return { code: 0, stdout: '', stderr: '' };
+    };
+    await mac.signAdhoc(app, { runner, sleep: async () => {}, identity: 'cursor-zh-local', onLog: (m) => logs.push(m) });
+    assert.equal(forceSigns.length, 2);
+    assert.equal(forceSigns[0][forceSigns[0].indexOf('--sign') + 1], 'cursor-zh-local');
+    assert.equal(forceSigns[1][forceSigns[1].indexOf('--sign') + 1], '-');
+    assert.ok(logs.some((l) => /回退 ad-hoc/.test(l)));
+  });
+});
+
+describe('macOS: local codesign identity', () => {
+  it('findLocalSignIdentity reads security find-identity', async () => {
+    const runner = async (cmd, args) => {
+      assert.equal(cmd, '/usr/bin/security');
+      assert.deepEqual(args, ['find-identity', '-v', '-p', 'codesigning']);
+      return { code: 0, stdout: '  1) DEAD "cursor-zh-local"\n', stderr: '' };
+    };
+    assert.equal(await mac.findLocalSignIdentity({ runner }), 'cursor-zh-local');
+    assert.equal(await mac.findLocalSignIdentity({
+      runner: async () => ({ code: 0, stdout: '     0 valid identities found\n', stderr: '' }),
+    }), null);
+  });
+
+  it('ensureLocalSignIdentity returns existing identity without openssl', async () => {
+    const calls = [];
+    const runner = async (cmd, args) => {
+      calls.push([cmd, ...args]);
+      if (cmd === '/usr/bin/security' && args[0] === 'find-identity') {
+        return { code: 0, stdout: '  1) DEAD "cursor-zh-local"\n', stderr: '' };
+      }
+      return { code: 0, stdout: '', stderr: '' };
+    };
+    assert.equal(await mac.ensureLocalSignIdentity({ runner }), 'cursor-zh-local');
+    assert.ok(calls.every((c) => c[0] !== 'openssl'));
+  });
+
+  it('ensureLocalSignIdentity creates cert when missing (mocked openssl/security)', async () => {
+    const home = await tmp('certcreate-');
+    const workDir = path.join(home, 'work');
+    await fs.mkdir(workDir);
+    let finds = 0;
+    const runner = async (cmd, args) => {
+      if (cmd === '/usr/bin/security' && args[0] === 'find-identity') {
+        finds++;
+        // 第一次没有；导入后再有
+        if (finds === 1) return { code: 0, stdout: '     0 valid identities found\n', stderr: '' };
+        return { code: 0, stdout: '  1) DEAD "cursor-zh-local"\n', stderr: '' };
+      }
+      if (cmd === 'openssl' && args[0] === 'req') {
+        await fs.writeFile(args[args.indexOf('-keyout') + 1], 'KEY');
+        await fs.writeFile(args[args.indexOf('-out') + 1], 'CRT');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === 'openssl' && args[0] === 'pkcs12') {
+        assert.ok(args.includes('-legacy') || args.includes('-export'));
+        await fs.writeFile(args[args.indexOf('-out') + 1], 'P12');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/usr/bin/security' && args[0] === 'import') {
+        assert.equal(args[args.indexOf('-P') + 1].length, 32); // hex password, not logged
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/usr/bin/security' && args[0] === 'add-trusted-cert') return { code: 0, stdout: '', stderr: '' };
+      return { code: 0, stdout: '', stderr: '' };
+    };
+    const logs = [];
+    assert.equal(await mac.ensureLocalSignIdentity({
+      runner,
+      workDir,
+      onLog: (m) => logs.push(m),
+      randomBytes: (n) => Buffer.alloc(n, 7),
+    }), 'cursor-zh-local');
+    assert.ok(logs.some((l) => /创建本地代码签名证书/.test(l)));
+    // 临时密钥材料应已清理
+    assert.equal(await fs.readdir(workDir).then((x) => x.length), 0);
   });
 });

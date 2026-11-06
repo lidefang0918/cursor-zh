@@ -1,4 +1,6 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { run as defaultRun } from './exec.js';
 
@@ -6,16 +8,18 @@ import { run as defaultRun } from './exec.js';
 //
 // 签名：Cursor 是 Developer ID 签名 + 公证的应用，Resources/app 下的文件都被 _CodeSignature/CodeResources 封存。
 // 改了 JS 后封存失效：带隔离属性时 Gatekeeper 报“已损坏”，Ventura 起 Gatekeeper 首次启动也会校验公证应用的完整性。
-// 所以默认（macSign='adhoc'）在写入后对外层 Cursor.app 做 ad-hoc 重签名（只改 MacOS/Cursor 和 _CodeSignature/CodeResources，
+// 所以默认（macSign='adhoc'）在写入后对外层 Cursor.app 重签名（只改 MacOS/Cursor 和 _CodeSignature/CodeResources，
 // 内嵌的 Frameworks/Helpers 未改动、保留原 Developer ID 签名），并去掉 com.apple.quarantine。
+// 优先用固定自签证书 cursor-zh-local（DR 稳定，TCC 授权跨次重签保留）；找不到/失败则回退 ad-hoc（--sign -）。
 // 重签后必须把 .app 挪开再挪回：否则 syspolicy 按路径缓存会让随后的 ELECTRON_RUN_AS_NODE/子进程被 SIGKILL。
-// 重签名不加 --options runtime：主程序的权限声明里没有 disable-library-validation，ad-hoc（无团队 ID）的主程序若开着
+// 重签名不加 --options runtime：主程序的权限声明里没有 disable-library-validation，无团队 ID 的主程序若开着
 // 加固运行时就无法加载 Cursor 团队签名的 Electron Framework。
-// 'adhoc-deep' 按 `codesign --force --deep --sign -` 把所有内嵌代码也重签（备份整个 .app 的 APFS 克隆，还原时整体换回）。
+// 'adhoc-deep' 按 `codesign --force --deep` 把所有内嵌代码也重签（备份整个 .app 的 APFS 克隆，还原时整体换回）。
 // 'none' 不重签（保留原签名的“已损坏”风险，仅供高级用户）。
 // 还原：把备份的 MacOS/Cursor 与 _CodeSignature/CodeResources 连同原版 JS 一起写回 → 原 Developer ID 签名重新有效。
 export const MAC_SIGN_FILES = ['MacOS/Cursor', '_CodeSignature/CodeResources'];
 export const SIGN_MODES = ['adhoc', 'adhoc-deep', 'none'];
+export const LOCAL_SIGN_IDENTITY = 'cursor-zh-local';
 
 export const appPathOf = (root) => (/\.app\/Contents\/?$/.test(root) ? root.replace(/\/Contents\/?$/, '') : null);
 
@@ -151,12 +155,103 @@ function isEngineLikeMacProcess(cmd) {
   return /engine-ipc\.mjs(\s|$)/.test(cmd) || /\s-e(\s|$)/.test(cmd) || /\s-p(\s|$)/.test(cmd);
 }
 
+export async function findLocalSignIdentity({ runner = defaultRun } = {}) {
+  const r = await runner('/usr/bin/security', ['find-identity', '-v', '-p', 'codesigning']);
+  if (r.code !== 0) return null;
+  const text = `${r.stdout || ''}\n${r.stderr || ''}`;
+  return text.includes(`"${LOCAL_SIGN_IDENTITY}"`) || new RegExp(`\\b${LOCAL_SIGN_IDENTITY}\\b`).test(text)
+    ? LOCAL_SIGN_IDENTITY
+    : null;
+}
+
+// 首次：生成带 codeSigning EKU 的自签证书并导入 login keychain（add-trusted-cert 可能弹一次密码框）。
+// 私钥/口令只落临时目录，用完即删，不写进仓库。
+export async function ensureLocalSignIdentity({
+  runner = defaultRun,
+  onLog = () => {},
+  workDir,
+  randomBytes = (n) => crypto.randomBytes(n),
+} = {}) {
+  const existing = await findLocalSignIdentity({ runner });
+  if (existing) return existing;
+
+  onLog(`首次使用：正在创建本地代码签名证书 ${LOCAL_SIGN_IDENTITY}（可能弹出钥匙串密码框，仅此一次）…`);
+  const dir = workDir || await fs.mkdtemp(path.join(os.tmpdir(), 'czl-codesign-'));
+  const ownDir = !workDir;
+  const key = path.join(dir, 'cursor-zh-local.key');
+  const crt = path.join(dir, 'cursor-zh-local.crt');
+  const p12 = path.join(dir, 'cursor-zh-local.p12');
+  const cnf = path.join(dir, 'cert-ext.cnf');
+  const password = randomBytes(16).toString('hex');
+  const loginKeychain = path.join(os.homedir(), 'Library/Keychains/login.keychain-db');
+
+  try {
+    await fs.writeFile(cnf, [
+      '[req]',
+      'distinguished_name = dn',
+      'x509_extensions = ext',
+      'prompt = no',
+      '[dn]',
+      `CN = ${LOCAL_SIGN_IDENTITY}`,
+      '[ext]',
+      'basicConstraints = critical,CA:FALSE',
+      'keyUsage = critical,digitalSignature',
+      'extendedKeyUsage = critical,codeSigning',
+      '',
+    ].join('\n'));
+
+    const req = await runner('openssl', [
+      'req', '-x509', '-newkey', 'rsa:2048', '-nodes',
+      '-keyout', key, '-out', crt, '-days', '3650', '-config', cnf,
+    ]);
+    if (req.code !== 0) throw new Error((req.stderr || req.stdout || 'openssl req 失败').trim());
+
+    // OpenSSL 3 默认算法 macOS security import 不认，需 -legacy；LibreSSL / 旧版无此开关则回退
+    let p12r = await runner('openssl', [
+      'pkcs12', '-export', '-legacy', '-out', p12, '-inkey', key, '-in', crt, '-passout', `pass:${password}`,
+    ]);
+    if (p12r.code !== 0) {
+      p12r = await runner('openssl', [
+        'pkcs12', '-export', '-out', p12, '-inkey', key, '-in', crt, '-passout', `pass:${password}`,
+      ]);
+    }
+    if (p12r.code !== 0) throw new Error((p12r.stderr || p12r.stdout || 'openssl pkcs12 失败').trim());
+
+    const imp = await runner('/usr/bin/security', [
+      'import', p12, '-k', loginKeychain, '-P', password,
+      '-T', '/usr/bin/codesign', '-T', '/usr/bin/security',
+    ]);
+    if (imp.code !== 0) throw new Error((imp.stderr || imp.stdout || 'security import 失败').trim());
+
+    const trust = await runner('/usr/bin/security', [
+      'add-trusted-cert', '-d', '-r', 'trustRoot', '-p', 'codeSign', '-k', loginKeychain, crt,
+    ]);
+    if (trust.code !== 0) {
+      onLog(`警告：信任本地签名证书失败（${(trust.stderr || trust.stdout || '').trim() || '未知错误'}），仍将尝试用该身份签名`);
+    }
+
+    const created = await findLocalSignIdentity({ runner });
+    if (!created) throw new Error('证书已导入但 find-identity 未找到 cursor-zh-local');
+    onLog(`已创建本地代码签名证书 ${LOCAL_SIGN_IDENTITY}`);
+    return created;
+  } finally {
+    for (const f of [key, crt, p12, cnf]) await fs.rm(f, { force: true }).catch(() => {});
+    if (ownDir) await fs.rm(dir, { recursive: true, force: true }).catch(() => {});
+  }
+}
+
+function codesignArgs(identity, deep, app) {
+  return ['--force', ...(deep ? ['--deep'] : []), '--sign', identity, '--preserve-metadata=entitlements', app];
+}
+
 export async function signAdhoc(app, {
   deep = false,
   runner = defaultRun,
   sleep = (ms) => new Promise((r) => setTimeout(r, ms)),
   timeoutMs = 15000,
   kill = (pid, sig) => process.kill(pid, sig),
+  onLog = () => {},
+  identity, // 测试可注入；生产默认自动 ensureLocalSignIdentity，失败回退 '-'
 } = {}) {
   // 任何仍映射 Contents/MacOS/Cursor 的进程（含本工具的 engine-ipc）在重签名时都会被 SIGKILL → 系统弹「意外退出」
   const root = path.join(app, 'Contents');
@@ -184,10 +279,25 @@ export async function signAdhoc(app, {
     if (isEngineLikeMacProcess(p.command)) tryKill(p.pid, 'SIGKILL');
     else throw new Error(`重签名前仍有 Cursor 进程在运行，请完全退出 Cursor 后重试`);
   }
-  const args = ['--force', ...(deep ? ['--deep'] : []), '--sign', '-', '--preserve-metadata=entitlements', app];
-  const r = await runner('/usr/bin/codesign', args);
-  if (r.code !== 0) throw new Error(`ad-hoc 重签名失败：${(r.stderr || r.stdout).trim()}`);
-  // 原地 ad-hoc 后，syspolicy 会按路径记住旧策略：同路径再 ELECTRON_RUN_AS_NODE/拉起子进程会被 SIGKILL。
+
+  let signId = identity;
+  if (signId === undefined) {
+    try {
+      signId = await ensureLocalSignIdentity({ runner, onLog });
+    } catch (e) {
+      onLog(`创建/查找本地签名证书失败，回退 ad-hoc：${e.message}`);
+      signId = null;
+    }
+  }
+  const preferred = signId || '-';
+  let r = await runner('/usr/bin/codesign', codesignArgs(preferred, deep, app));
+  if (r.code !== 0 && preferred !== '-') {
+    onLog(`自签证书重签名失败，回退 ad-hoc：${(r.stderr || r.stdout).trim()}`);
+    r = await runner('/usr/bin/codesign', codesignArgs('-', deep, app));
+  }
+  if (r.code !== 0) throw new Error(`重签名失败：${(r.stderr || r.stdout).trim()}`);
+
+  // 原地重签后，syspolicy 会按路径记住旧策略：同路径再 ELECTRON_RUN_AS_NODE/拉起子进程会被 SIGKILL。
   // 挪开再挪回可清掉该路径缓存（副本在别的路径上同签名则正常）。
   const aside = `${app}.czl-resign-${process.pid}`;
   try {
