@@ -355,39 +355,95 @@ describe('macOS: localize/revert with re-signing', () => {
     assert.ok(logs.some((l) => /已更新/.test(l) && /99\.9\.9/.test(l) && new RegExp(String(originalVersion)).test(l)), `日志未包含版本不一致警告，实际日志：${logs.join(' | ')}`);
   });
 
-  it('revert: suppresses auto-relaunch when codesign --verify fails after restore (possible binary/framework version mismatch)', async () => {
+  it('revert E-revert: codesign --verify fails after restore → suppresses auto-relaunch (SIGTRAP guard)', async () => {
     // 场景：还原备份中的 MacOS/Cursor 后，codesign --verify --deep 失败，说明主程序与 Frameworks 版本
     // 仍不一致（可能 ShipIt 只部分完成）。此时不能自动重开 Cursor，否则 V8 Isolate 初始化 SIGTRAP。
+    // 重要：必须注入 isCursorRunning=true + closeCursor 产生 relaunch 信息，
+    // 才能验证是 signVerifyFailed 压制了 relaunch，而不是因为根本没有 relaunch 信息。
     const { root, app, opts } = await setup();
     assert.equal((await localize(opts)).ok, true);
 
     const logs = [];
     const relaunches = [];
 
-    // 模拟 codesign --verify 失败的 runner（主程序与 Frameworks 版本不一致时会如此）
+    // codesign --verify 返回失败（主程序与 Frameworks 版本不一致时会如此）；--force 和其他调用正常
     const verifyFailRunner = async (cmd, args) => {
       if (cmd === '/usr/bin/codesign' && args.includes('--verify')) {
         return { code: 1, stdout: '', stderr: 'invalid or unsupported format for signature\n' };
       }
-      // 其余调用（xattr、security 等）正常通过
+      if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
+        const a = args.at(-1);
+        await fs.writeFile(path.join(a, 'Contents/MacOS/Cursor'), 'MACHO-adhoc');
+        await fs.writeFile(path.join(a, 'Contents/_CodeSignature/CodeResources'), '<plist>adhoc seal</plist>');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/bin/cp') { await fs.cp(args.at(-2), args.at(-1), { recursive: true }); return { code: 0, stdout: '', stderr: '' }; }
       return { code: 0, stdout: '', stderr: '' };
     };
-
-    // 注入 closeCursor：模拟有一个 Cursor 实例在运行，并在 close 后产生 relaunch 信息
-    // 这样 withCursorClosed 才会尝试调用 relaunchCursor，才能验证抑制生效
-    const closeCursor = async () => ({ ok: true, closed: true, relaunch: { platform: 'darwin', app } });
 
     const rv = await revert({
       ...opts,
       onLog: (m) => logs.push(m),
       platformRunner: verifyFailRunner,
-      closeCursor,
+      // isCursorRunning + closeRunning 确保 closeCursor 被调用，relaunch 信息存在
+      isCursorRunning: async () => true,
+      closeRunning: true,
+      closeCursor: async () => ({ ok: true, closed: true, relaunch: { platform: 'darwin', app } }),
       relaunchCursor: (ri) => relaunches.push(ri),
     });
 
     assert.equal(rv.ok, true, rv.error);
-    assert.equal(relaunches.length, 0, '签名校验失败时不应自动重开 Cursor（避免 SIGTRAP）');
+    // signVerifyFailed 设 o.relaunch = false，relaunchCursor 不应被调用（relaunch 信息存在但被压制）
+    assert.equal(relaunches.length, 0, '签名校验失败时 signVerifyFailed 应压制 relaunch（否则 SIGTRAP）');
     assert.ok(logs.some((l) => /签名校验未通过/.test(l)), `日志未包含签名校验失败警告，实际日志：${logs.join(' | ')}`);
+  });
+
+  it('localize E-rollback: FINISH_FAILED 回滚路径 codesign --verify 失败时不自动重开', async () => {
+    // 场景：汉化补丁已写入，但 finishLocalize（装语言包）失败触发回滚。
+    // 回滚调用 restoreInstall，若此时 codesign --verify 失败（signVerifyFailed），同样必须抑制 relaunch。
+    const { root, app, opts, home } = await setup();
+
+    // 让 ensureLanguagePack 失败：提供一个总是以 exit 1 返回的假 CLI
+    const failCliPath = path.join(home, 'fail-cli.sh');
+    await fs.writeFile(failCliPath, '#!/bin/sh\nexit 1\n', { mode: 0o755 });
+
+    const logs = [];
+    const relaunches = [];
+
+    // codesign --force 正常（macAfterWrite 重签名 OK），--verify 失败（restoreInstall 校验失败）
+    const rollbackVerifyFailRunner = async (cmd, args) => {
+      if (cmd === '/usr/bin/codesign' && args.includes('--verify')) {
+        return { code: 1, stdout: '', stderr: 'invalid or unsupported format for signature\n' };
+      }
+      if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
+        const a = args.at(-1);
+        await fs.writeFile(path.join(a, 'Contents/MacOS/Cursor'), 'MACHO-adhoc');
+        await fs.writeFile(path.join(a, 'Contents/_CodeSignature/CodeResources'), '<plist>adhoc seal</plist>');
+        return { code: 0, stdout: '', stderr: '' };
+      }
+      if (cmd === '/bin/cp') { await fs.cp(args.at(-2), args.at(-1), { recursive: true }); return { code: 0, stdout: '', stderr: '' }; }
+      return { code: 0, stdout: '', stderr: '' };
+    };
+
+    const r = await localize({
+      ...opts,
+      cliPath: failCliPath,       // ← ensureLanguagePack 失败 → finishLocalize catch
+      platformRunner: rollbackVerifyFailRunner,
+      onLog: (m) => logs.push(m),
+      isCursorRunning: async () => true,
+      closeRunning: true,
+      closeCursor: async () => ({ ok: true, closed: true, relaunch: { platform: 'darwin', app } }),
+      relaunchCursor: (ri) => relaunches.push(ri),
+    });
+
+    // finishLocalize catch → FINISH_FAILED
+    assert.equal(r.code, 'FINISH_FAILED', `应为 FINISH_FAILED，实际：${JSON.stringify(r)}`);
+    // signVerifyFailed 应压制 relaunch
+    assert.equal(relaunches.length, 0, 'FINISH_FAILED 回滚路径 signVerifyFailed 时不应自动重开 Cursor');
+    assert.ok(
+      logs.some((l) => /签名校验未通过/.test(l)),
+      `日志未含签名校验失败警告，实际日志：${logs.join(' | ')}`,
+    );
   });
 
   it('revert B: 同号 commit 变更时跳过还原旧 MacOS/Cursor（同版本补丁更新同样危险）', async () => {
