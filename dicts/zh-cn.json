@@ -1673,5 +1673,11 @@
   "Projects Credit": "项目额度",
   "Upload Avatar": "上传头像",
   "Avatar": "头像",
-  "Remaining": "剩余"
+  "Remaining": "剩余",
+  "Zoom": "缩放",
+  "Scale of the whole Cursor window, the same as Zoom In and Zoom Out": "整个 Cursor 窗口的缩放比例，与放大、缩小相同",
+  "Upload profile photo": "上传头像",
+  "Remove profile photo": "移除头像",
+  "Profile photo": "头像",
+  "Request timed out": "请求超时"
 }

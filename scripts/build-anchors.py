@@ -217,7 +217,10 @@ def main():
                 continue
             if all(f['from'] != g['from'] for g in frags):
                 frags.append(f)
-        # 引擎按顺序做片段替换：被别的片段包含的短片段（如 `?" (controlled by admin)":""`）排到长片段之后，
+        # 被更长片段完全覆盖的短前缀/后缀不入锚点（否则精确试打会记成未命中）。
+        # 仍有独立出现的短片段（如 `?" (controlled by admin)":""`）保留。
+        frags = [f for f in frags if f.get('count', 1) > sum(g.get('count', 1) for g in frags if g is not f and f['from'] in g['from'])]
+        # 引擎按顺序做片段替换：被别的片段包含的短片段排到长片段之后，
         # 否则长片段（整句模板）先被短片段改掉就对不上了；稳定排序，其余顺序不变
         frags = sorted(frags, key=lambda f, all_=list(frags): sum(1 for g in all_ if g is not f and f['from'] in g['from']))
         report.append(f"FRAGS   {b[10:20]} {len(frags)}")
