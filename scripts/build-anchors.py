@@ -162,6 +162,19 @@ def template_fragments(src):
     return list(out.values())
 
 
+def drop_covered_fragments(frags):
+    """短片段若每次出现都在某条更长片段里，就丢掉（精确试打否则会未命中）。
+    仍有独立出现的保留。嵌套的更长片段（mid ⊂ long）只按最外层计数，避免同一处加两次误删。"""
+    def containers(f):
+        return [g for g in frags if g is not f and f['from'] != g['from'] and f['from'] in g['from']]
+    def covered(f):
+        cons = containers(f)
+        # 只计不被其它容器包含的最长片段，避免 nested 把同一处算两遍
+        maximal = [g for g in cons if not any(g is not h and g['from'] in h['from'] for h in cons)]
+        return sum(g.get('count', 1) for g in maximal)
+    return [f for f in frags if f.get('count', 1) > covered(f)]
+
+
 def nls_translate(msg, words):
     if msg in words:
         return words[msg]
@@ -217,9 +230,7 @@ def main():
                 continue
             if all(f['from'] != g['from'] for g in frags):
                 frags.append(f)
-        # 被更长片段完全覆盖的短前缀/后缀不入锚点（否则精确试打会记成未命中）。
-        # 仍有独立出现的短片段（如 `?" (controlled by admin)":""`）保留。
-        frags = [f for f in frags if f.get('count', 1) > sum(g.get('count', 1) for g in frags if g is not f and f['from'] in g['from'])]
+        frags = drop_covered_fragments(frags)
         # 引擎按顺序做片段替换：被别的片段包含的短片段排到长片段之后，
         # 否则长片段（整句模板）先被短片段改掉就对不上了；稳定排序，其余顺序不变
         frags = sorted(frags, key=lambda f, all_=list(frags): sum(1 for g in all_ if g is not f and f['from'] in g['from']))
