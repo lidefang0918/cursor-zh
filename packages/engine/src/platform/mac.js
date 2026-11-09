@@ -297,6 +297,23 @@ export async function signAdhoc(app, {
   }
   if (r.code !== 0) throw new Error(`重签名失败：${(r.stderr || r.stdout).trim()}`);
 
+  // codesign --force 原地改写 MacOS/Cursor 内容，但 inode 号不变。内核 vnode 签名缓存按
+  // (device, inode) 索引：inode 不变时，内核可能用旧缓存（原 Developer ID 签名哈希）验证
+  // 新签名的内容 → "embedded signature doesn't match attached signature" → CS_KILLED (SIGKILL)。
+  // 修复：用 copyFile + rename 给 MacOS/Cursor 换一个新 inode，使内核必须从磁盘重新加载签名，
+  // 而不是对比已缓存的旧 vnode 状态。rename 是同目录原子操作，权限继承自 stat 读取的原始 mode。
+  const binary = path.join(app, 'Contents', 'MacOS', 'Cursor');
+  const tmpBin = `${binary}.czl-new-${process.pid}`;
+  try {
+    const st = await fs.stat(binary);
+    await fs.copyFile(binary, tmpBin);
+    await fs.chmod(tmpBin, st.mode & 0o7777);
+    await fs.rename(tmpBin, binary);
+  } catch (e) {
+    await fs.rm(tmpBin, { recursive: true, force: true }).catch(() => {});
+    throw new Error(`重签名后替换可执行文件 inode 失败（${e.code ?? e.message}）`);
+  }
+
   // 原地重签后，syspolicy 会按路径记住旧策略：同路径再 ELECTRON_RUN_AS_NODE/拉起子进程会被 SIGKILL。
   // 挪开再挪回可清掉该路径缓存（副本在别的路径上同签名则正常）。
   const aside = `${app}.czl-resign-${process.pid}`;

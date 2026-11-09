@@ -101,6 +101,20 @@ while read -r ACT; do
           die 6 "重签名失败：$APP"
         fi
       fi
+      # codesign --force 原地改写 MacOS/Cursor 内容但不换 inode。内核 vnode 签名缓存按
+      # (device, inode) 索引：inode 不变时内核可能用旧缓存验证新内容 →
+      # "embedded signature doesn't match attached signature" → CS_KILLED (SIGKILL)。
+      # 用 cp + mv 给可执行文件换一个新 inode，迫使内核从磁盘重新加载签名。
+      BINARY="$APP/Contents/MacOS/Cursor"
+      if [ -f "$BINARY" ]; then
+        TMP_BIN="${BINARY}.czl-new-$$"
+        if cp -- "$BINARY" "$TMP_BIN" && copymeta "$BINARY" "$TMP_BIN" && mv -- "$TMP_BIN" "$BINARY"; then
+          :
+        else
+          rm -f -- "$TMP_BIN" 2>/dev/null || true
+          die 6 "重签名后替换可执行文件 inode 失败：$BINARY"
+        fi
+      fi
       # 清掉按路径缓存的签名策略，否则同路径 ELECTRON_RUN_AS_NODE/子进程会被 SIGKILL
       ASIDE="$APP.czl-resign-$$"
       mv "$APP" "$ASIDE" && mv "$ASIDE" "$APP" || { mv "$ASIDE" "$APP" 2>/dev/null; die 6 "重签名后刷新路径失败：$APP"; }
