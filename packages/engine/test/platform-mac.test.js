@@ -314,6 +314,80 @@ describe('macOS: localize/revert with re-signing', () => {
     const ok = await setup({ version: 'test-pristine' });
     assert.equal((await localize(ok.opts)).ok, true);
   });
+
+  it('revert: Squirrel auto-update race — detects version mismatch and skips restoring old MacOS/Cursor to prevent SIGTRAP', async () => {
+    // 场景：本工具汉化成功后，Squirrel（ShipIt）对整个 Cursor.app 做了原子目录替换（升级到新版）。
+    // 还原时 isStale 可能因备份期间 workbench.js 的 DOM 标记尚存而误判为"未过期"，进而尝试把
+    // 备份里的旧版 MacOS/Cursor 写入已升级 bundle（Frameworks 是新版）→ 版本不一致 → SIGTRAP。
+    // 修复：还原前比较安装目录 product.json 版本与备份版本，若不一致则只清理汉化设置，不写入文件。
+    const { root, opts } = await setup();
+    const logs = [];
+    assert.equal((await localize({ ...opts, onLog: (m) => logs.push(m) })).ok, true);
+
+    // 模拟 Squirrel ShipIt 完成整包替换：更新 product.json 版本号和 MacOS/Cursor 二进制内容
+    // 注意：使用数字版本号，确保 fallbackAnchors 能正确加载（filter 要求 /^\d+(\.\d+)+$/）
+    const productPath = path.join(root, 'Resources/app/product.json');
+    const product = JSON.parse(await read(productPath));
+    const originalVersion = product.version; // 'test-shared'
+    product.version = '99.9.9'; // 模拟 Squirrel 升级后的新版本
+    await fs.writeFile(productPath, JSON.stringify(product, null, '\t') + '\n');
+    await fs.writeFile(path.join(root, 'MacOS/Cursor'), 'MACHO-squirrel-new-version', { mode: 0o755 });
+
+    const rv = await revert({ ...opts, onLog: (m) => logs.push(m) });
+    assert.equal(rv.ok, true, rv.error);
+
+    // 旧版 MacOS/Cursor 不能被还原回来（否则与新版 Frameworks 不一致 → SIGTRAP）
+    assert.equal(
+      await read(path.join(root, 'MacOS/Cursor')),
+      'MACHO-squirrel-new-version',
+      '版本不一致时不应把旧版 MacOS/Cursor 写回安装目录',
+    );
+
+    // product.json 版本也不应被还原（Squirrel 更新的版本号应保留）
+    assert.equal(JSON.parse(await read(productPath)).version, '99.9.9');
+
+    // 汉化记录已清除
+    const st = await readState(opts.dataDir);
+    assert.equal(st.localized, false);
+
+    // 日志应包含版本不一致警告，以及新旧版本号
+    assert.ok(logs.some((l) => /自动更新/.test(l) && /99\.9\.9/.test(l) && new RegExp(String(originalVersion)).test(l)), `日志未包含版本不一致警告，实际日志：${logs.join(' | ')}`);
+  });
+
+  it('revert: suppresses auto-relaunch when codesign --verify fails after restore (possible binary/framework version mismatch)', async () => {
+    // 场景：还原备份中的 MacOS/Cursor 后，codesign --verify --deep 失败，说明主程序与 Frameworks 版本
+    // 仍不一致（可能 ShipIt 只部分完成）。此时不能自动重开 Cursor，否则 V8 Isolate 初始化 SIGTRAP。
+    const { root, app, opts } = await setup();
+    assert.equal((await localize(opts)).ok, true);
+
+    const logs = [];
+    const relaunches = [];
+
+    // 模拟 codesign --verify 失败的 runner（主程序与 Frameworks 版本不一致时会如此）
+    const verifyFailRunner = async (cmd, args) => {
+      if (cmd === '/usr/bin/codesign' && args.includes('--verify')) {
+        return { code: 1, stdout: '', stderr: 'invalid or unsupported format for signature\n' };
+      }
+      // 其余调用（xattr、security 等）正常通过
+      return { code: 0, stdout: '', stderr: '' };
+    };
+
+    // 注入 closeCursor：模拟有一个 Cursor 实例在运行，并在 close 后产生 relaunch 信息
+    // 这样 withCursorClosed 才会尝试调用 relaunchCursor，才能验证抑制生效
+    const closeCursor = async () => ({ ok: true, closed: true, relaunch: { platform: 'darwin', app } });
+
+    const rv = await revert({
+      ...opts,
+      onLog: (m) => logs.push(m),
+      platformRunner: verifyFailRunner,
+      closeCursor,
+      relaunchCursor: (ri) => relaunches.push(ri),
+    });
+
+    assert.equal(rv.ok, true, rv.error);
+    assert.equal(relaunches.length, 0, '签名校验失败时不应自动重开 Cursor（避免 SIGTRAP）');
+    assert.ok(logs.some((l) => /签名校验未通过/.test(l)), `日志未包含签名校验失败警告，实际日志：${logs.join(' | ')}`);
+  });
 });
 
 describe('macOS: codesign must not race live Cursor processes', () => {
