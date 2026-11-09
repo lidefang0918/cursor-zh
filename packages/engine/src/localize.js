@@ -433,17 +433,24 @@ async function backupChanged(backupDir, anchors, info) {
   const m = shaMap(await backupItems(backupDir));
   for (const [rel, sha] of Object.entries(anchors.pristine ?? {})) if (m[rel] && m[rel] !== sha) return `备份时 ${rel.split('/').pop()} 已不是 Cursor ${info.version} 原版`;
   if (anchors.productJson) {
+    // 检查备份里的 product.json（版本 + commit 双检：同号不同 commit 也表示 bundle 已替换，同样危险）
     try {
-      const v = JSON.parse(await fs.readFile(path.join(backupDir, 'files', anchors.productJson), 'utf8')).version;
-      if (v && String(v) !== info.version) return `备份时版本已变为 ${v}（检测时为 ${info.version}）`;
+      const bp = JSON.parse(await fs.readFile(path.join(backupDir, 'files', anchors.productJson), 'utf8'));
+      const bv = String(bp.version ?? ''), bc = String(bp.commit ?? '');
+      if (bv && bv !== info.version) return `备份时版本已变为 ${bv}（检测时为 ${info.version}）`;
+      if (bc && info.commit && bc !== info.commit) return `备份时 commit 已变为 ${bc.slice(0, 8)}（检测时为 ${info.commit.slice(0, 8)}），中止以防覆盖已更新文件`;
     } catch {}
-    // 备份完成后再读一次安装目录的 product.json：ShipIt 可能在创建备份期间以原子目录替换完成了自动更新，
-    // 此时备份里的版本仍是旧版而安装目录已是新版——后续若把旧版 MacOS/Cursor 写入新版 bundle，
-    // Electron 主程序与 Frameworks 版本不一致，重开后 V8 Isolate 初始化阶段会 SIGTRAP
+    // 备份完成后再读一次安装目录的 live product.json：ShipIt 可能在 createBackup 完成后完成原子替换。
+    // fail-closed：读取失败本身说明 ShipIt 正在操作 bundle，不安全继续，直接中止。
+    let liveProd;
     try {
-      const v = JSON.parse(await fs.readFile(path.join(info.root, anchors.productJson), 'utf8')).version;
-      if (v && String(v) !== info.version) return `备份后安装目录版本已变为 ${v}（检测时为 ${info.version}，自动更新与备份并发）`;
-    } catch {}
+      liveProd = JSON.parse(await fs.readFile(path.join(info.root, anchors.productJson), 'utf8'));
+    } catch (e) {
+      return `备份后安装目录 product.json 读取失败（${e.code ?? e.message}），中止汉化以防意外覆盖`;
+    }
+    const lv = String(liveProd?.version ?? ''), lc = String(liveProd?.commit ?? '');
+    if (lv && lv !== info.version) return `备份后安装目录版本已变为 ${lv}（检测时为 ${info.version}，自动更新与备份并发）`;
+    if (lc && info.commit && lc !== info.commit) return `备份后安装目录 commit 已变为 ${lc.slice(0, 8)}（检测时为 ${info.commit.slice(0, 8)}），自动更新与备份并发`;
   }
   return null;
 }
@@ -542,6 +549,8 @@ async function finishLocalize(o, info, state, backupDir, result, carry, method) 
     let restored = true;
     const back = await restoreInstall(o, o.installRoot, backupDir, o.macSign).catch((x) => ({ ok: false, error: x.message }));
     if (back.ok) await dropBackup({ backupDir }); else restored = false;
+    // 回滚后签名校验失败：同样不自动重开，避免以不一致 bundle 启动触发 SIGTRAP
+    if (back.signVerifyFailed) { o.relaunch = false; }
     try { if (undo.prevLocale !== undefined) await setLocale({ argvPath: o.argvPath, locale: undo.prevLocale }); } catch { restored = false; }
     try { if (undo.langpack) { await uninstallLanguagePack(o); await unregisterLanguagePack(o); } } catch { restored = false; }
     await writeState(o.dataDir, { localized: false, carry: state.carry });
@@ -587,21 +596,46 @@ export async function revert(opts = {}) {
     if (await filesMatch(installRoot, shaMap(items))) {
       log('安装文件已是原版（管理员命令已执行），继续清理');
     } else {
-      // 在关闭 Cursor 之后、写入备份文件之前，重新读取安装目录版本：
-      // macOS Squirrel（ShipIt）在 Cursor 退出后对整个 app bundle 做原子目录替换。
-      // 若 ShipIt 在 isStale 检查后、关闭 Cursor 时才完成替换，isStale 看到的还是我们的 DOM 标记，
-      // 随后 restoreInstall 会把备份里的旧版 MacOS/Cursor 写入已更新的 bundle（Frameworks 是新版），
-      // 导致 Electron 主程序与 Frameworks 版本不一致，重开后 V8 Isolate 初始化阶段 SIGTRAP。
-      // 仅在 macOS 上检测：ShipIt 是 macOS 专属的原子替换机制；Linux/Windows 的更新方式不同。
-      if (o.platform === 'darwin' && state.version && info?.productPath) {
-        try {
-          const liveV = JSON.parse(await fs.readFile(info.productPath, 'utf8')).version;
-          if (liveV && String(liveV) !== String(state.version)) {
-            log(`⚠ Cursor 已从汉化时的 ${state.version} 自动更新到 ${liveV}，跳过还原安装目录（避免主程序与 Frameworks 版本不一致导致启动崩溃），仅清理汉化设置`);
+      // ── macOS: 关闭 Cursor 后写入前，重新校验安装目录身份 ────────────────────────
+      // ShipIt（Squirrel 更新进程）在 Cursor 退出后对整个 app bundle 做原子目录替换。
+      // 若 ShipIt 在 isStale 检查后、关闭 Cursor 时完成替换，isStale 看到的还是我们的 DOM 标记，
+      // restoreInstall 随后会把备份里的旧版 MacOS/Cursor 写入已更新 bundle（Frameworks 已是新版）
+      // → Electron 主程序与 Frameworks 版本不一致 → V8 Isolate 初始化阶段 SIGTRAP。
+      // 检测方式：比较 state.version/commit（汉化时记录）与 live product.json（close 后重读）。
+      // 版本或 commit 任一不同均跳过写入，只清理汉化设置。
+      //
+      // ⚠ 剩余 TOCTOU 窗口：此处读取到 restoreInstall 完成之间仍有极短窗口，ShipIt 可能再次
+      // 完成替换。该窗口无法在用户态彻底消除（需要内核级 fs 快照或对 bundle 目录的排他锁，
+      // 而 Cursor 本身不持有此锁）。第二层防御：restoreInstall 完成后 codesign --verify --deep
+      // 校验签名，若失败则 signVerifyFailed 抑制自动重开，强制用户手动验证。
+      //
+      // 仅限 darwin：ShipIt 是 macOS 专属机制；Linux/Windows 更新路径不同，不适用此检查。
+      if (o.platform === 'darwin' && state.version) {
+        // info 为空（Cursor 已被卸载/位置变化）时从 installRoot 推导路径，仍做 fail-closed 检查
+        const productPath = info?.productPath ?? (installRoot ? path.join(installRoot, 'Resources/app/product.json') : null);
+        if (productPath) {
+          let liveProd;
+          try {
+            liveProd = JSON.parse(await fs.readFile(productPath, 'utf8'));
+          } catch (e) {
+            // fail-closed：读取失败可能意味着 ShipIt 正在替换 bundle；不写入，不重开
+            log(`⚠ 安装目录 product.json 读取失败（${e.code ?? e.message}），为安全起见跳过还原，不自动重开 Cursor`);
+            o.relaunch = false;
+            return fail('PRODUCT_READ_FAILED', `还原前安全检查失败：无法读取 product.json（${e.code ?? e.message}）`);
+          }
+          const liveV = String(liveProd?.version ?? '');
+          const liveC = String(liveProd?.commit ?? '');
+          const stateC = String(state.commit ?? '');
+          const versionChanged = liveV && liveV !== String(state.version);
+          // 同号不同 commit：同版本内的修复也可能更换 MacOS/Cursor 二进制，写旧版同样 SIGTRAP
+          const commitChanged = liveC && stateC && liveC !== stateC;
+          if (versionChanged || commitChanged) {
+            const what = versionChanged ? `版本 ${state.version} → ${liveV}` : `commit ${stateC.slice(0, 8)} → ${liveC.slice(0, 8)}`;
+            log(`⚠ Cursor 已更新（${what}），跳过还原安装目录（避免主程序与 Frameworks 版本不一致导致启动崩溃），仅清理汉化设置`);
             await retireStale(o, state, log);
             return cleanupUser(o, state, { stale: true });
           }
-        } catch {}
+        }
       }
       const a = await restoreInstall(o, installRoot, backupDir, state.macSign ?? (o.platform === 'darwin' ? 'adhoc' : undefined));
       if (!a.ok) {
@@ -640,6 +674,10 @@ async function recoverFromBackup(o, info, anchors, state) {
       if (a.code === 'NEED_ELEVATION') log(`需要管理员权限：${a.tried.map((t) => `${t.via}：${t.reason}`).join('；') || '已跳过自动提权'}`);
       else log(`✖ 还原失败：${a.error}`);
       return a;
+    }
+    if (a.signVerifyFailed) {
+      log(`⚠ 签名校验未通过，不自动重开 Cursor：${a.signDetail}。请验证 Cursor.app 完整性后再手动打开`);
+      o.relaunch = false;
     }
     log(`已按备份还原安装文件（${METHOD[a.method] ?? a.method}，sha256 校验通过）`);
     // 有 carry（语言包/locale 是我们改的）才动用户设置；没有说明旧版已清理过，只清译文缓存

@@ -9,6 +9,7 @@ import * as mac from '../src/platform/mac.js';
 import { applyFiles, checkWritable, HELPER_PATH } from '../src/elevate.js';
 import { sha256File } from '../src/backup.js';
 import { localize, revert, status, defaultPaths, readState } from '../src/localize.js';
+import { writeState } from '../src/state.js';
 import { closeCursor, listCursorProcesses, relaunchCursor } from '../src/process.js';
 import { detectAllCursors } from '../src/detect.js';
 import { vscodeChecksum } from '../src/patch.js';
@@ -351,7 +352,7 @@ describe('macOS: localize/revert with re-signing', () => {
     assert.equal(st.localized, false);
 
     // 日志应包含版本不一致警告，以及新旧版本号
-    assert.ok(logs.some((l) => /自动更新/.test(l) && /99\.9\.9/.test(l) && new RegExp(String(originalVersion)).test(l)), `日志未包含版本不一致警告，实际日志：${logs.join(' | ')}`);
+    assert.ok(logs.some((l) => /已更新/.test(l) && /99\.9\.9/.test(l) && new RegExp(String(originalVersion)).test(l)), `日志未包含版本不一致警告，实际日志：${logs.join(' | ')}`);
   });
 
   it('revert: suppresses auto-relaunch when codesign --verify fails after restore (possible binary/framework version mismatch)', async () => {
@@ -387,6 +388,148 @@ describe('macOS: localize/revert with re-signing', () => {
     assert.equal(rv.ok, true, rv.error);
     assert.equal(relaunches.length, 0, '签名校验失败时不应自动重开 Cursor（避免 SIGTRAP）');
     assert.ok(logs.some((l) => /签名校验未通过/.test(l)), `日志未包含签名校验失败警告，实际日志：${logs.join(' | ')}`);
+  });
+
+  it('revert B: 同号 commit 变更时跳过还原旧 MacOS/Cursor（同版本补丁更新同样危险）', async () => {
+    // 场景：ShipIt 在同一版本号内发布了修复（commit 变了但 version 字段未改）。
+    // 若把汉化时备份的旧 MacOS/Cursor 写入新 bundle，依然可能因 ABI 不兼容导致 SIGTRAP。
+    const { root, opts } = await setup();
+    const logs = [];
+    assert.equal((await localize({ ...opts, onLog: (m) => logs.push(m) })).ok, true);
+
+    // 保持 version 不变，只改 commit 和 MacOS/Cursor（模拟同号补丁更新）
+    const productPath = path.join(root, 'Resources/app/product.json');
+    const product = JSON.parse(await read(productPath));
+    product.commit = 'squirrel-new-commit-deadbeef';
+    await fs.writeFile(productPath, JSON.stringify(product, null, '\t') + '\n');
+    await fs.writeFile(path.join(root, 'MacOS/Cursor'), 'MACHO-squirrel-patched-binary', { mode: 0o755 });
+
+    const rv = await revert({ ...opts, onLog: (m) => logs.push(m) });
+    assert.equal(rv.ok, true, rv.error);
+    // 旧版 MacOS/Cursor 不能被写回（否则与新 Frameworks/commit 不一致 → SIGTRAP）
+    assert.equal(
+      await read(path.join(root, 'MacOS/Cursor')),
+      'MACHO-squirrel-patched-binary',
+      'commit 不一致时不应把旧版 MacOS/Cursor 写回安装目录',
+    );
+    assert.equal((await readState(opts.dataDir)).localized, false);
+    // commit 在日志里截为前 8 字符：'squirrel-new-commit-deadbeef' → 'squirrel'
+    assert.ok(
+      logs.some((l) => /commit/.test(l) && /squirrel/.test(l)),
+      `日志未含 commit 变更警告，实际日志：${logs.join(' | ')}`,
+    );
+  });
+
+  it('revert C: product.json 读取异常 → fail-closed，不写旧文件，不自动重开', async () => {
+    // 场景：关闭 Cursor 后读取安装目录 product.json 失败（ShipIt 正在替换 bundle 时可能出现）。
+    // 此时不能继续写入，应 fail-closed：返回错误，抑制 relaunch，不恢复旧 MacOS/Cursor。
+    const { root, app, opts } = await setup();
+    assert.equal((await localize(opts)).ok, true);
+
+    const logs = [];
+    const relaunches = [];
+    const productPath = path.join(root, 'Resources/app/product.json');
+    const originalBinary = await read(path.join(root, 'MacOS/Cursor'));
+
+    // closeCursor 注入：在"关闭 Cursor"后删除 product.json（模拟 ShipIt 操作 bundle 时临时不可读）
+    const injectCloseCursor = async () => {
+      await fs.rm(productPath, { force: true });
+      return { ok: true, closed: true, relaunch: { platform: 'darwin', app } };
+    };
+
+    const rv = await revert({
+      ...opts,
+      onLog: (m) => logs.push(m),
+      isCursorRunning: async () => true,
+      closeRunning: true,
+      closeCursor: injectCloseCursor,
+      relaunchCursor: (ri) => relaunches.push(ri),
+    });
+
+    // fail-closed：返回错误，不写文件，不重开
+    assert.equal(rv.ok, false);
+    assert.equal(rv.code, 'PRODUCT_READ_FAILED');
+    assert.equal(relaunches.length, 0, 'product.json 不可读时不应自动重开 Cursor（避免以不一致 bundle 启动）');
+    assert.ok(
+      logs.some((l) => /读取失败/.test(l) || /安全起见/.test(l)),
+      `日志未含读取失败警告，实际日志：${logs.join(' | ')}`,
+    );
+    // MacOS/Cursor 未被写回（restoreInstall 未执行）
+    assert.equal(await read(path.join(root, 'MacOS/Cursor')), originalBinary, 'fail-closed 时不应修改安装目录文件');
+  });
+
+  it('localize D: backup 期间 commit 变更阻止汉化（backupChanged commit 双检）', async () => {
+    // 场景：closeCursor 返回后（备份期间），ShipIt 完成了同号 commit 更新。
+    // createBackup 拷贝了新 commit 的 product.json；backupChanged 比较 backup.commit vs info.commit → 中止。
+    const { root, opts } = await setup();
+    const logs = [];
+    const productPath = path.join(root, 'Resources/app/product.json');
+
+    // closeCursor 注入：在"关闭 Cursor"后修改 product.json commit（info.commit = 'c0ffee' 已在 resolve 时记录）
+    const injectCommitChange = async () => {
+      const p = JSON.parse(await read(productPath));
+      p.commit = 'newcommit-after-close-squirrel';
+      await fs.writeFile(productPath, JSON.stringify(p, null, '\t') + '\n');
+      return { ok: true, closed: true, relaunch: null };
+    };
+
+    const r = await localize({
+      ...opts,
+      onLog: (m) => logs.push(m),
+      isCursorRunning: async () => true,
+      closeRunning: true,
+      closeCursor: injectCommitChange,
+    });
+
+    assert.equal(r.code, 'INSTALL_CHANGED', `应为 INSTALL_CHANGED，实际：${JSON.stringify(r)}`);
+    assert.ok(/commit/.test(r.error), `错误信息应含 commit，实际：${r.error}`);
+    // 安装目录未被写入汉化内容
+    const content = await read(path.join(root, REL));
+    assert.ok(!content.includes('"Cursor 设置"'), '汉化内容不应写入安装目录（INSTALL_CHANGED 应在 patch 前中止）');
+  });
+
+  it('revert E-recover: recoverFromBackup 路径签名校验失败时同样不自动重开 Cursor', async () => {
+    // 场景：state.localized = false（记录丢失），但安装文件仍带补丁 → 走 recoverFromBackup 路径。
+    // 若 codesign --verify --deep 失败，同样必须抑制 relaunch，避免以不一致 bundle 启动。
+    const { root, app, opts } = await setup();
+    const logs = [];
+    const relaunches = [];
+
+    // 1. 汉化成功，记录 backupDir
+    const lr = await localize(opts);
+    assert.equal(lr.ok, true);
+    const st = await readState(opts.dataDir);
+    const backupDir = st.backupDir;
+    assert.ok(backupDir, '汉化后应有 backupDir');
+
+    // 2. 模拟旧版工具误清记录但未还原文件（state.localized = false，workbench.js 仍带补丁）
+    await writeState(opts.dataDir, { localized: false });
+
+    // 3. codesign --verify 失败的 runner
+    const verifyFailRunner = async (cmd, args) => {
+      if (cmd === '/usr/bin/codesign' && args.includes('--verify')) {
+        return { code: 1, stdout: '', stderr: 'invalid or unsupported format for signature\n' };
+      }
+      return { code: 0, stdout: '', stderr: '' };
+    };
+
+    const rv = await revert({
+      ...opts,
+      fromBackup: backupDir,
+      onLog: (m) => logs.push(m),
+      platformRunner: verifyFailRunner,
+      isCursorRunning: async () => true,
+      closeRunning: true,
+      closeCursor: async () => ({ ok: true, closed: true, relaunch: { platform: 'darwin', app } }),
+      relaunchCursor: (ri) => relaunches.push(ri),
+    });
+
+    assert.equal(rv.ok, true, rv.error);
+    assert.equal(relaunches.length, 0, 'recoverFromBackup 路径签名校验失败时不应自动重开 Cursor（避免 SIGTRAP）');
+    assert.ok(
+      logs.some((l) => /签名校验未通过/.test(l)),
+      `日志未含签名校验失败警告，实际日志：${logs.join(' | ')}`,
+    );
   });
 });
 
