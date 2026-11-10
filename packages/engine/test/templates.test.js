@@ -55,3 +55,51 @@ print(json.dumps(sorted((f['from'], f['to']) for f in m.template_fragments(src))
     for (const k of ['API Key', 'Access Key ID', 'Secret Access Key', 'Region', 'You can put in', 'Off', 'On', 'Nightly']) assert.ok(dict[k] && dict[k] !== k, k);
   });
 });
+
+const dropCovered = (frags) => JSON.parse(execFileSync('python3', ['-c', `
+import importlib.util, json
+spec = importlib.util.spec_from_file_location('ba', 'scripts/build-anchors.py')
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+print(json.dumps([f['from'] for f in m.drop_covered_fragments(${JSON.stringify(frags)})], ensure_ascii=False))
+`], { cwd: root, encoding: 'utf8' }).trim().split('\n').pop());
+
+describe('drop_covered_fragments', () => {
+  it('drops a short fragment fully contained in a longer one', () => {
+    const kept = dropCovered([
+      { from: '`Control whether agents can read files outside the workspace without approval${', to: '`控制…${', count: 1 },
+      { from: '`Control whether agents can read files outside the workspace without approval${p}`', to: '`控制…${p}`', count: 1 },
+    ]);
+    assert.deepEqual(kept, ['`Control whether agents can read files outside the workspace without approval${p}`']);
+  });
+
+  it('keeps a short fragment that still appears on its own', () => {
+    const kept = dropCovered([
+      { from: '?" (controlled by admin)":""', to: '?"（由管理员控制）":""', count: 8 },
+      { from: '`Prevent Agent from automatically running MCP tools${r?" (controlled by admin)":""}`', to: '`长${r?"（由管理员控制）":""}`', count: 1 },
+      { from: '`Apply .cursorignore files to all subdirectories${n?" (controlled by admin)":""}. Changing this setting requires restarting Cursor.`', to: '`长2`', count: 1 },
+    ]);
+    assert.ok(kept.includes('?" (controlled by admin)":""'), kept.join('|'));
+    assert.equal(kept.length, 3);
+  });
+
+  it('does not drop a standalone occurrence when nested longer fragments would double-count it', () => {
+    // 短片段出现 2 次：1 次包在 mid⊂long 里，1 次独立。嵌套容器不能把同一处加两次，否则 2>1+1 为假会误删。
+    const kept = dropCovered([
+      { from: 'SHORT', to: '短', count: 2 },
+      { from: 'MID SHORT', to: '中 短', count: 1 },
+      { from: 'LONG MID SHORT', to: '长 中 短', count: 1 },
+    ]);
+    assert.ok(kept.includes('SHORT'), `kept=${kept.join('|')}`);
+    assert.ok(kept.includes('LONG MID SHORT'), `kept=${kept.join('|')}`);
+    assert.ok(!kept.includes('MID SHORT'), `mid is fully covered, kept=${kept.join('|')}`);
+  });
+
+  it('drops a short fragment covered by two disjoint longer fragments of equal total count', () => {
+    const kept = dropCovered([
+      { from: 'TAIL', to: '尾', count: 2 },
+      { from: 'ONE TAIL', to: '一尾', count: 1 },
+      { from: 'TWO TAIL', to: '二尾', count: 1 },
+    ]);
+    assert.deepEqual(kept.sort(), ['ONE TAIL', 'TWO TAIL']);
+  });
+});

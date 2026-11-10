@@ -1,13 +1,14 @@
 {
   "schema": 1,
   "minTool": "0.1.1",
-  "updated": "2026-11-04T10:55:14.859Z",
+  "updated": "2026-11-09T01:31:40.694Z",
   "files": {
-    "dicts/zh-cn.json": "f4520ae3dc6a22a342cb75041ece347df363da72ca15949283a7430db49cd7ff",
-    "dicts/zh-cn.nls.json": "7453c100c133b2ea0fa1e7a217f6f53ed763c729abe8efe212d61b461b4dcc87",
+    "dicts/zh-cn.json": "0bb6c30d0ee46982b2ccaf9a6d98bca3deb24ed089bef736be086eb45cf485e9",
+    "dicts/zh-cn.nls.json": "0e78e324c9b0a1326e51748ae57a5f1998c3cfb49a7a0ffdf20062e241088960",
     "dicts/zh-cn.patterns.json": "29827f7f00dd492a05b06a03593ad78ad5b6f3d217ee5f98b4e748ce4a4b5972",
     "anchors/3.27.14.json": "d6b457301b4037900c2bc1c42e62bed386bf6028c920b6341b761d03951e7890",
     "anchors/3.27.22.json": "12e7cb74330c7751ba398861593159e1242de5914fd35d5eb652970779d95f49",
-    "anchors/3.28.7.json": "4b1e6f83f0575545b63a015a3166ea283d27de3e9d13158ae8084c5a298b2223"
+    "anchors/3.28.7.json": "4b1e6f83f0575545b63a015a3166ea283d27de3e9d13158ae8084c5a298b2223",
+    "anchors/3.29.9.json": "9ecd9ca376cc8c0a78f0159a70352084080c805c929d730824e760427130765e"
   }
 }
