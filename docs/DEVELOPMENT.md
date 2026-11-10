@@ -54,7 +54,7 @@
   - 改 `Cursor.app` 里的文件会让官方签名失效，所以默认（`--mac-sign=adhoc`）改完后对外层做一次 ad-hoc 重签名并去掉 quarantine；`adhoc-deep` 整包重签（先 APFS clone 备份，只支持直接可写的情况）；`none` 不重签。还原时连同签名文件一起恢复，签名回到官方 Developer ID。
   - macOS 13+ 的“App 管理”权限会拦截修改，按提示到 系统设置 → 隐私与安全性 → App 管理 里给本工具（或终端）打开开关。
   - 直接在“下载”里打开的 Cursor 会被系统转移到只读的随机路径（App Translocation），请先把 Cursor 移到“应用程序”。
-  - 汉化后首次启动可能弹出“Cursor Safe Storage”钥匙串提示，选“始终允许”。ad-hoc 签名后 Cursor 自带的自动更新可能失败：**更新 Cursor 前先“一键还原”**，更新完再汉化。
+  - 汉化后首次启动可能弹出“Cursor Safe Storage”钥匙串提示，选“始终允许”。签名方式为 `cursor-zh-local` 本地自签证书，首次运行时需管理员授权将证书加入系统钥匙串信任（System Keychain，一次性）；如拒绝授权，工具报错并中止本次重签名。已知限制：CS_KILLED 尚未完全修复，曾尝试对 `MacOS/Cursor` copy+rename 换新 inode 的方案已撒销。**更新 Cursor 前先“一键还原”**，更新完再汉化。
 - 命令行：`node scripts/run.mjs localize [--close] [--root=<安装根>] [--mac-sign=adhoc|adhoc-deep|none]`。macOS 的安装根是 `.../Cursor.app/Contents`。
 - 冒烟检查（只读）：`node scripts/smoke-check.mjs pristine|patched|checksums <安装根> <linux|win32|darwin>`、`node scripts/smoke-check.mjs ui <调试端口>`；CI 草稿：`.github/workflows/platform-smoke.yml`。
 
