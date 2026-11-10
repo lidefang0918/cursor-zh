@@ -10,7 +10,7 @@
 [![下载量](https://img.shields.io/github/downloads/lidefang0918/cursor-zh/total?label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=2ea44f)](https://github.com/lidefang0918/cursor-zh/releases)
 [![许可证](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-MIT-yellow)](LICENSE)
 [![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#-下载安装)
-[![Cursor](https://img.shields.io/badge/Cursor-3.27.14%20%2F%203.27.22-000000)](#支持哪些-cursor-版本)
+[![Cursor](https://img.shields.io/badge/Cursor-3.27.14%20%2F%203.27.22%20%2F%203.28.7%20%2F%203.29.9-000000)](#支持哪些-cursor-版本)
 
 [下载](#-下载安装) · [使用步骤](#-使用步骤) · [常见问题](#-常见问题) · [反馈](https://github.com/lidefang0918/cursor-zh/issues)
 
@@ -91,13 +91,13 @@
 
 | 系统 | 下载 | 说明 |
 |---|---|---|
-| **Windows** 10/11 x64 | [安装版 setup.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.4-win-x64-setup.exe)（推荐，约 4 MB） | 安装后在开始菜单或桌面打开“Cursor 一键汉化” |
-| | [免安装版 portable.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.4-win-x64-portable.exe) | 双击就能用 |
-| | [命令行精简版 cli.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.4-win-x64-cli.zip)（不到 1 MB） | 解压后双击“一键汉化.bat” |
-| **macOS** | [dmg 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.4-mac-universal.dmg)（推荐） | Apple 芯片和 Intel 通用，拖进“应用程序”即可 |
-| | [app.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.4-mac-universal.app.zip) | 解压后拖进“应用程序” |
-| **Linux** x86_64 | [deb 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.4-linux-amd64.deb) | `sudo apt install ./cursor-zh-0.2.4-linux-amd64.deb`，之后在应用菜单打开或运行 `cursor-zh` |
-| | [AppImage](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.4-linux-x86_64.AppImage) | `chmod +x` 后双击运行 |
+| **Windows** 10/11 x64 | [安装版 setup.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-win-x64-setup.exe)（推荐，约 4 MB） | 安装后在开始菜单或桌面打开“Cursor 一键汉化” |
+| | [免安装版 portable.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-win-x64-portable.exe) | 双击就能用 |
+| | [命令行精简版 cli.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-win-x64-cli.zip)（不到 1 MB） | 解压后双击“一键汉化.bat” |
+| **macOS** | [dmg 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-mac-universal.dmg)（推荐） | Apple 芯片和 Intel 通用，拖进“应用程序”即可 |
+| | [app.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-mac-universal.app.zip) | 解压后拖进“应用程序” |
+| **Linux** x86_64 | [deb 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-linux-amd64.deb) | `sudo apt install ./cursor-zh-0.2.5-linux-amd64.deb`，之后在应用菜单打开或运行 `cursor-zh` |
+| | [AppImage](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-linux-x86_64.AppImage) | `chmod +x` 后双击运行 |
 
 想确认文件完整，可以用 [SHA256SUMS.txt](https://github.com/lidefang0918/cursor-zh/releases/latest/download/SHA256SUMS.txt) 核对。
 
@@ -147,11 +147,15 @@
 
 词典放在 GitHub 上，每次汉化都会自动取最新的（取不到就用安装包自带的）。我们每天自动检查 Cursor 有没有出新版本，出了就尽快补上新文案；补好后你**不用重新下载本工具**，再点一次“一键汉化”（或“更新汉化”）就能补全。
 
-> **macOS 用户**：汉化后 Cursor 自带的自动更新可能失败。建议**更新 Cursor 前先点“一键还原”**，更新完再汉化。
+> **macOS 用户**：汉化前请先**保存工作、备份重要文件**。汉化过程中工具会关闭 Cursor，未保存的工作可能丢失。完成后工具会自动重新打开 Cursor。汉化后 Cursor 自带的自动更新可能失败：建议**更新 Cursor 前先点“一键还原”**，更新完再汉化；如汉化失败，点“一键还原”恢复官方原版。
 
 ### 支持哪些 Cursor 版本？
 
-目前专门适配过 **Cursor 3.27.14 和 3.27.22**（3.27.22 已在 Windows、macOS、Linux 真机上验证）。更新的版本也能用，见上一条。查看版本：Cursor 菜单 **帮助 → 关于**（Help → About）。
+目前有完整锚点文件的版本（离线试打通过）：**3.27.14、3.27.22、3.28.7、3.29.9**。3.27.22 已在 Windows、macOS、Linux 真机上验证；3.28.7 和 3.29.9 已完成离线锚点试打，尚未全量真机 UI 验证。
+
+**Cursor 3.29.15** 目前以兼容模式运行（见 [Issue #8](https://github.com/lidefang0918/cursor-zh/issues/8)），能汉化大部分界面，个别新增文案暂时保持英文，不会改坏 Cursor，可随时一键还原。
+
+更新的版本也能用，见上一条。查看版本：Cursor 菜单 **帮助 → 关于**（Help → About）。
 
 ### 怎么完全还原？会不会把 Cursor 弄坏？
 
@@ -159,9 +163,19 @@
 
 想卸载本工具，请**先点一键还原，再卸载**。只卸载工具不会自动还原 Cursor。
 
+### macOS 签名与系统信任（重要）
+
+本工具用名为 **`cursor-zh-local`** 的本地自签证书对 Cursor.app 重新签名。**首次使用时**会弹出系统密码框，要求将该证书的公鑰加入**系统鑰匙串信任**（System Keychain）——这是一次性操作，之后无需重复。
+
+> ⚠️ **涉及系统信任**：加入系统鑰匙串意味着你在此设备上信任该证书的代码签名。该证书仅在本机生成，私鑰不离开本机，不联网，不共享。如果不希望修改系统信任，可以在密码框里选“取消”，工具会回退到 ad-hoc 签名（不加入系统信任，但 Cursor 的鑰匙串访问每次可能需要额外确认）。
+
+**已知限制（CS_KILLED / Code Signature Invalid）**：在极少数情况下，重签名后 Cursor 的子进程可能被内核以“Code Signature Invalid”强制终止。当前已做缓解，但在特定 macOS 版本和进程时序下仍可能发生，**尚未完全修复**。如遇此情况：点 **一键还原** 恢复官方签名，从 [cursor.com](https://cursor.com) 重新下载 Cursor，再重试汉化。
+
+**TCC 授权**： 证书的设备识别（Device Requirement）在重签名后保持稳定，macOS 鑰匙串访问授权在证书不变时可持续。这取决于 macOS 安全策略，不保证永久保留。
+
 ### macOS 提示“Cursor 已损坏，无法打开”？
 
-macOS 修改 App 内的文件后，原来的签名就失效了。工具在汉化后会自动重新签名（ad-hoc）并清除隔离标记，一般不会出现这个提示。如果还是出现了：
+macOS 修改 App 内的文件后，原来的签名就失效了。工具在汉化后会自动重新签名并清除隔离标记，一般不会出现这个提示。如果还是出现了：
 
 1. 先打开本工具点 **一键还原**，Cursor 会恢复为官方原版和官方签名；
 2. 或者在终端执行 `xattr -dr com.apple.quarantine /Applications/Cursor.app` 后再打开；
@@ -169,10 +183,9 @@ macOS 修改 App 内的文件后，原来的签名就失效了。工具在汉化
 
 如果是**本工具自己**提示“已损坏”，请执行上文“首次打开的安全提示”里的 `xattr` 命令。
 
-### macOS 弹出钥匙串“Cursor Safe Storage”提示？
+### macOS 弹出鑰匙串“Cursor Safe Storage”提示？
 
 汉化后 Cursor 用的是新签名，macOS 会询问是否允许它继续读取原来保存的登录凭据。请输入开机密码并选 **始终允许**，之后不会再问。如果点了“拒绝”，Cursor 可能需要重新登录。
-
 ### 日志在哪里？出错了怎么办？
 
 失败时窗口会用中文写明原因和下一步建议。点 **打开日志** 可以直接打开日志文件 `gui.log`。日志、备份和状态都放在这里：
