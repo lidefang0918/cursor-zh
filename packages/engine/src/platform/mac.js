@@ -11,7 +11,9 @@ import { run as defaultRun } from './exec.js';
 // 所以默认（macSign='adhoc'）在写入后对外层 Cursor.app 重签名（只改 MacOS/Cursor 和 _CodeSignature/CodeResources，
 // 内嵌的 Frameworks/Helpers 未改动、保留原 Developer ID 签名），并去掉 com.apple.quarantine。
 // 优先用固定自签证书 cursor-zh-local（DR 稳定，TCC 授权跨次重签保留）；找不到/失败则回退 ad-hoc（--sign -）。
-// 重签后必须把 .app 挪开再挪回：否则 syspolicy 按路径缓存会让随后的 ELECTRON_RUN_AS_NODE/子进程被 SIGKILL。
+// amfid 不读登录钥匙串：证书必须再信任进系统钥匙串，否则 vnode 上的 cs_blob 没有 CS_VALID，
+// 主进程能起来，随后再 exec 同一文件会在 load_code_signature 得到 LOAD_BADMACHO（error 2）。
+// 不要在 codesign 之后 cp 主程序换 inode：codesign --force 已经换过 inode，再复制会把刚挂上的 cs_blob 一起克隆走。
 // 重签名不加 --options runtime：主程序的权限声明里没有 disable-library-validation，无团队 ID 的主程序若开着
 // 加固运行时就无法加载 Cursor 团队签名的 Electron Framework。
 // 'adhoc-deep' 按 `codesign --force --deep` 把所有内嵌代码也重签（备份整个 .app 的 APFS 克隆，还原时整体换回）。
@@ -244,6 +246,44 @@ function codesignArgs(identity, deep, app) {
   return ['--force', ...(deep ? ['--deep'] : []), '--sign', identity, '--preserve-metadata=entitlements', app];
 }
 
+const SYSTEM_KEYCHAIN = '/Library/Keychains/System.keychain';
+
+// 登录钥匙串里的 trustRoot 挡不住 amfid。缺了系统钥匙串信任就抛错，禁止带着未信任证书重签。
+export async function ensureSystemCodeSignTrust({ runner = defaultRun, onLog = () => {} } = {}) {
+  const id = await findLocalSignIdentity({ runner });
+  if (!id) return;
+  const has = await runner('/usr/bin/security', ['find-certificate', '-c', LOCAL_SIGN_IDENTITY, SYSTEM_KEYCHAIN]);
+  if (has.code === 0) return;
+
+  const loginKeychain = path.join(os.homedir(), 'Library/Keychains/login.keychain-db');
+  const exp = await runner('/usr/bin/security', ['find-certificate', '-c', LOCAL_SIGN_IDENTITY, '-p', loginKeychain]);
+  const pem = exp.stdout || '';
+  if (exp.code !== 0 || !pem.includes('BEGIN CERTIFICATE')) {
+    throw new Error('登录钥匙串里没有 cursor-zh-local 证书，无法让 amfid 信任它');
+  }
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'czl-trust-'));
+  const crt = path.join(dir, 'cursor-zh-local.crt');
+  try {
+    await fs.writeFile(crt, pem);
+    onLog('正在把 cursor-zh-local 加入系统钥匙串，让 amfid 信任（需要管理员密码，仅此一次）…');
+    const r = await runner('/usr/bin/osascript', [
+      '-e', 'on run argv',
+      '-e', 'do shell script "/usr/bin/security add-trusted-cert -d -r trustRoot -p codeSign -k /Library/Keychains/System.keychain " & quoted form of (item 1 of argv) with administrator privileges',
+      '-e', 'end run',
+      crt,
+    ]);
+    if (r.code !== 0) {
+      const err = `${r.stderr || ''}\n${r.stdout || ''}`;
+      if (parseOsascriptError(err).cancelled) {
+        throw new Error('未授权把 cursor-zh-local 加入系统钥匙串。amfid 不信任该证书时，Cursor 子进程会被 SIGKILL');
+      }
+      throw new Error(`加入系统钥匙串失败：${err.trim() || '未知错误'}`);
+    }
+  } finally {
+    await fs.rm(dir, { recursive: true, force: true }).catch(() => {});
+  }
+}
+
 export async function signAdhoc(app, {
   deep = false,
   runner = defaultRun,
@@ -290,6 +330,7 @@ export async function signAdhoc(app, {
     }
   }
   const preferred = signId || '-';
+  if (preferred !== '-') await ensureSystemCodeSignTrust({ runner, onLog });
   let r = await runner('/usr/bin/codesign', codesignArgs(preferred, deep, app));
   if (r.code !== 0 && preferred !== '-') {
     onLog(`自签证书重签名失败，回退 ad-hoc：${(r.stderr || r.stdout).trim()}`);
@@ -297,25 +338,7 @@ export async function signAdhoc(app, {
   }
   if (r.code !== 0) throw new Error(`重签名失败：${(r.stderr || r.stdout).trim()}`);
 
-  // codesign --force 原地改写 MacOS/Cursor 内容，但 inode 号不变。内核 vnode 签名缓存按
-  // (device, inode) 索引：inode 不变时，内核可能用旧缓存（原 Developer ID 签名哈希）验证
-  // 新签名的内容 → "embedded signature doesn't match attached signature" → CS_KILLED (SIGKILL)。
-  // 修复：用 copyFile + rename 给 MacOS/Cursor 换一个新 inode，使内核必须从磁盘重新加载签名，
-  // 而不是对比已缓存的旧 vnode 状态。rename 是同目录原子操作，权限继承自 stat 读取的原始 mode。
-  const binary = path.join(app, 'Contents', 'MacOS', 'Cursor');
-  const tmpBin = `${binary}.czl-new-${process.pid}`;
-  try {
-    const st = await fs.stat(binary);
-    await fs.copyFile(binary, tmpBin);
-    await fs.chmod(tmpBin, st.mode & 0o7777);
-    await fs.rename(tmpBin, binary);
-  } catch (e) {
-    await fs.rm(tmpBin, { recursive: true, force: true }).catch(() => {});
-    throw new Error(`重签名后替换可执行文件 inode 失败（${e.code ?? e.message}）`);
-  }
-
-  // 原地重签后，syspolicy 会按路径记住旧策略：同路径再 ELECTRON_RUN_AS_NODE/拉起子进程会被 SIGKILL。
-  // 挪开再挪回可清掉该路径缓存（副本在别的路径上同签名则正常）。
+  // 让 LaunchServices 按新签名重新登记这个路径。codesign 自己会换掉主程序 inode，这里不再 cp。
   const aside = `${app}.czl-resign-${process.pid}`;
   try {
     await fs.rename(app, aside);

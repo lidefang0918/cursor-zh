@@ -460,6 +460,9 @@ async function macAfterWrite(o, method) {
   const app = mac.appPathOf(o.installRoot);
   if (!app) return;
   const runner = runnerOf(o);
+  if (o.macSign === 'adhoc' || o.macSign === 'adhoc-deep') {
+    await mac.ensureSystemCodeSignTrust({ runner, onLog: o.onLog });
+  }
   if (method === 'direct') {
     if (o.macSign === 'adhoc' || o.macSign === 'adhoc-deep') {
       await mac.signAdhoc(app, { deep: o.macSign === 'adhoc-deep', runner, onLog: o.onLog });

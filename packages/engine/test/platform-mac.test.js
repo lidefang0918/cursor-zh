@@ -719,17 +719,17 @@ describe('macOS: codesign must not race live Cursor processes', () => {
     assert.ok(logs.some((l) => /回退 ad-hoc/.test(l)));
   });
 
-  it('signAdhoc replaces MacOS/Cursor with new inode after codesign (vnode cache bust)', async () => {
-    // 验证：codesign 后 MacOS/Cursor 获得了新 inode。
-    // 内核 vnode 签名缓存按 (device, inode) 索引；若 inode 不变则内核可能用旧缓存
-    // 验证新签名的内容 → "embedded signature doesn't match attached signature" → CS_KILLED。
+  it('signAdhoc does not copy MacOS/Cursor after codesign', async () => {
     const home = await tmp('sign-inode-');
     const root = await fakeApp(home);
     const app = path.dirname(root);
     const binary = path.join(root, 'MacOS/Cursor');
-    const beforeIno = (await fs.stat(binary)).ino;
     const runner = async (cmd, args) => {
       if (cmd === 'ps') return { code: 0, stdout: '', stderr: '' };
+      if (cmd === '/usr/bin/security' && args[0] === 'find-identity') {
+        return { code: 0, stdout: '  1) DEAD "cursor-zh-local"\n', stderr: '' };
+      }
+      if (cmd === '/usr/bin/security' && args[0] === 'find-certificate') return { code: 0, stdout: '', stderr: '' };
       if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
         await fs.writeFile(binary, 'MACHO-adhoc');
         await fs.writeFile(path.join(app, 'Contents/_CodeSignature/CodeResources'), '<plist>seal</plist>');
@@ -738,40 +738,9 @@ describe('macOS: codesign must not race live Cursor processes', () => {
       return { code: 0, stdout: '', stderr: '' };
     };
     await mac.signAdhoc(app, { runner, sleep: async () => {}, identity: 'cursor-zh-local' });
-    const afterIno = (await fs.stat(binary)).ino;
-    assert.notEqual(afterIno, beforeIno, 'signAdhoc 应为 MacOS/Cursor 换一个新 inode，消除内核 vnode 签名缓存');
-    assert.equal(await read(binary), 'MACHO-adhoc', '新 inode 应保留签名后的内容');
-  });
-
-  it('signAdhoc binary inode-replace failure preserves signed content and propagates error', async () => {
-    // 验证：copyFile 失败时，已签名的原始内容仍保留，错误正确传播，不静默吞掉。
-    const home = await tmp('sign-inode-err-');
-    const root = await fakeApp(home);
-    const app = path.dirname(root);
-    const binary = path.join(root, 'MacOS/Cursor');
-    // 在 tmpBin 路径预先建目录 → fs.copyFile(binary, tmpBin) 写入目录会失败 (EISDIR)
-    const tmpBin = `${binary}.czl-new-${process.pid}`;
-    await fs.mkdir(tmpBin, { recursive: true });
-    const signedContent = 'MACHO-signed-new';
-    const runner = async (cmd, args) => {
-      if (cmd === 'ps') return { code: 0, stdout: '', stderr: '' };
-      if (cmd === '/usr/bin/codesign' && args.includes('--force')) {
-        await fs.writeFile(binary, signedContent);
-        await fs.writeFile(path.join(app, 'Contents/_CodeSignature/CodeResources'), '<plist>seal</plist>');
-        return { code: 0, stdout: '', stderr: '' };
-      }
-      return { code: 0, stdout: '', stderr: '' };
-    };
-    try {
-      await mac.signAdhoc(app, { runner, sleep: async () => {}, identity: 'cursor-zh-local' });
-      assert.fail('should have thrown on inode replace failure');
-    } catch (e) {
-      assert.match(e.message, /inode|替换可执行文件/, `错误信息应提及 inode 替换失败，实际：${e.message}`);
-      // 已签名的内容应保留（codesign 成功，只是 inode 换新失败）
-      assert.equal(await read(binary), signedContent, '错误传播时不应损坏已签名的 binary 内容');
-    } finally {
-      await fs.rm(tmpBin, { recursive: true, force: true });
-    }
+    const names = await fs.readdir(path.dirname(binary));
+    assert.equal(names.some((n) => n.includes('czl-new')), false);
+    assert.equal(await read(binary), 'MACHO-adhoc');
   });
 });
 
