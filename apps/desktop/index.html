@@ -5,62 +5,228 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'" />
   <title>Cursor 一键汉化</title>
   <style>
-    :root { color-scheme: light; }
-    body { font-family: system-ui, "Noto Sans CJK SC", "WenQuanYi Micro Hei", sans-serif; margin: 0; padding: 18px 22px; background: #f6f7f9; color: #1d2129; font-size: 14px; }
-    h2 { margin: 0 0 12px; font-size: 20px; }
-    .card { background: #fff; border: 1px solid #e3e6eb; border-radius: 8px; padding: 10px 14px; }
-    dl { display: grid; grid-template-columns: 6em 1fr; gap: 6px 10px; margin: 0; }
-    dt { color: #6b7280; } dd { margin: 0; word-break: break-all; }
-    dd.mono { font-family: ui-monospace, monospace; font-size: 13px; }
-    .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; background: #eef0f3; margin-left: 6px; }
-    .t-ok { color: #137333; } .t-warn { color: #b45309; } .t-bad { color: #c5221f; }
-    .notice button.primary { background: #1a73e8; border: 1px solid #1a73e8; color: #fff; border-radius: 4px; }
-    #notice { margin: 12px 0; }
-    .notice { border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; line-height: 1.6; }
-    .notice.info { background: #e8f0fe; border: 1px solid #c6dafc; }
-    .notice.warn { background: #fef7e0; border: 1px solid #f9e2a6; }
-    .notice.error { background: #fce8e6; border: 1px solid #f6c7c2; }
+    :root {
+      color-scheme: light;
+      --bg: #f4f5f7;
+      --surface: #ffffff;
+      --text: #1c2430;
+      --muted: #5c6570;
+      --faint: #8b939e;
+      --line: rgba(28,36,48,0.14);
+      --line-soft: rgba(28,36,48,0.08);
+      --primary: #3b82f6;
+      --primary-text: #ffffff;
+      --btn: #ffffff;
+      --btn-border: rgba(28,36,48,0.16);
+      --ok: #137333;
+      --ok-bg: #e6f4ea;
+      --warn: #b45309;
+      --warn-bg: #fef7e0;
+      --warn-line: #f9e2a6;
+      --bad: #c5221f;
+      --bad-bg: #fce8e6;
+      --bad-line: #f6c7c2;
+      --info: #174ea6;
+      --info-bg: #e8f0fe;
+      --info-line: #c6dafc;
+      --log-bg: #1f2329;
+      --log-text: #d8d8d8;
+      --shadow: 0 16px 40px rgba(0,0,0,0.18);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #16181e;
+      --surface: #1e2128;
+      --text: #e8eaed;
+      --muted: #9aa3b2;
+      --faint: #7a8491;
+      --line: rgba(255,255,255,0.12);
+      --line-soft: rgba(255,255,255,0.08);
+      --primary: #6ea8ff;
+      --primary-text: #0b1220;
+      --btn: rgba(255,255,255,0.04);
+      --btn-border: rgba(255,255,255,0.14);
+      --ok: #81c995;
+      --ok-bg: #16351f;
+      --warn: #f5c06a;
+      --warn-bg: #3a2e14;
+      --warn-line: #6a5420;
+      --bad: #f28b82;
+      --bad-bg: #3b1614;
+      --bad-line: #7a2e28;
+      --info: #a8c7fa;
+      --info-bg: #1b2d4a;
+      --info-line: #2b4a73;
+      --log-bg: #0f1115;
+      --log-text: #d8d8d8;
+      --shadow: 0 16px 40px rgba(0,0,0,0.45);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: system-ui, "Noto Sans CJK SC", "WenQuanYi Micro Hei", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 18px 22px 16px;
+      min-height: 100%;
+    }
+    .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    h1 { margin: 0; font-size: 18px; font-weight: 650; letter-spacing: -0.02em; }
+    .tools { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .tools label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+    #theme {
+      font: inherit; font-size: 12px; color: var(--text);
+      background: var(--btn); border: 1px solid var(--btn-border);
+      border-radius: 6px; padding: 4px 6px; min-height: 32px; max-width: 76px;
+    }
+    .icon-btn {
+      width: 32px; height: 32px; border: 1px solid var(--btn-border);
+      background: var(--btn); color: var(--muted); border-radius: 6px;
+      display: grid; place-items: center; cursor: pointer; padding: 0;
+    }
+    .icon-btn:hover:not(:disabled) { color: var(--text); }
+    .icon-btn:disabled, button:disabled { opacity: 0.45; cursor: default; }
+    button.primary:disabled {
+      opacity: 1;
+      background: color-mix(in srgb, var(--primary) 38%, var(--bg));
+      color: var(--text);
+    }
+    .status-title { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 650; margin: 0 0 4px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+    .dot.ok { background: #34a853; }
+    .dot.warn { background: #e37400; }
+    .dot.bad { background: #d93025; }
+    .meta { color: var(--muted); font-size: 14px; }
+    .badge { display: inline-block; font-size: 12px; padding: 1px 7px; border-radius: 8px; margin-left: 8px; vertical-align: middle; }
+    .badge.ok { background: var(--ok-bg); color: var(--ok); }
+    .badge.warn { background: var(--warn-bg); color: var(--warn); }
+    .badge.bad { background: var(--bad-bg); color: var(--bad); }
+    #running-line { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+    #notice { margin: 12px 0 0; }
+    .notice { border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; line-height: 1.55; font-size: 13px; }
+    .notice.info { background: var(--info-bg); border: 1px solid var(--info-line); }
+    .notice.warn { background: var(--warn-bg); border: 1px solid var(--warn-line); }
+    .notice.error { background: var(--bad-bg); border: 1px solid var(--bad-line); }
     .notice .title { font-weight: 600; }
-    .notice code, .cmd { font-family: ui-monospace, monospace; font-size: 12px; }
-    .cmd { display: block; background: #1f2329; color: #e6e6e6; padding: 8px; border-radius: 6px; margin: 6px 0; word-break: break-all; user-select: all; }
-    .notice button { margin: 6px 8px 0 0; font-size: 13px; padding: 4px 12px; }
-    .actions { margin: 12px 0; }
-    .actions button { font-size: 16px; padding: 8px 22px; margin-right: 12px; border-radius: 6px; border: 1px solid #c9ced6; background: #fff; cursor: pointer; }
-    .actions button.primary { background: #1a73e8; border-color: #1a73e8; color: #fff; }
-    .actions button#localize { font-size: 20px; padding: 14px 44px; font-weight: 600; }
-    #progress { margin: 4px 0 12px; }
-    #progress .bar { height: 6px; border-radius: 3px; background: #e3e6eb; overflow: hidden; position: relative; }
-    #progress .bar::after { content: ""; position: absolute; left: -40%; width: 40%; height: 100%; background: #1a73e8; border-radius: 3px; animation: slide 1.2s ease-in-out infinite; }
+    .notice.info .title { color: var(--info); }
+    .notice.warn .title { color: var(--warn); }
+    .notice.error .title { color: var(--bad); }
+    .notice code, .cmd { font-family: ui-monospace, "IBM Plex Mono", Menlo, monospace; font-size: 12px; }
+    .cmd { display: block; background: var(--log-bg); color: var(--log-text); padding: 8px; border-radius: 6px; margin: 6px 0; word-break: break-all; user-select: all; }
+    .notice button { margin: 6px 8px 0 0; font-size: 13px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--btn-border); background: var(--btn); color: var(--text); cursor: pointer; }
+    .notice button.primary { background: var(--primary); border-color: var(--primary); color: var(--primary-text); }
+    .note-line { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+    .actions { margin: 14px 0 8px; display: flex; flex-direction: column; gap: 8px; }
+    button {
+      font: inherit; cursor: pointer;
+    }
+    .btn {
+      font-size: 15px; padding: 10px 14px; min-height: 40px; border-radius: 8px;
+      border: 1px solid var(--btn-border); background: var(--btn); color: var(--text);
+    }
+    .btn.primary { width: 100%; background: var(--primary); border-color: var(--primary); color: var(--primary-text); font-weight: 600; }
+    #progress { margin: 0 0 10px; }
+    #progress .bar { height: 4px; border-radius: 99px; background: var(--line); overflow: hidden; position: relative; }
+    #progress .bar::after { content: ""; position: absolute; left: -40%; width: 40%; top: 0; bottom: 0; background: var(--primary); border-radius: 99px; animation: slide 1.2s ease-in-out infinite; }
     @keyframes slide { to { left: 100%; } }
-    #progress .step { color: #4b5563; font-size: 13px; margin-top: 6px; }
+    #progress .step { color: var(--muted); font-size: 13px; margin-top: 6px; }
     .next { margin-top: 4px; }
-    button:disabled { opacity: .45; cursor: default; }
-    select { font-size: 13px; }
-    pre { background: #1f2329; color: #d8d8d8; height: 170px; overflow: auto; padding: 8px 10px; border-radius: 8px; margin: 0; font-size: 12px; white-space: pre-wrap; }
-    .err { color: #ff7b72; } .done { color: #7ee787; } .note { color: #8a8f98; font-size: 12px; margin-top: 10px; }
+    #installs-wrap { margin: 8px 0 0; }
+    #installs-wrap label { color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    select { font: inherit; font-size: 13px; color: var(--text); background: var(--btn); border: 1px solid var(--btn-border); border-radius: 6px; padding: 4px 8px; }
+    .folds { margin-top: 8px; border-top: 1px solid var(--line-soft); padding-top: 4px; }
+    .fold-toggle {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; background: none; border: 0; color: var(--muted); font-size: 13px; cursor: pointer; min-height: 32px; text-align: left;
+    }
+    .fold-toggle:hover { color: var(--text); }
+    .details { font-size: 13px; display: grid; grid-template-columns: 6em 1fr; gap: 6px 10px; margin: 0 0 8px; }
+    .details dt { color: var(--muted); } .details dd { margin: 0; word-break: break-all; }
+    pre#log, #log {
+      background: var(--log-bg); color: var(--log-text); height: 160px; overflow: auto;
+      padding: 8px 10px; border-radius: 8px; margin: 0 0 8px; font-size: 12px; white-space: pre-wrap;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+    .log-actions { margin-bottom: 8px; }
+    .log-actions button { font-size: 12px; padding: 4px 8px; min-height: 28px; border-radius: 6px; border: 1px solid var(--btn-border); background: var(--btn); color: var(--text); }
+    #mac-hint { margin-top: 8px; }
+    #mac-hint-toggle {
+      background: none; border: 0; padding: 0; color: var(--faint); font-size: 12px; cursor: pointer; text-align: left; line-height: 1.5;
+    }
+    #mac-facts { margin-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.55; }
+    .foot { margin: 10px 0 0; font-size: 12px; color: var(--faint); }
+    #overlay {
+      position: fixed; inset: 0; background: rgba(20,22,28,0.4);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    #overlay[hidden] { display: none; }
+    #dialog {
+      width: min(480px, 100%); background: var(--surface); color: var(--text);
+      border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: var(--shadow);
+    }
+    #dialog h2 { margin: 0 0 8px; font-size: 16px; }
+    #dialog .body { font-size: 13px; color: var(--muted); max-height: min(420px, calc(100vh - 200px)); overflow: auto; overflow-wrap: break-word; word-break: normal; }
+    #dialog .body p { margin: 0 0 8px; }
+    .nowrap { white-space: nowrap; }
+    #dialog .actions { margin: 14px 0 0; display: flex; justify-content: flex-end; flex-direction: row; gap: 8px; }
+    #dialog .actions .btn { width: auto; min-width: 72px; }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
   </style>
 </head>
 <body>
-  <h2>Cursor 一键汉化</h2>
-  <div class="card">
-    <dl>
-      <dt>安装</dt><dd><select id="installs" hidden></select><span id="root" class="mono">检测中…</span></dd>
-      <dt>安装方式</dt><dd id="kind">-</dd>
-      <dt>版本</dt><dd id="version">-</dd>
-      <dt>写入权限</dt><dd id="perm">-</dd>
-      <dt>状态</dt><dd id="state">-</dd>
-    </dl>
+  <div class="top">
+    <h1>Cursor 一键汉化</h1>
+    <div class="tools">
+      <label>主题
+        <select id="theme" data-testid="theme-select" aria-label="主题">
+          <option value="light">浅色</option>
+          <option value="dark">深色</option>
+          <option value="system">系统</option>
+        </select>
+      </label>
+      <button type="button" class="icon-btn" id="refresh" data-testid="refresh" aria-label="刷新" title="刷新">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"/><path d="M13.5 3.5v3h-3"/></svg>
+      </button>
+    </div>
   </div>
+  <div class="status-title"><span class="dot" id="status-dot"></span><span id="status-title">检测中…</span></div>
+  <div class="meta" id="version-line"></div>
+  <div id="running-line" hidden>Cursor 正在运行</div>
+  <div id="installs-wrap" hidden><label>安装 <select id="installs"></select></label></div>
   <div id="notice"></div>
-  <div class="actions">
-    <button id="localize" class="primary">一键汉化</button>
-    <button id="revert">一键还原</button>
-    <button id="refresh" style="font-size:13px;padding:6px 12px">刷新</button>
-    <button id="showlog" style="font-size:13px;padding:6px 12px">打开日志</button>
-  </div>
+  <p class="note-line" id="success-note" hidden>打开 Cursor 即可。</p>
   <div id="progress" hidden><div class="bar"></div><div class="step" id="step">准备中…</div></div>
-  <pre id="log"></pre>
-  <p class="note">本工具会修改 Cursor 安装文件，修改前自动备份，可一键还原；与 Cursor 官方无关。只有“写入安装目录”这一步需要管理员权限，界面本身始终以普通用户运行。</p>
+  <div class="actions">
+    <button type="button" class="btn primary" id="localize">一键汉化</button>
+    <button type="button" class="btn" id="revert" hidden>还原英文</button>
+  </div>
+  <div class="folds">
+    <button type="button" class="fold-toggle" id="toggle-details" data-testid="toggle-details">详细信息 <span aria-hidden="true">▾</span></button>
+    <div id="details" hidden></div>
+    <button type="button" class="fold-toggle" id="toggle-log" data-testid="toggle-log">日志 <span aria-hidden="true">▾</span></button>
+    <div id="log-wrap" hidden>
+      <pre id="log" aria-label="日志"></pre>
+      <div class="log-actions"><button type="button" id="showlog">打开日志文件</button></div>
+    </div>
+  </div>
+  <div id="mac-hint" hidden>
+    <button type="button" id="mac-hint-toggle">macOS 签名存在已知限制 · 查看</button>
+    <div id="mac-facts" hidden>汉化会用本机固定证书 cursor-zh-local 重签 Cursor.app。首次使用需要管理员授权，将该证书加入系统钥匙串信任（一次性）。若拒绝授权，本次重签名会中止，不会回退到 ad-hoc。CS_KILLED（Code Signature Invalid）尚未完全修复；若遇到，请先还原英文，从 cursor.com 重新下载 Cursor 后再汉化。更新 Cursor 前也应先还原。</div>
+  </div>
+  <p class="foot">修改前自动备份，可还原。</p>
+  <div id="overlay" hidden>
+    <div id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" data-testid="dialog">
+      <h2 id="dialog-title"></h2>
+      <div class="body" id="dialog-body"></div>
+      <div class="actions">
+        <button type="button" class="btn" id="dialog-cancel" data-testid="dialog-cancel">取消</button>
+        <button type="button" class="btn primary" id="dialog-confirm" data-testid="dialog-confirm">继续</button>
+      </div>
+    </div>
+  </div>
   <script src="renderer.js"></script>
 </body>
 </html>

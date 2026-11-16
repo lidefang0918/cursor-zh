@@ -189,7 +189,7 @@ fn main() {
             }
             tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::App("index.html".into()))
                 .title("Cursor 一键汉化")
-                .inner_size(820.0, 860.0)
+                .inner_size(820.0, 720.0)
                 .min_inner_size(640.0, 600.0)
                 .build()?;
             Ok(())
