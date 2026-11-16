@@ -4,7 +4,7 @@
 
 # Cursor 一键汉化
 
-**把 Cursor 的菜单、设置、命令面板和 Agent 界面换成简体中文。点一下就能汉化，也能一键还原成英文原版。**
+**把 Cursor 的菜单、设置、命令面板和 Agent 界面换成简体中文。点「一键汉化」即可，也可以随时「还原英文」。**
 
 [![最新版本](https://img.shields.io/github/v/release/lidefang0918/cursor-zh?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC&color=1677ff)](https://github.com/lidefang0918/cursor-zh/releases/latest)
 [![下载量](https://img.shields.io/github/downloads/lidefang0918/cursor-zh/total?label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=2ea44f)](https://github.com/lidefang0918/cursor-zh/releases)
@@ -18,15 +18,18 @@
 
 ![汉化后的 Cursor：中文菜单](docs/images/hero.webp)
 
-<p align="center"><img src="docs/images/app-localized.webp" width="560" alt="Cursor 一键汉化 工具界面" /></p>
+<p align="center"><img src="docs/images/app-localized.webp" width="560" alt="汉化完成后的工具窗口（Linux 真实窗口）" /></p>
+<p align="center"><sub>工具界面截图来自 Linux 真实 Tauri 窗口（Cursor 3.29.9）。上方是汉化后的 Cursor 本身。</sub></p>
 
 ## ✨ 特点
 
-- **一键汉化，一键还原**：修改前自动备份原版文件。还原后与原版**逐字节相同**，签名也一并恢复。
+- **一键汉化，随时还原**：修改前自动备份原版文件。点「还原英文」后与原版**逐字节相同**，macOS 上的官方签名也一并恢复。
+- **操作前确认**：如果 Cursor 正在运行，会先确认再以正常方式退出；还原前也会再确认一次。
+- **首屏只显示关键信息**：版本、汉化状态和主按钮一目了然。安装路径、词典和诊断在「详细信息」里按需展开，完整日志同样默认收起。可在窗口右上角切换主题（系统 / 浅色 / 深色）。
 - **只翻界面，不碰内容**：你的代码、文件名、AI 对话内容都不会被翻译。工具不读取、不修改你的登录信息、聊天记录和项目文件，也不收集、不上传任何数据。
 - **品牌名和专有名词保留原文**：Cursor、Agent 里的模型名（Claude、GPT、Grok……）、Azure OpenAI、AWS Bedrock 等保持英文，不出现生硬的直译。
 - **安装包只有几 MB**：界面使用系统自带的网页组件，不额外打包浏览器内核。
-- **Cursor 升级后照样能用**：Cursor 自动更新后，工具会显示“汉化已失效”，重新点一下即可。就算是本工具还没专门适配的新版本，也能直接汉化（能翻的都翻，个别新文案暂时保持英文）。
+- **Cursor 升级后照样能用**：Cursor 自动更新后，工具会显示「Cursor 已更新，汉化已失效」，点「重新汉化」即可。就算是本工具还没专门适配的新版本，窗口会标「兼容模式」，仍可汉化（能翻的都翻，个别新文案暂时保持英文）。
 - **词典自动更新**：每次汉化都会从 GitHub 取最新词典（国内访问慢时自动改用 jsDelivr 镜像），不用重新下载安装包；没网时用安装包自带的词典，照样能汉化。
 - **三个平台都能用**：Windows 10/11、macOS（Apple 芯片和 Intel 通用）、Linux（deb、rpm、AppImage 安装的 Cursor 都支持）。
 
@@ -49,7 +52,7 @@
 > 剩下的 1.5% 并不是漏翻，而是本来就该保留原文的内容，比如“Claude Opus 5.5 已启用”里的模型名、`例如 gpt-35-turbo` 这样的示例值。静态补丁替换 3078 处，模板片段 189 处，NLS 文案 1529 条，未命中 0 条。
 
 <details>
-<summary><b>📸 更多截图（点开查看）</b></summary>
+<summary><b>📸 更多截图：汉化后的 Cursor 界面（点开查看）</b></summary>
 
 **汉化前和汉化后对比（Cursor 设置 → 常规）**
 
@@ -91,17 +94,18 @@
 
 | 系统 | 下载 | 说明 |
 |---|---|---|
-| **Windows** 10/11 x64 | [安装版 setup.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-win-x64-setup.exe)（推荐，约 4 MB） | 安装后在开始菜单或桌面打开“Cursor 一键汉化” |
-| | [免安装版 portable.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-win-x64-portable.exe) | 双击就能用 |
-| | [命令行精简版 cli.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-win-x64-cli.zip)（不到 1 MB） | 解压后双击“一键汉化.bat” |
-| **macOS** | [dmg 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-mac-universal.dmg)（推荐） | Apple 芯片和 Intel 通用，拖进“应用程序”即可 |
-| | [app.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-mac-universal.app.zip) | 解压后拖进“应用程序” |
-| **Linux** x86_64 | [deb 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-linux-amd64.deb) | `sudo apt install ./cursor-zh-0.2.5-linux-amd64.deb`，之后在应用菜单打开或运行 `cursor-zh` |
-| | [AppImage](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.5-linux-x86_64.AppImage) | `chmod +x` 后双击运行 |
+| **Windows** 10/11 x64 | [安装版 setup.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.6-win-x64-setup.exe)（推荐，约 4 MB） | 安装后在开始菜单或桌面打开“Cursor 一键汉化” |
+| | [免安装版 portable.exe](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.6-win-x64-portable.exe) | 双击就能用 |
+| | [命令行精简版 cli.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.6-win-x64-cli.zip)（不到 1 MB） | 解压后双击“一键汉化.bat” |
+| **macOS** | [dmg 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.6-mac-universal.dmg)（推荐） | Apple 芯片和 Intel 通用，拖进“应用程序”即可 |
+| | [app.zip](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.6-mac-universal.app.zip) | 解压后拖进“应用程序” |
+| **Linux** x86_64 | [deb 安装包](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.6-linux-amd64.deb) | `sudo apt install ./cursor-zh-0.2.6-linux-amd64.deb`，之后在应用菜单打开或运行 `cursor-zh` |
+| | [AppImage](https://github.com/lidefang0918/cursor-zh/releases/latest/download/cursor-zh-0.2.6-linux-x86_64.AppImage) | `chmod +x` 后双击运行 |
 
 想确认文件完整，可以用 [SHA256SUMS.txt](https://github.com/lidefang0918/cursor-zh/releases/latest/download/SHA256SUMS.txt) 核对。
 
-### 首次打开的安全提示
+<details>
+<summary><b>首次打开的安全提示</b></summary>
 
 本工具没有购买代码签名证书，系统第一次打开时会提醒。这是正常现象：
 
@@ -115,79 +119,108 @@
 
 - **Windows**：如果弹出“Windows 已保护你的电脑”（SmartScreen），点 **更多信息 → 仍要运行**。
 
+</details>
+
 ## 🚀 使用步骤
 
-1. **打开“Cursor 一键汉化”**。首屏显示 Cursor 版本、汉化状态和是否已适配。安装路径、词典和诊断在「详细信息」里按需展开，完整日志同样默认收起。
-2. **点“一键汉化”**。如果 Cursor 正开着，会先确认再以正常方式退出（macOS 相当于 Command+Q，不是强制结束）。未保存的内容由 Cursor 自动保留，完成后会按原来的方式重新打开。在 macOS 上，真正写入前还会说明系统钥匙串信任和已知的签名限制；拒绝授权将中止本次操作，不会回退到 ad-hoc。
+1. **打开“Cursor 一键汉化”**。首屏显示 Cursor 版本、汉化状态和是否已适配。安装路径、词典和诊断在「详细信息」里按需展开，完整日志同样默认收起。右上角可以切换主题。
+2. **点「一键汉化」**。如果 Cursor 正开着，会先确认再以正常方式退出（macOS 相当于 Command+Q，不是强制结束）。未保存的内容由 Cursor 自动保留，完成后会按原来的方式重新打开。在 macOS 上，真正写入前还会说明系统钥匙串信任和已知的签名限制；拒绝授权将中止本次操作，不会回退到 ad-hoc。
+3. **看到「已是中文界面」就好了**。主按钮会变成「还原英文」。然后打开（或重启）Cursor 即可。如果个别地方还是英文，再重启一次 Cursor。
 
-   <img src="docs/images/app-confirm-close.webp" width="520" alt="确认关闭 Cursor" />
+   <p align="center"><img src="docs/images/app-localized.webp" width="520" alt="已是中文界面，可点还原英文（Linux 真实窗口）" /></p>
+   <p align="center"><sub>Linux 真实窗口：汉化成功后显示「已是中文界面」。</sub></p>
 
-3. **看到“已是中文界面”就好了**。然后打开（或重启）Cursor 即可。如果个别地方还是英文，再重启一次 Cursor。
+**想换回英文**：点 **还原英文**，在确认框里再点一次「还原英文」。还原后的文件与官方原版逐字节相同，状态会回到「还未汉化」。
 
-   <img src="docs/images/app-localized.webp" width="520" alt="汉化完成" />
+<p align="center"><img src="docs/images/app-revert-confirm.webp" width="420" alt="还原为英文原版确认框" /></p>
+<p align="center"><img src="docs/images/app-reverted.webp" width="520" alt="还原完成后显示还未汉化（Linux 真实窗口）" /></p>
+<p align="center"><sub>Linux 真实窗口：还原前确认，以及还原完成后的「还未汉化」。</sub></p>
 
-**想换回英文**：点 **还原英文**。还原后的文件与官方原版逐字节相同。
+<details>
+<summary><b>管理员权限、多份安装</b></summary>
 
-<img src="docs/images/app-reverted.webp" width="520" alt="还原完成" />
+只有“把文件写进安装目录”这一步可能需要权限，工具本身始终以普通用户运行。
 
-> **需要管理员权限的情况**：只有“把文件写进安装目录”这一步可能需要权限，工具本身始终以普通用户运行。
-> - Windows 系统级安装（`C:\Program Files`）会弹出“用户账户控制”，点“是”。
-> - Linux 的 deb/rpm 安装会弹出系统授权窗口，输入登录密码。
-> - macOS 如果被“App 管理”拦截，到 **系统设置 → 隐私与安全性 → App 管理** 打开本工具的开关。
+- Windows 系统级安装（`C:\Program Files`）会弹出“用户账户控制”，点“是”。
+- Linux 的 deb/rpm 安装会弹出系统授权窗口，输入登录密码。
+- macOS 如果被“App 管理”拦截，到 **系统设置 → 隐私与安全性 → App 管理** 打开本工具的开关。
+
+如果本机有多份 Cursor 安装，工具一次只管理当前选中的那一份。窗口里可以手动选择安装位置；若发现另一份安装处于汉化状态，请先切换过去并点「还原英文」。
+
+</details>
 
 ## ❓ 常见问题
 
 ### Cursor 更新后又变回英文了？
 
-这是正常的，Cursor 更新时会覆盖汉化过的文件。打开本工具，按钮会显示“重新汉化”，点一下即可。
+这是正常的，Cursor 更新时会覆盖汉化过的文件。打开本工具，按钮会显示「重新汉化」，点一下即可。**更新 Cursor 之前，建议先点「还原英文」。**
 
 ### Cursor 升级后还能用吗？
 
-能。Cursor 升级到本工具还没专门适配的新版本时，窗口里会显示“兼容模式”，照常点“一键汉化”就行：工具会用最近一版的词典逐条匹配，能翻的都翻，匹配不上的少数地方保持英文，不会报错，也不会改坏 Cursor（不满意随时一键还原）。完成后会告诉你“已汉化多少条、多少条在此版本未匹配”。
+能。Cursor 升级到本工具还没专门适配的新版本时，窗口里会显示「兼容模式」，照常点「一键汉化」就行：工具会用最近一版的词典逐条匹配，能翻的都翻，匹配不上的少数地方保持英文，不会报错，也不会改坏 Cursor（不满意随时点「还原英文」）。完成后会告诉你“已汉化多少条、多少条在此版本未匹配”。
 
-词典放在 GitHub 上，每次汉化都会自动取最新的（取不到就用安装包自带的）。我们每天自动检查 Cursor 有没有出新版本，出了就尽快补上新文案；补好后你**不用重新下载本工具**，再点一次“一键汉化”（或“更新汉化”）就能补全。
+词典放在 GitHub 上，每次汉化都会自动取最新的（取不到就用安装包自带的）。我们每天自动检查 Cursor 有没有出新版本，出了就尽快补上新文案；补好后你**不用重新下载本工具**，再点一次「一键汉化」（或「更新汉化」）就能补全。
 
-> **macOS 用户**：汉化前请先**保存工作、备份重要文件**。汉化过程中工具会关闭 Cursor，未保存的工作可能丢失。完成后工具会自动重新打开 Cursor。汉化后 Cursor 自带的自动更新可能失败：建议**更新 Cursor 前先点“一键还原”**，更新完再汉化；如汉化失败，点“一键还原”恢复官方原版。
+<details>
+<summary><b>macOS 用户请先看这里</b></summary>
+
+汉化前请先**保存工作、备份重要文件**。汉化过程中工具会关闭 Cursor，未保存的工作可能丢失。完成后工具会自动重新打开 Cursor。汉化后 Cursor 自带的自动更新可能失败：建议**更新 Cursor 前先点「还原英文」**，更新完再汉化；如汉化失败，点「还原英文」恢复官方原版。
+
+macOS 上仍有已知限制：**CS_KILLED / Code Signature Invalid 尚未完全修复**。详见下面「macOS 签名与系统信任」。
+
+</details>
 
 ### 支持哪些 Cursor 版本？
 
-目前有完整锚点文件的版本（离线试打通过）：**3.27.14、3.27.22、3.28.7、3.29.9、3.29.15、3.30.8、3.30.14**。3.27.22 已在 Windows、macOS、Linux 真机上验证。3.29.9 已完成离线锚点试打，并在 Linux 上用真实 Tauri 窗口对官方安装包的独立解包副本完成汉化与还原（还原后引擎会改写的 4 个文件 sha256 与原版一致）；本次未做 macOS / Windows 原生窗口验证，不能视为全平台通过。过程记录与真实窗口截图见 `docs/images/ui-progressive/VERIFY.md`（`native-*.png` 才是原生窗口；无此前缀的是 Playwright 模拟渲染，不要当成原生）。3.28.7、3.29.15、3.30.8 和 3.30.14 已完成离线锚点试打，尚未全量真机 UI 验证。3.29.15、3.30.8 与 3.30.14 的离线校验均使用官方 Linux .deb、macOS universal zip 与 Windows x64 user-setup，三平台 workbench 与 NLS 文件一致（product.json commit 分别为 `86776fcb52ca505783155631089b65d646f9b030`、`4a44c846d0b817fab060823f93c63ea2861ac190`、`5f54c8173e5552412beb40702adac16275677fa0`）。3.30.8 / 3.30.14 设置页有 3 条短标签（Low / Medium / High）因与枚举名碰撞，未收入静态替换，由 DOM 补漏处理。
+目前有完整锚点文件的版本：**3.27.14、3.27.22、3.28.7、3.29.9、3.29.15、3.30.8、3.30.14**。
 
-更新的版本也能用，见上一条。查看版本：Cursor 菜单 **帮助 → 关于**（Help → About）。
+- **3.27.22** 已在 Windows、macOS、Linux 真机上验证。
+- **3.29.9** 已完成离线锚点试打，并在 Linux 上用真实 Tauri 窗口对官方安装包的独立解包副本完成汉化与还原（还原后引擎会改写的 4 个文件 sha256 与原版一致）。本次未做 macOS / Windows 原生窗口验证，不能视为全平台通过。
+- **3.28.7、3.29.15、3.30.8、3.30.14** 已完成离线锚点试打，尚未全量真机 UI 验证。离线比对不能等同于全真机覆盖。
+
+更新的版本也能用，见上一条「兼容模式」。查看版本：Cursor 菜单 **帮助 → 关于**（Help → About）。
+
+<details>
+<summary><b>各版本锚点与校验细节</b></summary>
+
+3.29.15、3.30.8 与 3.30.14 的离线校验均使用官方 Linux .deb、macOS universal zip 与 Windows x64 user-setup，三平台 workbench 与 NLS 文件一致（product.json commit 分别为 `86776fcb52ca505783155631089b65d646f9b030`、`4a44c846d0b817fab060823f93c63ea2861ac190`、`5f54c8173e5552412beb40702adac16275677fa0`）。3.30.8 / 3.30.14 额外补了 25 条词典；设置页有 3 条短标签（Low / Medium / High）因与枚举名碰撞，未收入静态替换，由 DOM 补漏处理。
+
+过程记录与真实窗口截图见 `docs/images/ui-progressive/VERIFY.md`（`native-*.png` 才是原生窗口；无此前缀的是 Playwright 模拟渲染，不要当成原生）。README 里的工具界面图均来自上述 Linux 真实窗口，不是模拟渲染。
+
+</details>
 
 ### 怎么完全还原？会不会把 Cursor 弄坏？
 
-点 **一键还原** 即可。工具在第一次汉化前会把原版文件备份到下面“日志在哪里”表格中的目录里（`backups/<版本号>`），还原时逐个校验 sha256 后写回。还原后与官方原版逐字节相同，macOS 上的官方签名也会一起恢复。
+点 **还原英文** 即可。工具在第一次汉化前会把原版文件备份到下面「日志在哪里」表格中的目录里（`backups/<版本号>`），还原时逐个校验 sha256 后写回。还原后与官方原版逐字节相同，macOS 上的官方签名也会一起恢复。
 
-想卸载本工具，请**先点一键还原，再卸载**。只卸载工具不会自动还原 Cursor。
+想卸载本工具，请**先点「还原英文」，再卸载**。只卸载工具不会自动还原 Cursor。
 
-### macOS 签名与系统信任（重要）
+<details>
+<summary><b>macOS 签名、系统信任与常见提示</b></summary>
 
 本工具用名为 **`cursor-zh-local`** 的本地自签证书对 Cursor.app 重新签名。**首次使用时**会弹出系统密码框，要求将该证书的公钥加入**系统钥匙串信任**（System Keychain）——这是一次性操作，之后无需重复。
 
 > ⚠️ **涉及系统信任**：加入系统钥匙串意味着你在此设备上信任该证书的代码签名。该证书仅在本机生成，私钥不离开本机，不联网，不共享。如果拒绝授权或授权失败，工具会报错并中止本次重签名，不会回退到 ad-hoc。（如果系统里根本没有安装 cursor-zh-local 证书，工具直接用 ad-hoc 重签名，不会弹出授权框。）
 
-**已知限制（CS_KILLED / Code Signature Invalid）**：尚未完全修复。将证书加入系统钥匙串信任（让 amfid 能正确解析签名）是当前采用的缓解方向，但在特定 macOS 版本和进程时序下仍可能发生。如遇此情况：点 **一键还原** 恢复官方签名，从 [cursor.com](https://cursor.com) 重新下载 Cursor，再重试汉化。
+**已知限制（CS_KILLED / Code Signature Invalid）**：尚未完全修复。将证书加入系统钥匙串信任（让 amfid 能正确解析签名）是当前采用的缓解方向，但在特定 macOS 版本和进程时序下仍可能发生。如遇此情况：点 **还原英文** 恢复官方签名，从 [cursor.com](https://cursor.com) 重新下载 Cursor，再重试汉化。曾尝试过对主程序 copy+rename 换新 inode 的方案，该方案已撤销，现行流程不再使用。
 
-**TCC 授权**： 证书的设备识别（Device Requirement）在重签名后保持稳定，macOS 钥匙串访问授权在证书不变时可持续。这取决于 macOS 安全策略，不保证永久保留。
+**TCC 授权**：证书的设备识别（Device Requirement）在重签名后保持稳定，macOS 钥匙串访问授权在证书不变时可持续。这取决于 macOS 安全策略，不保证永久保留。
 
-### macOS 提示“Cursor 已损坏，无法打开”？
+**提示“Cursor 已损坏，无法打开”？** macOS 修改 App 内的文件后，原来的签名就失效了。工具在汉化后会自动重新签名并清除隔离标记，一般不会出现这个提示。如果还是出现了：
 
-macOS 修改 App 内的文件后，原来的签名就失效了。工具在汉化后会自动重新签名并清除隔离标记，一般不会出现这个提示。如果还是出现了：
-
-1. 先打开本工具点 **一键还原**，Cursor 会恢复为官方原版和官方签名；
+1. 先打开本工具点 **还原英文**，Cursor 会恢复为官方原版和官方签名；
 2. 或者在终端执行 `xattr -dr com.apple.quarantine /Applications/Cursor.app` 后再打开；
 3. 实在不行，从 [cursor.com](https://cursor.com) 重新下载安装 Cursor 即可，设置和聊天记录不受影响。
 
-如果是**本工具自己**提示“已损坏”，请执行上文“首次打开的安全提示”里的 `xattr` 命令。
+如果是**本工具自己**提示“已损坏”，请执行上文「首次打开的安全提示」里的 `xattr` 命令。
 
-### macOS 弹出钥匙串“Cursor Safe Storage”提示？
+**弹出钥匙串「Cursor Safe Storage」提示？** 汉化后 Cursor 用的是新签名，macOS 会询问是否允许它继续读取原来保存的登录凭据。请输入开机密码并选 **始终允许**，之后不会再问。如果点了“拒绝”，Cursor 可能需要重新登录。
 
-汉化后 Cursor 用的是新签名，macOS 会询问是否允许它继续读取原来保存的登录凭据。请输入开机密码并选 **始终允许**，之后不会再问。如果点了“拒绝”，Cursor 可能需要重新登录。
+</details>
 
 ### 日志在哪里？出错了怎么办？
 
-失败时窗口会用中文写明原因和下一步建议。点 **打开日志** 可以直接打开日志文件 `gui.log`。日志、备份和状态都放在这里：
+失败时窗口会用中文写明原因和下一步建议。在「日志」里展开后，可点 **打开日志文件** 打开 `gui.log`。日志、备份和状态都放在这里：
 
 | 系统 | 位置 |
 |---|---|
@@ -195,7 +228,7 @@ macOS 修改 App 内的文件后，原来的签名就失效了。工具在汉化
 | macOS | `~/Library/Application Support/cursor-zh-localizer` |
 | Linux | `~/.config/cursor-zh-localizer` |
 
-`backups` 目录里是汉化前的原版文件，“一键还原”要靠它，请不要删除。
+`backups` 目录里是汉化前的原版文件，「还原英文」要靠它，请不要删除。
 
 ### 汉化会影响 Cursor 的 AI 功能或者我的代码吗？
 
@@ -214,7 +247,7 @@ macOS 修改 App 内的文件后，原来的签名就失效了。工具在汉化
 ## ⚠️ 免责声明
 
 - 本项目是社区作品，**与 Cursor（Anysphere Inc.）官方无关**。“Cursor”是其所有者的商标。
-- 本工具会**修改你电脑上 Cursor 的安装文件**（修改前自动备份，可一键还原）。请自行评估使用风险，作者不对因使用本工具造成的任何损失负责。
+- 本工具会**修改你电脑上 Cursor 的安装文件**（修改前自动备份，可还原英文）。请自行评估使用风险，作者不对因使用本工具造成的任何损失负责。
 
 ## 📄 许可证
 

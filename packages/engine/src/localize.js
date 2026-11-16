@@ -277,7 +277,7 @@ export async function localize(opts = {}) {
     const sv = await supportedVersions(o);
     return fail('UNSUPPORTED', `没在 ${info.root} 找到 Cursor 的界面文件，无法汉化（已适配：${sv.join('、') || '无'}）`, { supportedVersions: sv });
   }
-  if (anchors.fallback) log(`⚠ Cursor ${info.version} 还没有专门适配，按 ${anchors.base} 的词典尽力汉化：匹配不上的地方保持英文，随时可以一键还原`);
+  if (anchors.fallback) log(`⚠ Cursor ${info.version} 还没有专门适配，按 ${anchors.base} 的词典尽力汉化：匹配不上的地方保持英文，随时可以还原英文`);
   const files = targetFiles(anchors);
   const backupFiles = [...files, ...signFiles(o)];
   const w = await checkWritable(o.installRoot, backupFiles, { platform: o.platform, probe: o.probeWritable });
