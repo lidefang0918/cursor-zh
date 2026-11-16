@@ -1,5 +1,20 @@
 # 更新日志
 
+## 未发布
+
+### 界面
+- 渐进披露首屏：风险确认移到操作前
+- 未找到 Cursor 时不再把「还原英文」作为主按钮（过往汉化记录仍在也不展示；其它可还原情境保留）
+- 未找到 Cursor 时「详细信息」折叠不再占布局：作者样式里的 `display:flex` 会盖掉 `hidden`，已补 `.fold-toggle[hidden] { display: none }`（与 `#overlay[hidden]` 相同）
+
+### Linux 真实窗口验证（非全平台）
+- 在 Linux 真实 Tauri debug 窗口中，对官方 Cursor 3.29.9 安装包的独立解包副本完成汉化与还原；还原后 4 个引擎改写文件 sha256 与原版一致
+- 未做 macOS / Windows 原生窗口验证
+- 构建依赖已安装；`npx tauri build --debug --no-bundle` 用于验证编译（带打包时 linuxdeploy 打 AppImage 曾失败，debug 二进制本身可用）
+- 已知：启动时可能出现 AT-SPI / dbind 警告；本次未能缩小窗口（默认 820×720，配置最小 640×600）
+- 记录：`docs/images/ui-progressive/VERIFY.md`
+
+
 ## v0.2.5 (2026-11-10)
 
 ### 新增适配

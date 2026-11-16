@@ -48,7 +48,7 @@ ipcMain.handle('copy', (_e, text) => { clipboard.writeText(String(text)); return
 app.whenReady().then(() => {
   fileLog(`启动 v${app.getVersion()} ${process.platform}-${process.arch} electron ${process.versions.electron}`);
   win = new BrowserWindow({
-    width: 820, height: 860, minHeight: 600, title: 'Cursor 一键汉化',
+    width: 820, height: 720, minWidth: 640, minHeight: 600, title: 'Cursor 一键汉化',
     icon: path.join(here, 'build', 'icon.png'),
     webPreferences: { preload: path.join(here, 'preload.cjs'), contextIsolation: true, sandbox: true },
   });
