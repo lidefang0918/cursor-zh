@@ -10,7 +10,7 @@
 [![下载量](https://img.shields.io/github/downloads/lidefang0918/cursor-zh/total?label=%E4%B8%8B%E8%BD%BD%E9%87%8F&color=2ea44f)](https://github.com/lidefang0918/cursor-zh/releases)
 [![许可证](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-MIT-yellow)](LICENSE)
 [![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#-下载安装)
-[![Cursor](https://img.shields.io/badge/Cursor-3.27.14%20%2F%203.27.22%20%2F%203.28.7%20%2F%203.29.9-000000)](#支持哪些-cursor-版本)
+[![Cursor](https://img.shields.io/badge/Cursor-3.27.14%20%2F%203.27.22%20%2F%203.28.7%20%2F%203.29.9%20%2F%203.29.15-000000)](#支持哪些-cursor-版本)
 
 [下载](#-下载安装) · [使用步骤](#-使用步骤) · [常见问题](#-常见问题) · [反馈](https://github.com/lidefang0918/cursor-zh/issues)
 
@@ -151,9 +151,7 @@
 
 ### 支持哪些 Cursor 版本？
 
-目前有完整锚点文件的版本（离线试打通过）：**3.27.14、3.27.22、3.28.7、3.29.9**。3.27.22 已在 Windows、macOS、Linux 真机上验证；3.28.7 和 3.29.9 已完成离线锚点试打，尚未全量真机 UI 验证。
-
-**Cursor 3.29.15** 目前以兼容模式运行（见 [Issue #8](https://github.com/lidefang0918/cursor-zh/issues/8)），能汉化大部分界面，个别新增文案暂时保持英文，不会改坏 Cursor，可随时一键还原。
+目前有完整锚点文件的版本（离线试打通过）：**3.27.14、3.27.22、3.28.7、3.29.9、3.29.15**。3.27.22 已在 Windows、macOS、Linux 真机上验证；3.28.7、3.29.9 和 3.29.15 已完成离线锚点试打，尚未全量真机 UI 验证。3.29.15 的离线校验使用官方 Linux .deb、macOS universal zip 与 Windows x64 user-setup，三平台 workbench 与 NLS 文件一致（product.json commit `86776fcb52ca505783155631089b65d646f9b030`）。
 
 更新的版本也能用，见上一条。查看版本：Cursor 菜单 **帮助 → 关于**（Help → About）。
 
