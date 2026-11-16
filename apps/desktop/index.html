@@ -141,6 +141,8 @@
       width: 100%; display: flex; justify-content: space-between; align-items: center;
       padding: 8px 0; background: none; border: 0; color: var(--muted); font-size: 13px; cursor: pointer; min-height: 32px; text-align: left;
     }
+    /* 与 #overlay[hidden] 相同：作者样式里的 display:flex 会盖掉 UA 的 [hidden]{display:none} */
+    .fold-toggle[hidden] { display: none; }
     .fold-toggle:hover { color: var(--text); }
     .details { font-size: 13px; display: grid; grid-template-columns: 6em 1fr; gap: 6px 10px; margin: 0 0 8px; }
     .details dt { color: var(--muted); } .details dd { margin: 0; word-break: break-all; }
