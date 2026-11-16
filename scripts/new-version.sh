@@ -41,7 +41,12 @@ if [ "$ALL" = 1 ]; then
   elif [ "$V" = "$LATEST" ]; then WURL=$(api win32-x64-user downloadUrl); MURL=$(api darwin-universal downloadUrl | sed 's/\.dmg$/.zip/')
   else die "$V 不是最新版，接口查不到 Windows/macOS 下载地址；请设置 CZL_BASE，或去掉 --all-platforms"; fi
   get "$MURL" "$D/mac-universal.zip"
-  [ -d "$D/mac/Cursor.app" ] || { rm -rf "$D/mac"; "$Z7" x -snl -y -o"$D/mac" "$D/mac-universal.zip" >/dev/null; }
+  # 7zz 可能因框架里的多层符号链接报 exit 2 并跳过这些链接；Resources/app 仍可完整解出
+  if [ ! -d "$D/mac/Cursor.app/Contents/Resources/app" ]; then
+    rm -rf "$D/mac"
+    "$Z7" x -snl -y -o"$D/mac" "$D/mac-universal.zip" >/dev/null || true
+    [ -d "$D/mac/Cursor.app/Contents/Resources/app" ] || die "解包 macOS 安装包失败"
+  fi
   MROOT="$D/mac/Cursor.app/Contents"
   SPECS="$SPECS mac=darwin:$MROOT"
   get "$WURL" "$D/win-user.exe"
@@ -50,6 +55,12 @@ if [ "$ALL" = 1 ]; then
     rm -rf "$D/win"
     # innoextract 1.9（Ubuntu 自带）还不认识 Inno Setup 6.4；解不开就跳过 Windows 核对，由 platform-smoke 工作流在 Windows 机器上验证
     "$INNO" -s -d "$D/win" "$D/win-user.exe" >/dev/null 2>&1 || say "⚠ 本机 innoextract 解不开 Windows 安装包，跳过 Windows 核对"
+  fi
+  # innoextract ≥1.13 可能把应用树解到 code$GetDestDir，而不是 app/
+  if [ ! -d "$WROOT/resources" ]; then
+    for alt in "$D/win/code\$GetDestDir" "$D/win/code\$GetDestDir/app"; do
+      if [ -d "$alt/resources" ]; then WROOT=$alt; break; fi
+    done
   fi
   for f in out/vs/workbench/workbench.desktop.main.js out/vs/workbench/workbench.glass.main.js out/nls.messages.json; do
     a=$(sha256sum "$LROOT/resources/app/$f" | cut -c1-64)
