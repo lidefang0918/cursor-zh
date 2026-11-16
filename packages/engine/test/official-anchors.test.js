@@ -18,7 +18,7 @@ const exprs = (s) => (s.match(/\$\{[^{}`]+\}/g) || []).sort().join();
 
 describe('official anchors', () => {
   it('required adapted versions ship a shared anchors file for each listed platform', async () => {
-    for (const version of ['3.27.14', '3.27.22', '3.28.7', '3.29.9', '3.29.15']) {
+    for (const version of ['3.27.14', '3.27.22', '3.28.7', '3.29.9', '3.29.15', '3.30.8']) {
       const rel = path.join(anchorsDir, `${version}.json`);
       assert.ok(fs.existsSync(rel), `missing anchors/${version}.json`);
       const meta = JSON.parse(fs.readFileSync(rel, 'utf8'));
