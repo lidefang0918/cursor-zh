@@ -237,6 +237,31 @@ describe('渐进披露 UI', () => {
     assert.ok(sel && !sel.hidden && sel.children.length === 2);
   });
 
+  it('未找到 Cursor 时不展示还原英文，即使仍有过往汉化记录；也不展示空的详细信息', async () => {
+    const ui = await mountUI({
+      platform: 'linux',
+      status: baseStatus({
+        platform: 'linux',
+        kind: null,
+        cursor: null,
+        supported: false,
+        installs: [],
+        localized: false,
+        stale: false,
+        pending: null,
+        state: { localized: true, at: '2026-10-30T02:45:40.824Z', version: '3.27.22', installRoot: '/usr/share/cursor' },
+      }),
+    });
+    assert.match(ui.visibleText(), /未找到 Cursor/);
+    const rev = ui.$('revert');
+    assert.ok(rev, '还原按钮仍在 DOM 以便日后恢复');
+    assert.equal(rev.hidden, true, '无可还原的当前安装时不应展示还原英文');
+    assert.doesNotMatch(ui.visibleText(), /还原英文/);
+    assert.ok(ui.$('localize')?.hidden, '未找到时不展示一键汉化主按钮');
+    assert.ok(ui.$('toggle-details')?.hidden, '没有安装信息时不展示空的详细信息折叠');
+    assert.ok(!ui.$('details')?.textContent?.trim(), '详细信息内容应为空');
+  });
+
   it('忙碌时锁定冲突按钮', async () => {
     let release;
     const gate = new Promise((r) => { release = r; });

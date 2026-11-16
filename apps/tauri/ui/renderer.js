@@ -233,7 +233,8 @@ function applyButtons(s) {
     loc.hidden = true;
     loc.textContent = '一键汉化';
   } else loc.textContent = '一键汉化';
-  const canRevert = !!(s.state?.localized || s.pending || s.localized || s.stale);
+  // 没有当前安装时不可还原：过往 state.localized 残留不应把「还原英文」摆在主界面
+  const canRevert = !!(s.cursor && (s.state?.localized || s.pending || s.localized || s.stale));
   rev.hidden = !canRevert;
   rev.disabled = busy || !canRevert;
   $('refresh').disabled = busy;
@@ -242,10 +243,14 @@ function applyButtons(s) {
 
 function renderDetails(s) {
   const box = $('details');
+  const toggle = $('toggle-details');
   if (!s?.cursor) {
     box.replaceChildren();
+    box.hidden = true;
+    toggle.hidden = true;
     return;
   }
+  toggle.hidden = false;
   const perm = s.readOnlyFs ? '只读，无法修改' : s.writable == null ? '—' : s.writable ? '可直接写入' : '需要管理员权限';
   const rows = [
     ['位置', s.cursor.root],
@@ -258,6 +263,7 @@ function renderDetails(s) {
   const dl = el('dl', { class: 'details' });
   for (const [k, v] of rows) { dl.append(el('dt', {}, k), el('dd', {}, v)); }
   box.replaceChildren(dl);
+  applyFolds();
 }
 
 function applyFolds() {
