@@ -11,7 +11,7 @@ export const NEXT_STEP = {
   FINISH_FAILED: '已自动回滚。请把日志文件发给开发者。',
   HELPER_FAILED: '管理员写入没有成功，安装文件未改动。请重试；仍失败请把日志文件发给开发者。',
   READ_ONLY_FS: '安装位于只读位置（如正在运行的 AppImage）。请使用“解包后汉化”。',
-  OTHER_INSTALL: '先切换到那个已汉化的 Cursor 并“一键还原”，再汉化这个。',
+  OTHER_INSTALL: '先切换到那个已汉化的 Cursor 并「还原英文」，再汉化这个。',
   BACKUP_INVALID: '备份已损坏，无法自动还原。请重新安装 Cursor（覆盖安装即可，不会丢设置）。',
   BACKUP_MISMATCH: '备份不属于当前版本。请重新安装 Cursor（覆盖安装即可，不会丢设置）。',
   NO_BACKUP: '找不到备份。请重新安装 Cursor（覆盖安装即可，不会丢设置）。',

@@ -38,7 +38,7 @@ await fs.writeFile(path.join(stage, 'package.json'), JSON.stringify({
   productName: 'cursor-zh-localizer',
   desktopName: 'cursor-zh-localizer.desktop',
   version: desktopPkg.version,
-  description: 'Cursor 一键汉化：把 Cursor 界面翻译成简体中文，可一键还原',
+  description: 'Cursor 一键汉化：把 Cursor 界面翻译成简体中文，可还原英文',
   author: { name: '阿三', email: 'asan@local' },
   homepage: 'https://github.com/lidefang0918/cursor-zh',
   license: 'MIT',

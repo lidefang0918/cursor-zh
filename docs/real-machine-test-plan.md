@@ -16,7 +16,7 @@ box 是 Linux，Windows / macOS 的代码只用假安装树、模拟命令和官
 | G1 | 检测 | 打开 GUI，或执行 `node scripts/run.mjs status` | 识别出安装目录、版本 3.27.22、`supported: true`，`kind` 对应正确 |
 | G2 | 汉化 | Cursor 已关闭时点“一键汉化” | 成功。重新打开 Cursor 后菜单、设置、Agent 面板都是中文，**没有“安装似乎已损坏”提示** |
 | G3 | Cursor 正在运行 | Cursor 开着时点汉化 → “关闭 Cursor 并继续” | Cursor 正常退出（macOS 不弹出「意外退出」崩溃报告；未保存的内容会被 hot-exit 保留），写完后自动重新打开，原来的窗口和工作区都恢复 |
-| G4 | 还原 | 点“一键还原” | 界面回到英文；`smoke-check pristine` 通过；Windows 上 product.json 的 `target` 字段保持不变 |
+| G4 | 还原 | 点「还原英文」 | 界面回到英文；`smoke-check pristine` 通过；Windows 上 product.json 的 `target` 字段保持不变 |
 | G5 | 再次汉化 / 更新 | 用 Cursor 自带的更新升级到新版本 | 新版本没有锚点时显示“不支持的版本”，不会去改文件；状态显示“汉化已失效” |
 | G6 | 登录态 | 已登录的 Cursor 汉化后再还原 | 账号仍是登录状态（本工具不碰 user-data 里的认证数据） |
 | G7 | 被别的工具改过 | 先手动改一个字节的 workbench.desktop.main.js，再汉化 | 报 `MODIFIED_INSTALL`，什么都不改 |

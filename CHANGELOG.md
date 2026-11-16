@@ -1,24 +1,28 @@
 # 更新日志
 
-## 未发布
+## v0.2.6 (2026-11-16)
+
+### 界面
+- 渐进披露首屏：版本、状态和主按钮优先展示；风险确认移到操作前
+- 可选择主题（系统 / 浅色 / 深色）
+- 「详细信息」和「日志」按需展开，默认不占首屏
+- 未找到 Cursor 时不再把「还原英文」作为主按钮（过往汉化记录仍在也不展示；其它可还原情境保留）
+- 未找到 Cursor 时「详细信息」折叠不再占布局：已补 `.fold-toggle[hidden] { display: none }`
 
 ### 新增适配
 - 完整锚点文件新增 **Cursor 3.29.15**（commit `86776fcb52ca505783155631089b65d646f9b030`）。Linux / macOS / Windows 官方安装包离线试打通过：静态补丁 3499 处 + 片段 348 处 + NLS 1681 条，未命中 0；三平台 workbench 与 NLS 文件 sha256 一致。尚未全量真机 UI 验证。
 - 完整锚点文件新增 **Cursor 3.30.8**（commit `4a44c846d0b817fab060823f93c63ea2861ac190`）。Linux / macOS / Windows 官方安装包离线试打通过：静态补丁 3539 处 + 片段 349 处 + NLS 1687 条，未命中 0；三平台 workbench 与 NLS 文件 sha256 一致。补了语音对话、远程控制推广、Origin 设置、协调者力度等 25 条词典。Low / Medium / High 因与枚举名碰撞未做静态替换。尚未全量真机 UI 验证。
 - 完整锚点文件新增 **Cursor 3.30.14**（commit `5f54c8173e5552412beb40702adac16275677fa0`）。Linux / macOS / Windows 官方安装包离线试打通过：静态补丁 3538 处 + 片段 349 处 + NLS 1692 条，未命中 0；三平台 workbench 与 NLS 文件 sha256 一致。设置页覆盖与 3.30.8 相同（872/875，未静态替换 Low / Medium / High）。尚未全量真机 UI 验证。
 
-### 界面
-- 渐进披露首屏：风险确认移到操作前
-- 未找到 Cursor 时不再把「还原英文」作为主按钮（过往汉化记录仍在也不展示；其它可还原情境保留）
-- 未找到 Cursor 时「详细信息」折叠不再占布局：作者样式里的 `display:flex` 会盖掉 `hidden`，已补 `.fold-toggle[hidden] { display: none }`（与 `#overlay[hidden]` 相同）
-
 ### Linux 真实窗口验证（非全平台）
-- 在 Linux 真实 Tauri debug 窗口中，对官方 Cursor 3.29.9 安装包的独立解包副本完成汉化与还原；还原后 4 个引擎改写文件 sha256 与原版一致
-- 未做 macOS / Windows 原生窗口验证
-- 构建依赖已安装；`npx tauri build --debug --no-bundle` 用于验证编译（带打包时 linuxdeploy 打 AppImage 曾失败，debug 二进制本身可用）
-- 已知：启动时可能出现 AT-SPI / dbind 警告；本次未能缩小窗口（默认 820×720，配置最小 640×600）
-- 记录：`docs/images/ui-progressive/VERIFY.md`
+- 在 Linux 真实 Tauri 窗口中，对官方 Cursor 3.29.9 安装包的独立解包副本完成汉化与还原；还原后 4 个引擎改写文件 sha256 与原版一致
+- 未做 macOS / Windows 原生窗口验证；离线比对不能等同于全真机覆盖
+- 构建依赖已安装；`npx tauri build --debug --no-bundle` 用于验证编译（本机带打包时 linuxdeploy 打 AppImage 曾失败，不等于 GitHub release workflow 失败；debug 二进制本身可用）
+- 记录：`docs/images/ui-progressive/VERIFY.md`。README 中的工具界面图改为上述真实窗口截图，不再使用模拟渲染图
 
+### 已知限制
+- **CS_KILLED（Code Signature Invalid）**：尚未完全修复。更新 Cursor 前请先「还原英文」
+- 本次未做 macOS / Windows 原生窗口验证
 
 ## v0.2.5 (2026-11-10)
 

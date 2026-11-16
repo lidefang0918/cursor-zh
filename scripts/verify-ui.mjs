@@ -247,10 +247,8 @@ await browser.close();
 assert('console error 为 0', errors.length === 0, errors.join('\n') || '0');
 assert('pageerror 为 0', pageErrors.length === 0, pageErrors.join('\n') || '0');
 
-// README webps from formal UI (no usernames)
-toWebp(path.join(outDir, 'localized.png'), path.join(imgDir, 'app-localized.webp'));
-toWebp(path.join(outDir, 'light-default.png'), path.join(imgDir, 'app-reverted.webp'));
-toWebp(path.join(outDir, 'quit-confirm.png'), path.join(imgDir, 'app-confirm-close.webp'));
+// README 的 app-localized.webp / app-reverted.webp / app-revert-confirm.webp
+// 来自 Linux 真实 Tauri 窗口（docs/images/ui-progressive/native-*.png），不要用本脚本的 Playwright 模拟渲染覆盖。
 
 const failed = results.filter((r) => !r.ok);
 const lines = [
