@@ -62,6 +62,10 @@
     "Accept the next word of a suggestion via ${1}": "通过 ${1} 接受建议中的下一个单词",
     "Automatically index repositories to speed up Grep searches. All data is stored locally.${1}": "自动为仓库建立索引以加快 Grep 搜索。所有数据均存储在本地。${1}",
     "Apply .cursorignore files to all subdirectories${1}. Changing this setting requires restarting Cursor.": "将 .cursorignore 应用到所有子目录${1}。更改此设置需要重启 Cursor。",
-    "Use with caution. Skip symlinks during .cursorignore file discovery. Enable only when all .cursorignore files are reachable without symlinks${1}. Changing this setting requires restarting Cursor.": "谨慎使用。查找 .cursorignore 文件时跳过符号链接。仅当所有 .cursorignore 文件无需经过符号链接即可访问时才启用${1}。更改此设置需要重启 Cursor。"
+    "Use with caution. Skip symlinks during .cursorignore file discovery. Enable only when all .cursorignore files are reachable without symlinks${1}. Changing this setting requires restarting Cursor.": "谨慎使用。查找 .cursorignore 文件时跳过符号链接。仅当所有 .cursorignore 文件无需经过符号链接即可访问时才启用${1}。更改此设置需要重启 Cursor。",
+    "${1} devices waiting for approval": "${1} 台设备等待批准",
+    "Requested ${1} minutes ago": "${1} 分钟前请求",
+    "Allow “${1}”?": "允许“${1}”？",
+    "Waiting for approval · code ${1}": "等待批准 · 验证码 ${1}"
   }
 }
