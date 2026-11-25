@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "minTool": "0.1.1",
-  "updated": "2026-11-25T07:05:22.896Z",
+  "updated": "2026-11-25T07:12:44.058Z",
   "files": {
     "dicts/zh-cn.json": "591305377701a9136ef311f8fe735cba53905b81da0a450c372022cef4f3e0d3",
     "dicts/zh-cn.nls.json": "0e78e324c9b0a1326e51748ae57a5f1998c3cfb49a7a0ffdf20062e241088960",
@@ -13,6 +13,7 @@
     "anchors/3.29.9.json": "9ecd9ca376cc8c0a78f0159a70352084080c805c929d730824e760427130765e",
     "anchors/3.30.14.json": "76fa86bb3d0c4b16f816bf648093153f29cac18e7590b91c6362ad7f2e2ca218",
     "anchors/3.30.8.json": "b5225d89cb6295f724ac04687013b7eec63b32975b884e8b21ff9762ab81343e",
-    "anchors/3.31.11.json": "d961e70965dcffc4453832e21812766dc091e964ea5ca9010aaa8797176d386e"
+    "anchors/3.31.11.json": "d961e70965dcffc4453832e21812766dc091e964ea5ca9010aaa8797176d386e",
+    "anchors/3.31.15.json": "afdd5f2fe418ef69d54d0ad85e5911a1610c51be6a01d0c8369390ef82d76a16"
   }
 }
